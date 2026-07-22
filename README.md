@@ -1,8 +1,10 @@
-🚗 AutoBuddy
+<div align="center">
 
-> A Full Stack Vehicle Breakdown Assistance Platform built with **Node.js, Express.js, MongoDB, HTML, CSS & JavaScript**.
+<img src="https://capsule-render.vercel.app/api?type=venom&height=260&text=AutoBuddy&fontSize=60&color=0:00C896,100:1F2937&stroke=00C896&strokeWidth=2&fontColor=ffffff"/>
 
----
+<img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=700&size=24&pause=1000&color=00C896&center=true&vCenter=true&width=750&lines=Vehicle+Breakdown+Assistance+Platform;Nearby+Verified+Garages;Real-Time+Mechanic+Tracking;Built+with+Node.js+%7C+Express+%7C+MongoDB"/>
+
+</div>
 
 ✨ Features
 
