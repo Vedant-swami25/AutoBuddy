@@ -1,0 +1,55 @@
+/**
+ * Status banners used for success, warning, and error feedback.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.status-banner {
+  display: none;
+  margin: 20px 0 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: rgba(96, 165, 250, 0.12);
+  color: #dbeafe;
+}
+
+body[data-theme="light"] .status-banner {
+  color: #27537a;
+}
+
+.status-banner.visible {
+  display: block;
+}
+
+.status-banner.success {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.2);
+  color: #d7fbea;
+}
+
+body[data-theme="light"] .status-banner.success {
+  color: #0d5a49;
+}
+
+.status-banner.warning {
+  background: rgba(251, 146, 60, 0.12);
+  border-color: rgba(251, 146, 60, 0.2);
+  color: #ffedd5;
+}
+
+body[data-theme="light"] .status-banner.warning {
+  color: #8f4c14;
+}
+
+.status-banner.error {
+  background: rgba(251, 113, 133, 0.12);
+  border-color: rgba(251, 113, 133, 0.2);
+  color: #ffe4e6;
+}
+
+body[data-theme="light"] .status-banner.error {
+  color: #8f2942;
+}
+

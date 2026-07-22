@@ -1,0 +1,72 @@
+/**
+ * Shared dashboard action cards and descriptive card content.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.service-card p,
+.info-card p,
+.detail-card p,
+.list-card p,
+.action-card p,
+.auth-card p,
+.auth-point span {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.card-icon,
+.feature-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.feature-icon svg,
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.action-card {
+  display: grid;
+  gap: 14px;
+}
+
+.action-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.action-card-top .feature-icon {
+  margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+.action-card-top button {
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.action-card .button {
+  width: 100%;
+}
+
+.quick-actions-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+

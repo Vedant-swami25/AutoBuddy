@@ -1,0 +1,52 @@
+/**
+ * Toast notifications and shared footer note.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.toast-region {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1200;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(52, 211, 153, 0.18);
+  background: rgba(10, 22, 38, 0.92);
+  color: var(--text);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+body[data-theme="light"] .toast {
+  background: rgba(255, 251, 245, 0.96);
+}
+
+.toast.success {
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.toast.warning {
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.toast.error {
+  border-color: rgba(251, 113, 133, 0.3);
+}
+
+.footer-note {
+  margin-top: 24px;
+  text-align: center;
+  color: rgba(158, 179, 199, 0.85);
+}
+
+body[data-theme="light"] .footer-note {
+  color: rgba(95, 109, 123, 0.9);
+}
+

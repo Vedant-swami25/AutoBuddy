@@ -1,0 +1,16 @@
+/**
+ * Shared page shell layout.
+ */
+.page-shell {
+  width: min(calc(100% - 32px), var(--max-width));
+  margin: 0 auto;
+  padding: 32px 0 64px;
+  position: relative;
+  z-index: 1;
+}
+
+.page-shell.auth-page {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+}

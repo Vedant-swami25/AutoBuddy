@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoBuddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar topbar-compact">
+      <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
+        <span aria-hidden="true"></span>
+      </button>
+      <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span>AutoBuddy</span>
+            <small>Trusted roadside support</small>
+          </span>
+        </a>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
+      </header>
+      <aside class="page-sidebar" aria-hidden="true">
+        <div class="sidebar-panel">
+          <div class="sidebar-profile">
+            <div class="sidebar-avatar" aria-hidden="true">A</div>
+            <div>
+              <p class="sidebar-signed">Signed in as</p>
+              <strong id="sidebarUserName">Driver</strong>
+              <small id="sidebarUserContact">driver@email.com</small>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav">
+            <a class="sidebar-link active" href="index.html">
+              <span class="sidebar-link-icon">🏠</span>
+              Home
+            </a>
+            <a class="sidebar-link" href="services.html">
+              <span class="sidebar-link-icon">🧰</span>
+              Services
+            </a>
+            <a class="sidebar-link" href="garage.html">
+              <span class="sidebar-link-icon">🛠️</span>
+              Garages
+            </a>
+            <a class="sidebar-link" href="tracking.html">
+              <span class="sidebar-link-icon">📅</span>
+              My Bookings
+            </a>
+          </nav>
+
+          <div class="sidebar-footer">
+            <button class="secondary auth-only sidebar-logout" type="button" onclick="logout()" hidden>Sign Out</button>
+          </div>
+        </div>
+      </aside>
+      <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
+
+      <section class="hero">
+      <div>
+        <h1>Any vehicle issue, handled with calm design and faster next steps.</h1>
+        <p class="lead">
+          <span class="lead-brand">AutoBuddy</span>
+          <span class="lead-highlight">Garage On Wheels</span>
+          <span class="lead-tagline">Start your driving journey with us.</span>
+        </p>
+
+        <div class="hero-van-art" aria-label="AutoBuddy service van illustration">
+          <svg viewBox="0 0 960 420" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="vanBody" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fffefc"></stop>
+                <stop offset="58%" stop-color="#e8eef8"></stop>
+                <stop offset="100%" stop-color="#cad7ea"></stop>
+              </linearGradient>
+              <linearGradient id="vanAccent" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ff9d3a"></stop>
+                <stop offset="100%" stop-color="#f97316"></stop>
+              </linearGradient>
+              <radialGradient id="vanGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(255,153,58,0.75)"></stop>
+                <stop offset="100%" stop-color="rgba(255,153,58,0)"></stop>
+              </radialGradient>
+            </defs>
+            <ellipse cx="510" cy="366" rx="360" ry="34" fill="rgba(14,23,50,0.64)"></ellipse>
+            <ellipse cx="615" cy="120" rx="210" ry="120" fill="url(#vanGlow)"></ellipse>
+            <g transform="translate(180 102)">
+              <path d="M40 214h555c40 0 72-32 72-72V84c0-44-36-80-80-80H364c-35 0-68 14-93 39L173 137H92c-41 0-74 33-74 74v3c0 11 9 20 22 20Z" fill="url(#vanBody)"></path>
+              <path d="M53 230h543c25 0 45-20 45-45v-17H29v41c0 12 10 21 24 21Z" fill="#243459"></path>
+              <path d="M64 168h535l-16 55H72c-20 0-37-15-39-35l-1-20h32Z" fill="url(#vanAccent)"></path>
+              <path d="M170 64h166c20 0 36 16 36 36v42H118l52-57c0-12 9-21 20-21Z" fill="#eff5ff"></path>
+              <path d="M210 74h130c17 0 30 13 30 30v30H152l42-47c4-8 9-13 16-13Z" fill="#9fb6da"></path>
+              <path d="M398 60h156c16 0 29 13 29 29v74H398Z" fill="#dfe8f5"></path>
+              <path d="M415 75h132c12 0 21 10 21 21v51H415Z" fill="#eef4fd"></path>
+              <rect x="278" y="191" width="220" height="16" rx="8" fill="rgba(255,255,255,0.46)"></rect>
+              <rect x="436" y="102" width="168" height="58" rx="12" fill="rgba(255,255,255,0.28)"></rect>
+              <rect x="77" y="104" width="38" height="44" rx="10" fill="url(#vanAccent)"></rect>
+              <rect x="626" y="120" width="22" height="38" rx="8" fill="url(#vanAccent)"></rect>
+              <rect x="476" y="16" width="34" height="22" rx="10" fill="#ffb347"></rect>
+              <rect x="481" y="8" width="24" height="12" rx="6" fill="#ffd089"></rect>
+              <circle cx="183" cy="248" r="48" fill="#1c2948"></circle>
+              <circle cx="183" cy="248" r="28" fill="#eef4ff"></circle>
+              <circle cx="542" cy="248" r="48" fill="#1c2948"></circle>
+              <circle cx="542" cy="248" r="28" fill="#eef4ff"></circle>
+              <circle cx="183" cy="248" r="12" fill="#a8b8d4"></circle>
+              <circle cx="542" cy="248" r="12" fill="#a8b8d4"></circle>
+              <path d="M62 140h72v54H62c-16 0-30-13-30-30s13-24 30-24Z" fill="#f2f6fd"></path>
+              <path d="M75 147h52c13 0 23 10 23 23v17H75c-11 0-19-9-19-19v-2c0-10 9-19 19-19Z" fill="#adbddb"></path>
+              <path d="M388 113h18v53h-18Z" fill="#1f2f58"></path>
+              <g transform="translate(443 107)">
+                <path d="M84 18c28 0 56 8 78 22v52c-22 14-50 22-78 22-28 0-56-8-78-22V40c22-14 50-22 78-22Z" fill="rgba(249,115,22,0.14)"></path>
+                <path d="M84 0 28 18v40c0 41 23 74 56 92 33-18 56-51 56-92V18L84 0Zm0 17 39 12v27c0 29-14 52-39 68C59 108 45 85 45 56V29l39-12Z" fill="#f97316"></path>
+                <path d="m65 71 16-16c9-8 25-10 36-3l-12 12 13 13-13 12-13-13-16 16-13-13 16-16-13-13 13-12 12 12Z" fill="#f97316"></path>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <div id="homeStatus" class="status-banner" aria-live="polite"></div>
+      </div>
+
+      <aside class="hero-visual">
+        <div class="signal-card">
+          <p class="quick-actions-title">Driver quick actions</p>
+          <div class="action-grid">
+            <article class="action-card">
+              <div class="action-card-top">
+                <div class="feature-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M3 11.5 12 4l9 7.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-7Zm5.5 7.5h7v-5.5h-7V19Z"/>
+                  </svg>
+                </div>
+                <button type="button" onclick="window.location.href='garage.html'">Open</button>
+              </div>
+              <div>
+                <strong class="card-title">Find Nearby Garage</strong>
+                <p>Use live location and jump to trusted workshops nearby.</p>
+              </div>
+            </article>
+
+            <article class="action-card">
+              <div class="action-card-top">
+                <div class="feature-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H15a2 2 0 0 1 1.8 1.1l.9 1.9H20A2 2 0 0 1 22 11v5.5a1.5 1.5 0 0 1-1.5 1.5H19a3 3 0 0 1-6 0h-2a3 3 0 0 1-6 0H3.5A1.5 1.5 0 0 1 2 16.5V11a2.5 2.5 0 0 1 1-2.5Zm5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 9v4h11V9H5Z"/>
+                  </svg>
+                </div>
+                <button type="button" onclick="bookService(event)">Book</button>
+              </div>
+              <div>
+                <strong class="card-title">Book Mobile Service</strong>
+                <p>Request the AutoBuddy van first before falling back to garage visits.</p>
+              </div>
+            </article>
+
+            <article class="action-card">
+              <div class="action-card-top">
+                <div class="feature-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>
+                  </svg>
+                </div>
+                <button class="warning" type="button" onclick="emergency(event)">Help</button>
+              </div>
+              <div>
+                <strong class="card-title">Emergency Help</strong>
+                <p>Prioritize urgent roadside action when every minute matters.</p>
+              </div>
+            </article>
+
+            <article class="action-card">
+              <div class="action-card-top">
+                <div class="feature-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M7.8 6.2a3 3 0 0 1 4.2 0l1 1 1-1a3 3 0 1 1 4.2 4.2l-3 3L12 10.4l-3.2 3.1-3-3a3 3 0 0 1 0-4.3Zm8.5 8.2 2.8 2.7-1.4 1.4-2.7-2.8-1.6 1.6a2 2 0 0 1-2.8 0L8.9 15.6l-2.7 2.8-1.4-1.4 2.8-2.7-1.7-1.7 1.4-1.4 4.7 4.7 4.7-4.7 1.4 1.4-1.8 1.8Z"/>
+                  </svg>
+                </div>
+                <button class="secondary" type="button" onclick="window.location.href='partner.html'">Join</button>
+              </div>
+              <div>
+                <strong class="card-title">Join as Garage Partner</strong>
+                <p>Bring new workshops into the AutoBuddy support network.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/api.js" defer></script>
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/storage.js" defer></script>
+  <script src="assets/js/navigation.js" defer></script>
+  <script src="assets/js/booking.js" defer></script>
+  <script src="assets/js/location.js" defer></script>
+  <script src="assets/js/auth.js" defer></script>
+  <script src="assets/js/services.js" defer></script>
+  <script src="assets/js/garage.js" defer></script>
+  <script src="assets/js/map.js" defer></script>
+  <script src="assets/js/tracking-map.js" defer></script>
+  <script src="assets/js/tracking-ui.js" defer></script>
+  <script src="assets/js/tracking-service.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

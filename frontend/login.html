@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AutoBuddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-public-page="true">
+  <main class="page-shell auth-page">
+    <header class="topbar topbar-compact">
+      <a class="brand" href="login.html">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span>AutoBuddy</span>
+          <small>Secure roadside access</small>
+        </span>
+      </a>
+
+      <div class="topbar-controls">
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <section class="auth-layout">
+      <div>
+        <div class="eyebrow">Garage On Wheels</div>
+        <h1 class="auth-title">Authenticate before entering the AutoBuddy dashboard.</h1>
+        <section class="auth-poster" aria-label="AutoBuddy roadside assistance preview">
+          <div class="auth-poster-top">
+            <div class="auth-poster-brand">
+              <span class="auth-poster-logo" aria-hidden="true">
+                <svg viewBox="0 0 64 64">
+                  <path d="M32 4 12 11v16c0 15.2 8.4 27.2 20 33 11.6-5.8 20-17.8 20-33V11L32 4Zm0 8.2 12 4.2v10.2c0 10.7-5.4 19.1-12 23.3-6.6-4.2-12-12.6-12-23.3V16.4l12-4.2Z"/>
+                  <path d="M21 29c0-6.6 5.4-12 12-12 2.7 0 5.3.9 7.4 2.6l-4 4A6.9 6.9 0 0 0 33 22c-3.9 0-7 3.1-7 7 0 1.7.6 3.3 1.6 4.6l-4 4A11.9 11.9 0 0 1 21 29Zm22.3-5.6 4 4L33 41.7l-7.8-7.8 4-4 3.8 3.8 10.3-10.3Z"/>
+                </svg>
+              </span>
+              <span>AutoBuddy</span>
+            </div>
+
+            <div class="auth-poster-copy">
+              <h2>Reliable Vehicle Repairs &amp; Roadside Assistance</h2>
+              <p>Find &amp; book trusted garages or on-demand mobile vans in one calm, protected experience.</p>
+            </div>
+
+            <div class="auth-poster-list">
+              <div class="auth-poster-item">
+                <span class="auth-poster-check">✓</span>
+                <span>All vehicle types</span>
+              </div>
+              <div class="auth-poster-item">
+                <span class="auth-poster-check">✓</span>
+                <span>Emergency roadside help</span>
+              </div>
+              <div class="auth-poster-item">
+                <span class="auth-poster-check">✓</span>
+                <span>Verified local garages</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-poster-scene" aria-hidden="true">
+            <svg viewBox="0 0 920 360" preserveAspectRatio="xMidYMid meet">
+              <g fill="#172851" opacity="0.95">
+                <rect x="36" y="124" width="44" height="136" rx="4"></rect>
+                <rect x="102" y="152" width="62" height="108" rx="4"></rect>
+                <rect x="186" y="98" width="94" height="162" rx="6"></rect>
+                <rect x="302" y="74" width="54" height="186" rx="4"></rect>
+                <rect x="374" y="128" width="86" height="132" rx="4"></rect>
+                <rect x="512" y="116" width="58" height="144" rx="4"></rect>
+                <rect x="604" y="132" width="50" height="128" rx="4"></rect>
+                <rect x="690" y="104" width="118" height="156" rx="6"></rect>
+                <rect x="830" y="126" width="60" height="134" rx="4"></rect>
+              </g>
+              <g fill="#233a77" opacity="0.75">
+                <rect x="214" y="116" width="14" height="96"></rect>
+                <rect x="214" y="222" width="66" height="8"></rect>
+                <rect x="312" y="88" width="18" height="118"></rect>
+                <rect x="716" y="150" width="24" height="80"></rect>
+                <rect x="748" y="150" width="24" height="64"></rect>
+              </g>
+              <ellipse cx="454" cy="300" rx="364" ry="28" fill="rgba(18,28,59,0.68)"></ellipse>
+              <g transform="translate(86 184)">
+                <rect x="0" y="50" width="248" height="86" rx="22" fill="#0f1834"></rect>
+                <rect x="18" y="22" width="122" height="64" rx="20" fill="#101c3e"></rect>
+                <rect x="138" y="28" width="76" height="58" rx="14" fill="#182b5d"></rect>
+                <rect x="18" y="82" width="182" height="16" rx="8" fill="#3e5da8"></rect>
+                <circle cx="60" cy="140" r="22" fill="#0f1834"></circle>
+                <circle cx="60" cy="140" r="12" fill="#d9e4ff"></circle>
+                <circle cx="192" cy="140" r="22" fill="#0f1834"></circle>
+                <circle cx="192" cy="140" r="12" fill="#d9e4ff"></circle>
+                <rect x="56" y="42" width="74" height="30" rx="8" fill="#1d2f62"></rect>
+                <path d="M36 52h16v16H36z" fill="#e7f3ff" opacity="0.9"></path>
+                <path d="M156 60h44c7 0 12 5 12 12v4h-56z" fill="#a8c1ff" opacity="0.5"></path>
+              </g>
+              <g transform="translate(314 212)">
+                <path d="M0 70h208l42-50c14-16 34-25 55-25h76c26 0 47 21 47 47v28H0Z" fill="#21376f"></path>
+                <path d="M48 42h128c18 0 34 10 43 26H28c5-16 19-26 20-26Z" fill="#324d96"></path>
+                <circle cx="76" cy="108" r="24" fill="#0f1834"></circle>
+                <circle cx="76" cy="108" r="13" fill="#a9bfff"></circle>
+                <circle cx="312" cy="108" r="24" fill="#0f1834"></circle>
+                <circle cx="312" cy="108" r="13" fill="#a9bfff"></circle>
+                <path d="M356 28h42c9 0 16 7 16 16v24h-70c0-22 10-40 12-40Z" fill="#192a58"></path>
+                <rect x="120" y="54" width="88" height="12" rx="6" fill="#dce7ff" opacity="0.55"></rect>
+              </g>
+              <g transform="translate(600 196)">
+                <circle cx="94" cy="124" r="24" fill="#0f1834"></circle>
+                <circle cx="94" cy="124" r="10" fill="#dce7ff"></circle>
+                <circle cx="170" cy="124" r="20" fill="#0f1834"></circle>
+                <circle cx="170" cy="124" r="9" fill="#dce7ff"></circle>
+                <path d="M72 116 124 82h48l30 12 20 24-10 18H72Z" fill="#101936"></path>
+                <path d="M122 82h30l16 16h-46Z" fill="#2c4d95"></path>
+              </g>
+            </svg>
+          </div>
+        </section>
+      </div>
+
+      <aside class="auth-side">
+        <div class="auth-card">
+          <strong class="card-title">Sign in to continue</strong>
+          <p>Enter your login detail</p>
+
+          <form id="loginForm" class="auth-form">
+            <div class="field">
+              <label for="loginName">Full name</label>
+              <input id="loginName" placeholder="Vedant Sharma" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="loginEmail">Email address</label>
+              <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="loginMobile">Mobile number</label>
+              <input id="loginMobile" inputmode="numeric" maxlength="10" placeholder="9876543210" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="loginDistrict">District</label>
+              <input id="loginDistrict" placeholder="District" autocomplete="address-level2">
+            </div>
+            <div class="field">
+              <label for="loginState">State</label>
+              <input id="loginState" placeholder="State" autocomplete="address-level1">
+            </div>
+            <p id="locationHelper" class="auth-note">Enter district and state manually. Location access is requested only when you use map, garage, or emergency tracking.</p>
+            <button type="submit">Continue to AutoBuddy</button>
+          </form>
+
+          <div id="loginStatus" class="status-banner" aria-live="polite"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/api.js" defer></script>
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/storage.js" defer></script>
+  <script src="assets/js/navigation.js" defer></script>
+  <script src="assets/js/booking.js" defer></script>
+  <script src="assets/js/location.js" defer></script>
+  <script src="assets/js/auth.js" defer></script>
+  <script src="assets/js/services.js" defer></script>
+  <script src="assets/js/garage.js" defer></script>
+  <script src="assets/js/map.js" defer></script>
+  <script src="assets/js/tracking-map.js" defer></script>
+  <script src="assets/js/tracking-ui.js" defer></script>
+  <script src="assets/js/tracking-service.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

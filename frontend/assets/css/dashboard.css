@@ -1,0 +1,203 @@
+/**
+ * Home-page hero, dashboard layout, and feature summary styling.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.hero,
+.panel,
+.map-layout,
+.list-shell,
+.form-shell,
+.auth-layout {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.hero,
+.auth-layout {
+  display: grid;
+  gap: 28px;
+}
+
+.hero {
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  padding: 36px;
+}
+
+.auth-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  padding: 32px;
+}
+
+.hero::after,
+.panel::after,
+.map-layout::after,
+.list-shell::after,
+.form-shell::after,
+.auth-layout::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -45% auto;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.18), transparent 68%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.hero h1,
+.page-title,
+.auth-title {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+}
+
+.page-title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.auth-title {
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+}
+
+.hero p,
+.section-subtitle,
+.lead,
+.auth-copy {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.lead {
+  max-width: 680px;
+}
+
+.lead-brand,
+.lead-highlight,
+.lead-tagline {
+  display: block;
+}
+
+.lead-brand {
+  margin-bottom: 6px;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.lead-highlight {
+  margin-bottom: 12px;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.9rem, 3vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: var(--accent-warm);
+  text-shadow: 0 10px 28px rgba(249, 115, 22, 0.18);
+}
+
+.lead-tagline {
+  max-width: 36rem;
+  font-size: 1.04rem;
+  line-height: 1.8;
+}
+
+.hero-van-art {
+  position: relative;
+  margin-top: 26px;
+  padding: 18px 18px 10px;
+  border-radius: 28px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(251, 146, 60, 0.2), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(125, 211, 252, 0.12), transparent 32%),
+    linear-gradient(145deg, rgba(8, 17, 31, 0.58), rgba(17, 31, 52, 0.88));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 24px 50px rgba(3, 8, 18, 0.28);
+  overflow: hidden;
+}
+
+.hero-van-art::before {
+  content: "";
+  position: absolute;
+  inset: auto auto 0 0;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.14), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-van-art svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+}
+
+body[data-theme="light"] .lead-highlight {
+  color: #c96f24;
+  text-shadow: 0 8px 18px rgba(201, 111, 36, 0.08);
+}
+
+body[data-theme="light"] .hero-van-art {
+  background:
+    radial-gradient(circle at top right, rgba(232, 138, 61, 0.18), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(15, 157, 122, 0.1), transparent 32%),
+    linear-gradient(145deg, rgba(255, 251, 244, 0.9), rgba(241, 234, 223, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 22px 44px rgba(110, 95, 74, 0.14);
+}
+
+.hero-actions,
+.card-grid,
+.stats-grid,
+.action-grid,
+.auth-points,
+.signal-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.hero-actions {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-top: 26px;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 22px;
+}
+
+.action-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+

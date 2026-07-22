@@ -1,0 +1,85 @@
+/**
+ * Service catalogue groups, prices, and service-card variants.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.services-stack {
+  display: grid;
+  gap: 28px;
+}
+
+.services-group {
+  display: grid;
+  gap: 18px;
+}
+
+.services-group-head {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+}
+
+.services-group-head .section-subtitle {
+  margin: 6px 0 0;
+}
+
+.services-group-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.18), rgba(125, 211, 252, 0.14));
+  color: var(--text);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.services-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.priced-service-card {
+  display: grid;
+  gap: 14px;
+  min-height: 100%;
+}
+
+.featured-service-card {
+  background:
+    radial-gradient(circle at top right, rgba(251, 146, 60, 0.16), transparent 32%),
+    var(--surface-soft);
+}
+
+.emergency-service-card {
+  border-color: rgba(251, 146, 60, 0.22);
+}
+
+.service-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.service-price {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.services-group-emergency .service-price {
+  background: rgba(251, 146, 60, 0.12);
+  border-color: rgba(251, 146, 60, 0.2);
+}
+

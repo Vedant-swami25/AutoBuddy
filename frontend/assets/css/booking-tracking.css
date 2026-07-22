@@ -1,0 +1,174 @@
+/* Tracking layout, hero, meter, timeline and map styles (split from booking.css) */
+
+.tracking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 20px;
+}
+
+.tracking-main,
+.tracking-side {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.tracking-hero,
+.tracking-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.tracking-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: 20px;
+  padding: 28px;
+}
+
+.tracking-title {
+  margin: 14px 0 10px;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.05;
+}
+
+.tracking-meter {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.tracking-meter-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tracking-meter-label strong {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: 1.4rem;
+}
+
+.tracking-progress {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tracking-progress-bar {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent), #7dd3fc);
+  transition: width 0.35s ease;
+}
+
+.tracking-eta {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.tracking-panel {
+  padding: 24px;
+}
+
+.tracking-map-shell {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+#trackingMap {
+  min-height: 380px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.tracking-van-marker {
+  background: transparent;
+  border: none;
+}
+
+.tracking-van-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffae4c, #f97316);
+  box-shadow: 0 10px 22px rgba(249, 115, 22, 0.32);
+}
+
+.tracking-van-badge svg {
+  width: 17px;
+  height: 17px;
+  fill: #fff8ef;
+}
+
+body[data-theme="light"] .tracking-van-badge {
+  box-shadow: 0 8px 18px rgba(201, 111, 36, 0.2);
+}
+
+.tracking-timeline {
+  display: grid;
+  gap: 14px;
+}
+
+.tracking-step {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: var(--surface-soft);
+}
+
+.tracking-step-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.tracking-step.done .tracking-step-dot {
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--accent);
+}
+
+.tracking-step.active {
+  border-color: rgba(52, 211, 153, 0.24);
+  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.12);
+}
+
+.tracking-step-title {
+  display: block;
+  margin-bottom: 4px;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+.tracking-step-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}

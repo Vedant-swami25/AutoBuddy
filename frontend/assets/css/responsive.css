@@ -1,0 +1,97 @@
+/**
+ * Original responsive breakpoints shared by all pages.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+@media (max-width: 920px) {
+  .hero,
+  .map-layout,
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid,
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header,
+  .topbar,
+  .topbar-right {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    width: min(calc(100% - 20px), var(--max-width));
+    padding-top: 20px;
+    padding-bottom: 42px;
+  }
+
+  .hero,
+  .panel,
+  .list-shell,
+  .form-shell,
+  .map-layout,
+  .auth-layout {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .list-card {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .service-card-footer button,
+  .service-price {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .booking-history-top {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .topbar-nav,
+  .topbar-controls {
+    width: 100%;
+  }
+
+  .theme-toggle,
+  .user-badge,
+  .topbar-controls .secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #map {
+    min-height: 400px;
+  }
+
+  .lead-highlight {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+
+  .hero-van-art {
+    margin-top: 20px;
+    padding: 12px 12px 6px;
+    border-radius: 22px;
+  }
+
+  .floating-tracker {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}

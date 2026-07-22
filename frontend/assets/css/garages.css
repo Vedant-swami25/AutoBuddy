@@ -1,0 +1,84 @@
+/**
+ * Garage list, partner form, metadata, and field presentation.
+ *
+ * Moved from style.css to keep styling responsibilities easy to locate
+ * while preserving the original cascade order.
+ */
+
+.list-shell {
+  display: grid;
+  gap: 20px;
+}
+
+.list-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.list-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+}
+
+.list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.meta-chip {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 10px;
+}
+
+.field label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--input-bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.field input:focus {
+  border-color: rgba(52, 211, 153, 0.45);
+  transform: translateY(-1px);
+}
+
+.field input[readonly] {
+  cursor: default;
+  background: var(--surface-soft);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+

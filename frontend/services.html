@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services - AutoBuddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar topbar-compact">
+      <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
+        <span aria-hidden="true"></span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span>AutoBuddy</span>
+          <small>Trusted roadside support</small>
+        </span>
+      </a>
+      <div class="topbar-right">
+        <div class="topbar-controls">
+          <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <span class="theme-icon" aria-hidden="true"></span>
+          </button>
+          <div class="user-badge auth-only" hidden>
+            <span>Signed in as</span>
+            <strong id="userName">Driver</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+    <aside class="page-sidebar" aria-hidden="true">
+      <div class="sidebar-panel">
+        <div class="sidebar-profile">
+          <div class="sidebar-avatar" aria-hidden="true">A</div>
+          <div>
+            <p class="sidebar-signed">Signed in as</p>
+            <strong id="sidebarUserName">Driver</strong>
+            <small id="sidebarUserContact">driver@email.com</small>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="index.html">
+            <span class="sidebar-link-icon">🏠</span>
+            Home
+          </a>
+          <a class="sidebar-link active" href="services.html">
+            <span class="sidebar-link-icon">🧰</span>
+            Services
+          </a>
+          <a class="sidebar-link" href="garage.html">
+            <span class="sidebar-link-icon">🛠️</span>
+            Garages
+          </a>
+          <a class="sidebar-link" href="tracking.html">
+            <span class="sidebar-link-icon">📅</span>
+            My Bookings
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="secondary auth-only sidebar-logout" type="button" onclick="logout()" hidden>Sign Out</button>
+        </div>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
+
+    <section class="panel">
+      <div class="section-header">
+        <div>
+          <div class="eyebrow">Service pricing</div>
+          <h1 class="page-title">AutoBuddy services with clear pricing and faster booking.</h1>
+          <p class="section-subtitle">Choose the service you need, check the price instantly, and book it in one tap.</p>
+        </div>
+        <button class="secondary" onclick="window.location.href='index.html'">Back to Home</button>
+      </div>
+
+      <div class="services-stack">
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">1</span>
+            <div>
+              <h2 class="section-title">Basic Wash &amp; Cleaning</h2>
+              <p class="section-subtitle">Quick refresh options for daily use vehicles.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Exterior Wash</strong>
+              <p>Clean outer body panels and improve the vehicle finish.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹300</span><button type="button" onclick="bookPricedService('Exterior Wash', 300, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Interior Cleaning</strong>
+              <p>Dust, vacuum, and seat-area cleaning for a fresher cabin.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹400</span><button type="button" onclick="bookPricedService('Interior Cleaning', 400, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Full Car Wash (In + Out)</strong>
+              <p>Complete inside-out wash for a neat all-around cleanup.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹700</span><button type="button" onclick="bookPricedService('Full Car Wash', 700, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">2</span>
+            <div>
+              <h2 class="section-title">Premium Detailing</h2>
+              <p class="section-subtitle">Higher-end detailing for shine, comfort, and presentation.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Wax Polishing</strong>
+              <p>Boost paint shine and add a smoother protective surface finish.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1200</span><button type="button" onclick="bookPricedService('Wax Polishing', 1200, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Interior Deep Cleaning</strong>
+              <p>Deeper fabric, dashboard, and hidden-area cleaning support.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1500</span><button type="button" onclick="bookPricedService('Interior Deep Cleaning', 1500, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card featured-service-card">
+              <strong class="card-title">Full Detailing Package</strong>
+              <p>Our premium cleanup package for a full showroom-style refresh.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹2500</span><button type="button" onclick="bookPricedService('Full Detailing Package', 2500, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">3</span>
+            <div>
+              <h2 class="section-title">Basic Servicing</h2>
+              <p class="section-subtitle">Routine checks and maintenance for smoother driving.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Engine Oil Change</strong>
+              <p>Replace old engine oil and keep your engine running healthier.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1200</span><button type="button" onclick="bookPricedService('Engine Oil Change', 1200, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Brake Check &amp; Adjustment</strong>
+              <p>Brake response inspection with basic adjustment support.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹500</span><button type="button" onclick="bookPricedService('Brake Check & Adjustment', 500, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Battery Check</strong>
+              <p>Quick battery condition check before you get stuck on the road.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹200</span><button type="button" onclick="bookPricedService('Battery Check', 200, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">AC Gas Top-up</strong>
+              <p>Improve cabin cooling with a practical AC gas refill service.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1500</span><button type="button" onclick="bookPricedService('AC Gas Top-up', 1500, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">4</span>
+            <div>
+              <h2 class="section-title">Repairs (Minor)</h2>
+              <p class="section-subtitle">Quick-fix repairs for small but important issues.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Dent Removal</strong>
+              <p>Minor dent work to help restore the body appearance.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹800</span><button type="button" onclick="bookPricedService('Dent Removal', 800, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Scratch / Paint Touch-up</strong>
+              <p>Touch-up correction for small scratches and paint marks.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1000</span><button type="button" onclick="bookPricedService('Scratch / Paint Touch-up', 1000, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Minor Engine Repair</strong>
+              <p>Support for smaller engine-side issues before they grow bigger.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1500</span><button type="button" onclick="bookPricedService('Minor Engine Repair', 1500, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group services-group-emergency">
+          <div class="services-group-head">
+            <span class="services-group-icon">5</span>
+            <div>
+              <h2 class="section-title">Emergency Roadside Help</h2>
+              <p class="section-subtitle">Priority roadside support when the situation is urgent.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card featured-service-card emergency-service-card">
+              <strong class="card-title">Breakdown Assistance</strong>
+              <p>Immediate roadside response for sudden vehicle breakdown situations.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1000</span><button class="warning" type="button" onclick="bookPricedService('Breakdown Assistance', 1000, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card emergency-service-card">
+              <strong class="card-title">Battery Jumpstart</strong>
+              <p>Fast on-road support when your battery leaves you stranded.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹500</span><button class="warning" type="button" onclick="bookPricedService('Battery Jumpstart', 500, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card emergency-service-card">
+              <strong class="card-title">Emergency Visit Charge</strong>
+              <p>Priority dispatch support fee for urgent vehicle attention.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹300</span><button class="warning" type="button" onclick="bookPricedService('Emergency Visit Charge', 300, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">6</span>
+            <div>
+              <h2 class="section-title">Tire Services</h2>
+              <p class="section-subtitle">Quick wheel and tire support for safer movement.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Puncture Repair</strong>
+              <p>Fast puncture fixing so you can get moving again quickly.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹150</span><button type="button" onclick="bookPricedService('Puncture Repair', 150, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Tire Change</strong>
+              <p>Replacement support for damaged or flat tire situations.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹300</span><button type="button" onclick="bookPricedService('Tire Change', 300, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Air Pressure Check</strong>
+              <p>Basic tire pressure balancing for safer and smoother driving.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹50</span><button type="button" onclick="bookPricedService('Air Pressure Check', 50, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">7</span>
+            <div>
+              <h2 class="section-title">Diagnostics</h2>
+              <p class="section-subtitle">Technical checks to catch issues early.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">OBD Scanning</strong>
+              <p>Diagnostic scanning to identify system-level fault codes.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹500</span><button type="button" onclick="bookPricedService('OBD Scanning', 500, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Engine Health Check</strong>
+              <p>Health inspection to understand engine condition and risk areas.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹700</span><button type="button" onclick="bookPricedService('Engine Health Check', 700, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">8</span>
+            <div>
+              <h2 class="section-title">Bike Services</h2>
+              <p class="section-subtitle">Important two-wheeler support options as well.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Bike Wash</strong>
+              <p>Quick wash service to keep bikes neat and road-ready.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹150</span><button type="button" onclick="bookPricedService('Bike Wash', 150, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Bike Service</strong>
+              <p>Routine bike service support for better reliability and mileage.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹800</span><button type="button" onclick="bookPricedService('Bike Service', 800, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="services-group">
+          <div class="services-group-head">
+            <span class="services-group-icon">9</span>
+            <div>
+              <h2 class="section-title">Heavy Vehicle Upgrade</h2>
+              <p class="section-subtitle">Optional support for commercial and large vehicle needs.</p>
+            </div>
+          </div>
+          <div class="card-grid services-grid">
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Truck Inspection</strong>
+              <p>Inspection support for larger transport and heavy-use vehicles.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹1500</span><button type="button" onclick="bookPricedService('Truck Inspection', 1500, this)">Book Now</button></div>
+            </article>
+            <article class="service-card priced-service-card">
+              <strong class="card-title">Commercial Vehicle Service</strong>
+              <p>Broader service support for business and commercial fleets.</p>
+              <div class="service-card-footer"><span class="service-price">Price: ₹2500</span><button type="button" onclick="bookPricedService('Commercial Vehicle Service', 2500, this)">Book Now</button></div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div id="servicesStatus" class="status-banner" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/api.js" defer></script>
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/storage.js" defer></script>
+  <script src="assets/js/navigation.js" defer></script>
+  <script src="assets/js/booking.js" defer></script>
+  <script src="assets/js/location.js" defer></script>
+  <script src="assets/js/auth.js" defer></script>
+  <script src="assets/js/services.js" defer></script>
+  <script src="assets/js/garage.js" defer></script>
+  <script src="assets/js/map.js" defer></script>
+  <script src="assets/js/tracking-map.js" defer></script>
+  <script src="assets/js/tracking-ui.js" defer></script>
+  <script src="assets/js/tracking-service.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+/**
+ * Design tokens and theme variables.
+ *
+ * Change colors, spacing radii, shadows, and app width here first.
+ */
+:root {
+  --bg: #07111f;
+  --bg-soft: #0d1b2d;
+  --surface: rgba(10, 22, 38, 0.78);
+  --surface-strong: rgba(8, 17, 31, 0.92);
+  --surface-soft: rgba(255, 255, 255, 0.04);
+  --line: rgba(148, 163, 184, 0.2);
+  --text: #e5eef7;
+  --muted: #9eb3c7;
+  --accent: #34d399;
+  --accent-strong: #10b981;
+  --accent-soft: rgba(52, 211, 153, 0.14);
+  --accent-warm: #fb923c;
+  --danger: #fb7185;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --max-width: 1180px;
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --logo-shadow: 0 12px 28px rgba(251, 146, 60, 0.22);
+}
+
+body[data-theme="light"] {
+  --bg: #f4f0e8;
+  --bg-soft: #ebe4d8;
+  --surface: rgba(255, 252, 247, 0.86);
+  --surface-strong: rgba(255, 250, 243, 0.96);
+  --surface-soft: rgba(102, 88, 70, 0.05);
+  --line: rgba(106, 92, 73, 0.16);
+  --text: #1d2938;
+  --muted: #5f6d7b;
+  --accent: #0f9d7a;
+  --accent-strong: #08705c;
+  --accent-soft: rgba(15, 157, 122, 0.12);
+  --accent-warm: #e88a3d;
+  --danger: #d95c74;
+  --shadow: 0 26px 70px rgba(110, 95, 74, 0.14);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --logo-shadow: 0 12px 24px rgba(232, 138, 61, 0.16);
+}
