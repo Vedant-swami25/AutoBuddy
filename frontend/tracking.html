@@ -3,44 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Track Booking - AutoBuddy 3D Live Telemetry</title>
+  <title>Live Dispatch Tracking — AutoBuddy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
-
   <main class="page-shell">
-    <header class="topbar topbar-compact">
-      <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
-        <span aria-hidden="true"></span>
-      </button>
-      <a class="brand" href="index.html">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64">
-            <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
-          </svg>
-        </span>
-        <span class="brand-text">
-          <span>AutoBuddy</span>
-          <small>3D Immersive Roadside Network</small>
-        </span>
-      </a>
-
-      <div class="topbar-hud-metrics">
-        <div class="hud-chip">
-          <span class="hud-chip-dot"></span>
-          <span>SATELLITE SYNC ACTIVE</span>
-        </div>
-        <button type="button" class="sound-toggle-btn" onclick="window.soundFx.toggleSound()" aria-label="Toggle Sound Effects">
-          <span class="sound-icon">🔊</span>
-          <span class="sound-label">Audio ON</span>
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
+          <span aria-hidden="true"></span>
         </button>
-        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-name">AutoBuddy</span>
+            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
+          </span>
+        </a>
+      </div>
+
+      <nav class="topbar-nav">
+        <a class="nav-link" href="index.html">Overview</a>
+        <a class="nav-link" href="services.html">Services</a>
+        <a class="nav-link" href="garage.html">Workshops</a>
+        <a class="nav-link active" href="tracking.html">Live Tracking</a>
+        <a class="nav-link" href="partner.html">Partner Network</a>
+      </nav>
+
+      <div class="topbar-right">
+        <div class="user-badge auth-only" hidden>
+          <span id="userName">Driver</span>
+        </div>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true"></span>
         </button>
       </div>
@@ -60,7 +62,7 @@
         <nav class="sidebar-nav">
           <a class="sidebar-link" href="index.html">
             <span class="sidebar-link-icon">🏠</span>
-            Home
+            Overview
           </a>
           <a class="sidebar-link" href="services.html">
             <span class="sidebar-link-icon">🧰</span>
@@ -68,16 +70,20 @@
           </a>
           <a class="sidebar-link" href="garage.html">
             <span class="sidebar-link-icon">🛠️</span>
-            Garages
+            Workshops
           </a>
           <a class="sidebar-link active" href="tracking.html">
             <span class="sidebar-link-icon">📅</span>
-            My Bookings
+            Live Tracking
+          </a>
+          <a class="sidebar-link" href="partner.html">
+            <span class="sidebar-link-icon">🤝</span>
+            Partner Program
           </a>
         </nav>
 
         <div class="sidebar-footer">
-          <button class="secondary auth-only sidebar-logout" type="button" onclick="logout()" hidden>Sign Out</button>
+          <button class="secondary auth-only" style="width: 100%;" type="button" onclick="logout()" hidden>Sign Out</button>
         </div>
       </div>
     </aside>
@@ -85,53 +91,27 @@
 
     <section class="tracking-layout">
       <div class="tracking-main">
-        <div class="eyebrow">
-          <span>🛰️ 3D Telemetry Dashboard</span>
-        </div>
-        <h1 class="page-title">See every AutoBuddy booking and track the active one live.</h1>
-        <p class="section-subtitle">Browse your booking history, pick any visit, and jump into live van tracking from one place.</p>
-
-        <!-- 3D Live Trip Telemetry Gauges -->
-        <div class="telemetry-dashboard-3d">
-          <div class="telemetry-dial" data-tilt-3d="true">
-            <span class="telemetry-dial-label">Transit Speed</span>
-            <strong class="telemetry-dial-value" style="color: #00f29d;">38 <small style="font-size: 1rem;">km/h</small></strong>
-            <span style="font-size: 0.75rem; color: var(--muted);">Live GPS Velocity</span>
-          </div>
-          <div class="telemetry-dial" data-tilt-3d="true">
-            <span class="telemetry-dial-label">Altitude &amp; Azimuth</span>
-            <strong class="telemetry-dial-value" style="color: #00e5ff;">560 <small style="font-size: 1rem;">m</small></strong>
-            <span style="font-size: 0.75rem; color: var(--muted);">Heading 42° NE</span>
-          </div>
-          <div class="telemetry-dial" data-tilt-3d="true">
-            <span class="telemetry-dial-label">Signal Telemetry</span>
-            <strong class="telemetry-dial-value" style="color: #ff8a00;">99.8%</strong>
-            <span style="font-size: 0.75rem; color: var(--muted);">Sub-10m Precision</span>
-          </div>
+        <div>
+          <div class="eyebrow">Dispatch Tracking</div>
+          <h1 class="page-title">Live Service Progress</h1>
+          <p class="section-subtitle">Track your assigned mechanic and vehicle status in real time.</p>
         </div>
 
-        <div id="trackingStatus" class="status-banner visible">Loading your latest booking...</div>
+        <div id="trackingStatus" class="status-banner visible">Loading latest dispatch status...</div>
 
-        <section class="panel tracking-panel">
-          <div class="section-header">
+        <!-- Active Tracking Hero Card -->
+        <article class="tracking-hero">
+          <div class="tracking-hero-top">
             <div>
-              <h2 class="section-title">All bookings</h2>
-              <p class="section-subtitle">Tap any booking card to open its live tracker and current status.</p>
+              <span class="badge neutral" id="trackingBadge">Awaiting booking</span>
+              <h2 id="trackingGarageName" class="tracking-title">No booking selected yet</h2>
+              <p id="trackingMeta" class="map-note">Select an active booking to view live transit progress.</p>
             </div>
-          </div>
-          <div id="bookingHistoryList" class="booking-history-grid" aria-live="polite"></div>
-        </section>
-
-        <article class="tracking-hero" data-tilt-3d="true">
-          <div>
-            <span class="badge neutral" id="trackingBadge">Awaiting booking</span>
-            <h2 id="trackingGarageName" class="tracking-title">No booking selected yet</h2>
-            <p id="trackingMeta" class="map-note">Book a garage visit first, then return here to follow its progress.</p>
           </div>
 
           <div class="tracking-meter">
             <div class="tracking-meter-label">
-              <span>Progress</span>
+              <span>Service Progress</span>
               <strong id="trackingProgressValue">0%</strong>
             </div>
             <div class="tracking-progress">
@@ -141,42 +121,56 @@
           </div>
         </article>
 
-        <section class="panel tracking-panel">
+        <!-- Live Step Timeline -->
+        <section class="panel">
           <div class="section-header">
             <div>
-              <h2 class="section-title">Live trip timeline</h2>
-              <p class="section-subtitle">This updates as the service partner moves from confirmation to arrival.</p>
+              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Service Timeline</h2>
+              <p style="font-size: 0.84rem; color: var(--text-secondary);">Updates automatically as your mechanic progresses.</p>
             </div>
           </div>
           <div id="trackingTimeline" class="tracking-timeline"></div>
         </section>
 
+        <!-- Live Map -->
         <section class="tracking-map-shell">
           <div class="section-header">
             <div>
-              <h2 class="section-title">Live van location</h2>
-              <p class="section-subtitle">Watch the service vehicle move toward your location like a live delivery map.</p>
+              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Route Map</h2>
+              <p style="font-size: 0.84rem; color: var(--text-secondary);">Live location of the assigned service vehicle.</p>
             </div>
           </div>
           <div id="trackingMap" aria-label="Live service van tracking map"></div>
         </section>
+
+        <!-- Booking History -->
+        <section class="panel">
+          <div class="section-header">
+            <div>
+              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">All Bookings</h2>
+              <p style="font-size: 0.84rem; color: var(--text-secondary);">Tap any past or active visit to open its live tracker.</p>
+            </div>
+          </div>
+          <div id="bookingHistoryList" class="booking-history-grid" aria-live="polite"></div>
+        </section>
       </div>
 
+      <!-- Partner Details Sidebar -->
       <aside class="tracking-side">
-        <article class="detail-card" data-tilt-3d="true">
-          <strong class="card-title">Assigned service partner</strong>
-          <p id="trackingMechanic">Partner details will appear after booking confirmation.</p>
+        <article class="detail-card">
+          <strong class="card-title">Assigned Partner</strong>
+          <p id="trackingMechanic">Details appear after confirmation.</p>
         </article>
-        <article class="detail-card" data-tilt-3d="true">
+        <article class="detail-card">
           <strong class="card-title">Vehicle</strong>
-          <p id="trackingVehicle">Service vehicle details will appear here.</p>
+          <p id="trackingVehicle">Service vehicle details.</p>
         </article>
-        <article class="detail-card" data-tilt-3d="true">
-          <strong class="card-title">Contact</strong>
-          <p id="trackingPhone">Support contact will appear here.</p>
+        <article class="detail-card">
+          <strong class="card-title">Direct Contact</strong>
+          <p id="trackingPhone">Support contact details.</p>
         </article>
-        <div class="form-actions">
-          <button type="button" onclick="refreshTracking()">Refresh Tracking</button>
+        <div class="form-actions" style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" onclick="refreshTracking()">Refresh Status</button>
           <button class="secondary" type="button" onclick="window.location.href='garage.html'">Book Another Visit</button>
         </div>
       </aside>
@@ -185,9 +179,7 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="assets/js/config.js" defer></script>
-  <script src="assets/js/sound-fx.js" defer></script>
   <script src="assets/js/tilt-3d.js" defer></script>
-  <script src="assets/js/three-scene.js" defer></script>
   <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/api.js" defer></script>
   <script src="assets/js/utils.js" defer></script>

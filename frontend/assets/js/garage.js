@@ -1,8 +1,5 @@
 /**
  * Garage listing, partner requests, and garage booking actions.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
  */
 
 function renderGarageCard(garage) {
@@ -10,22 +7,30 @@ function renderGarageCard(garage) {
   card.className = "list-card";
 
   const verificationClass = garage.verified ? "badge" : "badge warning";
-  const verificationText = garage.verified ? "Verified" : "Pending verification";
+  const verificationText = garage.verified ? "Verified Partner" : "Pending Verification";
   const locationText = garage.address || `${garage.lat}, ${garage.lng}`;
-  const serviceText = (garage.services || garage.specialties || []).slice(0, 3).join(", ") || "General repairs";
+  const serviceText = (garage.services || garage.specialties || []).slice(0, 3).join(" • ") || "General repairs";
+  const ratingText = `${garage.rating || 4.7} ★`;
+  const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min arrival` : "Open today";
 
   card.innerHTML = `
-    <div>
-      <strong class="card-title">${garage.name}</strong>
-      <p>${locationText}</p>
+    <div class="garage-card-main">
+      <div class="garage-header-row">
+        <div>
+          <span class="${verificationClass}">${verificationText}</span>
+          <h3 class="garage-title" style="margin-top: 8px;">${garage.name}</h3>
+        </div>
+        <span class="garage-rating">${ratingText}</span>
+      </div>
+      <p class="garage-address">${locationText}</p>
       <div class="list-meta">
         <span class="meta-chip">${garage.hours || "Open today"}</span>
         <span class="meta-chip">${serviceText}</span>
-        <span class="${verificationClass}">${verificationText}</span>
       </div>
     </div>
-    <div>
-      <button>Book Visit</button>
+    <div class="garage-card-action">
+      <span class="garage-eta-tag">${etaText}</span>
+      <button type="button">Book Visit</button>
     </div>
   `;
 
@@ -43,15 +48,15 @@ async function loadGarages() {
     return;
   }
 
-  setStatus("garageStatus", "Loading available garages...", "neutral");
+  setStatus("garageStatus", "Loading verified partner garages...", "neutral");
 
   try {
     const garages = await fetchGarages();
     list.innerHTML = "";
 
     if (!garages.length) {
-      list.innerHTML = '<div class="empty-state">No garages are available yet. Partner applications will appear here once approved.</div>';
-      setStatus("garageStatus", "No garages are available yet.", "warning");
+      list.innerHTML = '<div class="empty-state">No workshops currently available in this sector. Partner applications will appear here once approved.</div>';
+      setStatus("garageStatus", "No workshops currently listed.", "warning");
       return;
     }
 
@@ -59,13 +64,13 @@ async function loadGarages() {
       list.appendChild(renderGarageCard(garage));
     });
 
-    setStatus("garageStatus", `${garages.length} garage options loaded successfully.`, "success");
+    setStatus("garageStatus", `${garages.length} verified workshops available nearby.`, "success");
   } catch (error) {
     list.innerHTML = "";
     GARAGE_FALLBACKS.forEach((garage) => {
       list.appendChild(renderGarageCard(garage));
     });
-    setStatus("garageStatus", `${GARAGE_FALLBACKS.length} garage options loaded successfully.`, "success");
+    setStatus("garageStatus", `${GARAGE_FALLBACKS.length} verified workshops loaded.`, "success");
   }
 }
 
@@ -93,7 +98,7 @@ async function bookGarage(garage, button) {
     });
 
     setActiveBooking(payload.booking);
-    setStatus("garageStatus", `Booking request sent to ${garage.name}.`, "success");
+    setStatus("garageStatus", `Booking confirmed with ${garage.name}.`, "success");
     showToast(`Booking request sent to ${garage.name}.`, "success");
     window.setTimeout(() => {
       openTrackingForBooking(payload.booking);
@@ -179,7 +184,7 @@ async function addGarage(event) {
       verified: false
     });
 
-    setStatus("partnerStatus", `Request sent successfully for ${name}. We will review and verify the garage soon.`, "success");
+    setStatus("partnerStatus", `Application submitted for ${name}. Our partner team will verify details shortly.`, "success");
     showToast("Garage partner request submitted.", "success");
     document.getElementById("name").value = "";
     document.getElementById("location").value = "";
@@ -190,4 +195,3 @@ async function addGarage(event) {
     setButtonLoading(button, false, "Submit Request");
   }
 }
-

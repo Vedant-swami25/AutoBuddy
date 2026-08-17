@@ -1,85 +1,129 @@
 /**
- * Service catalogue groups, prices, and service-card variants.
- *
- * Moved from style.css to keep styling responsibilities easy to locate
- * while preserving the original cascade order.
+ * AutoBuddy Services Catalog Styles
  */
-
-.services-stack {
-  display: grid;
-  gap: 28px;
+.services-tabs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.services-group {
-  display: grid;
-  gap: 18px;
+.service-filter-pill {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+  box-shadow: none;
+}
+
+.service-filter-pill:hover {
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.08);
+  transform: none;
+}
+
+.service-filter-pill.active {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+  box-shadow: 0 2px 8px rgba(0, 132, 255, 0.3);
+}
+
+.services-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
 }
 
 .services-group-head {
   display: flex;
-  align-items: start;
+  align-items: center;
   gap: 14px;
-}
-
-.services-group-head .section-subtitle {
-  margin: 6px 0 0;
+  margin-bottom: 18px;
 }
 
 .services-group-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.18), rgba(125, 211, 252, 0.14));
-  color: var(--text);
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
-  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
-  flex: 0 0 auto;
+  font-size: 0.88rem;
+}
+
+.services-group-emergency .services-group-icon {
+  background: var(--status-warning-soft);
+  color: var(--status-warning);
 }
 
 .services-grid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.priced-service-card {
   display: grid;
-  gap: 14px;
-  min-height: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
 
-.featured-service-card {
-  background:
-    radial-gradient(circle at top right, rgba(251, 146, 60, 0.16), transparent 32%),
-    var(--surface-soft);
+.service-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.25s ease;
 }
 
-.emergency-service-card {
-  border-color: rgba(251, 146, 60, 0.22);
+.service-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.service-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.service-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 20px;
 }
 
 .service-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .service-price {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(52, 211, 153, 0.12);
-  border: 1px solid rgba(52, 211, 153, 0.2);
-  color: var(--text);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.services-group-emergency .service-price {
-  background: rgba(251, 146, 60, 0.12);
-  border-color: rgba(251, 146, 60, 0.2);
+.service-card-footer button {
+  min-height: 38px;
+  padding: 6px 14px;
+  font-size: 0.84rem;
 }
-

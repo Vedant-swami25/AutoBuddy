@@ -1,15 +1,14 @@
 /**
- * AutoBuddy 3D Gyroscopic Card Tilt & Specular Physics Engine
- * Adds fluid 60fps 3D depth, perspective rotation, and dynamic light glare.
+ * AutoBuddy Subtle 3D Card Depth & Specular Physics Engine
+ * Adds tactile 60fps micro-tilt and dynamic specular light reflection.
  */
 
 class Tilt3DEngine {
   constructor() {
-    this.maxTilt = 12; // max tilt degrees
-    this.perspective = 1000;
-    this.scale = 1.025;
-    this.speed = 400; // transition speed ms
-    this.activeCards = new Set();
+    this.maxTilt = 7; // subtle, natural tilt degrees
+    this.perspective = 1200;
+    this.scale = 1.015;
+    this.speed = 350; // transition speed ms
     this.init();
   }
 
@@ -17,7 +16,6 @@ class Tilt3DEngine {
     if (typeof window === "undefined") return;
     this.bindCards();
 
-    // Re-bind when DOM mutations happen (e.g. dynamically added garage cards or bookings)
     const observer = new MutationObserver(() => {
       this.bindCards();
     });
@@ -34,7 +32,7 @@ class Tilt3DEngine {
       ".service-card",
       ".list-card",
       ".detail-card",
-      ".signal-card",
+      ".workflow-card",
       ".auth-card",
       ".booking-history-card",
       ".map-card",
@@ -46,11 +44,9 @@ class Tilt3DEngine {
       if (card.dataset.tiltBound) return;
       card.dataset.tiltBound = "true";
 
-      // Ensure card has 3D transform styling
       card.style.transformStyle = "preserve-3d";
-      card.style.transition = `transform ${this.speed}ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow ${this.speed}ms ease`;
+      card.style.transition = `transform ${this.speed}ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow ${this.speed}ms ease`;
 
-      // Create dynamic specular glare layer if not present
       let glare = card.querySelector(".tilt-glare");
       if (!glare) {
         glare = document.createElement("div");
@@ -69,10 +65,8 @@ class Tilt3DEngine {
     const onMouseEnter = () => {
       bounds = card.getBoundingClientRect();
       isHovered = true;
-      card.style.transition = "none"; // instant response during hover
-      if (glare) {
-        glare.style.opacity = "1";
-      }
+      card.style.transition = "none";
+      if (glare) glare.style.opacity = "1";
     };
 
     const onMouseMove = (e) => {
@@ -81,8 +75,8 @@ class Tilt3DEngine {
       const mouseX = e.clientX - bounds.left;
       const mouseY = e.clientY - bounds.top;
 
-      const xPct = (mouseX / bounds.width) * 2 - 1; // -1 to 1
-      const yPct = (mouseY / bounds.height) * 2 - 1; // -1 to 1
+      const xPct = (mouseX / bounds.width) * 2 - 1;
+      const yPct = (mouseY / bounds.height) * 2 - 1;
 
       const rotateX = -yPct * this.maxTilt;
       const rotateY = xPct * this.maxTilt;
@@ -90,19 +84,16 @@ class Tilt3DEngine {
       card.style.transform = `perspective(${this.perspective}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${this.scale}, ${this.scale}, ${this.scale})`;
 
       if (glare) {
-        const angle = Math.atan2(mouseY - bounds.height / 2, mouseX - bounds.width / 2) * (180 / Math.PI) - 90;
-        glare.style.background = `radial-gradient(circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%)`;
+        glare.style.background = `radial-gradient(circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 65%)`;
       }
     };
 
     const onMouseLeave = () => {
       isHovered = false;
-      card.style.transition = `transform ${this.speed}ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow ${this.speed}ms ease`;
+      card.style.transition = `transform ${this.speed}ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow ${this.speed}ms ease`;
       card.style.transform = `perspective(${this.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
 
-      if (glare) {
-        glare.style.opacity = "0";
-      }
+      if (glare) glare.style.opacity = "0";
     };
 
     card.addEventListener("mouseenter", onMouseEnter, { passive: true });
