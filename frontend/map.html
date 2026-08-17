@@ -89,28 +89,27 @@
     </aside>
     <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
 
-    <section class="map-layout panel">
+    <section class="map-layout panel reveal">
       <aside class="map-sidebar">
         <div>
-          <div class="eyebrow">Interactive Map</div>
-          <h1 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Locate Nearby Garages</h1>
-          <p class="map-note" style="margin-top: 4px;">Tap any workshop marker on the map to inspect its verified profile and book directly.</p>
+          <div class="eyebrow">Map</div>
+          <h1 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Nearby garages</h1>
         </div>
 
         <article class="map-card">
-          <strong class="card-title">Selected Workshop</strong>
-          <p id="mapGarageMeta" class="map-note">Select a marker on the map to view workshop details, ratings, and instant visit booking.</p>
+          <strong class="card-title">Selected</strong>
+          <p id="mapGarageMeta" class="map-note">Tap a marker to view details.</p>
           <div class="form-actions" style="margin-top: 14px;">
-            <button id="mapBookButton" type="button" onclick="bookSelectedGarageFromMap(event)" disabled>Book Visit</button>
-            <button class="secondary" type="button" onclick="window.location.href='garage.html'">List View</button>
+            <button id="mapBookButton" type="button" onclick="bookSelectedGarageFromMap(event)" disabled>Book</button>
+            <button class="secondary" type="button" onclick="window.location.href='garage.html'">List</button>
           </div>
         </article>
 
         <button class="secondary" type="button" onclick="useMyCurrentLocation(event)">
-          <span>Center My Location</span>
+          <span>My Location</span>
         </button>
 
-        <div id="mapStatus" class="status-banner visible">Loading verified workshop network...</div>
+        <div id="mapStatus" class="status-banner visible">Loading map...</div>
       </aside>
 
       <div id="map" aria-label="Nearby garages map"></div>

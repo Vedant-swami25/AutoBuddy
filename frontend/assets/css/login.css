@@ -1,25 +1,43 @@
 /**
  * AutoBuddy Login / Authentication Interface Styles
  */
+.auth-body {
+  position: relative;
+}
+
+.auth-bg-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 15% 50%, rgba(0, 132, 255, 0.12), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(2, 132, 199, 0.08), transparent 65%);
+}
+
 .auth-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-topbar {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  margin-bottom: 0;
 }
 
 .auth-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 440px);
-  gap: 36px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 420px);
+  gap: 40px;
   align-items: center;
   margin: auto 0;
-  padding: 36px;
-  border-radius: var(--radius-xl);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  padding: 20px 0 40px;
 }
 
 .auth-title {
@@ -29,89 +47,53 @@
   letter-spacing: -0.03em;
   line-height: 1.12;
   color: var(--text-primary);
-  margin-bottom: 16px;
+  margin-bottom: 28px;
 }
 
-.auth-poster {
+.auth-stat-row {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.auth-stat {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
-.auth-poster-copy h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+.auth-stat strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
   color: var(--text-primary);
-  margin-bottom: 6px;
 }
 
-.auth-poster-copy p {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.auth-poster-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.auth-poster-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
+.auth-stat span {
+  font-size: 0.76rem;
+  color: var(--text-tertiary);
   font-weight: 500;
-  color: var(--text-primary);
-}
-
-.auth-poster-check {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--status-success-soft);
-  color: var(--status-success);
-  font-size: 0.75rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .auth-card {
   padding: 32px;
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface-elevated);
+  border-radius: var(--radius-xl);
+  background: var(--bg-surface-glass);
   border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .auth-card .card-title {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 4px;
-}
-
-.auth-card > p {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.auth-note {
-  font-size: 0.78rem;
-  color: var(--text-tertiary);
-  line-height: 1.45;
-  margin: 8px 0 16px;
 }
 
 .auth-form button[type="submit"] {
@@ -122,7 +104,7 @@
 @media (max-width: 900px) {
   .auth-layout {
     grid-template-columns: 1fr;
-    padding: 24px;
-    gap: 24px;
+    gap: 28px;
+    padding: 12px 0 32px;
   }
 }

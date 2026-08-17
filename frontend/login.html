@@ -9,23 +9,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body data-public-page="true">
+<body data-public-page="true" class="auth-body">
+  <div class="auth-bg-glow" aria-hidden="true"></div>
+
   <main class="page-shell auth-page">
-    <header class="topbar">
+    <header class="topbar auth-topbar">
       <div class="topbar-left">
         <a class="brand" href="login.html">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64">
-              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
-            </svg>
+            <svg viewBox="0 0 64 64"><path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/></svg>
           </span>
           <span class="brand-text">
             <span class="brand-name">AutoBuddy</span>
-            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
+            <span class="brand-tagline">Roadside &amp; Workshop</span>
           </span>
         </a>
       </div>
-
       <div class="topbar-right">
         <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true"></span>
@@ -34,63 +33,42 @@
     </header>
 
     <section class="auth-layout">
-      <div>
+      <div class="auth-hero-side">
         <div class="eyebrow">Driver Portal</div>
-        <h1 class="auth-title">Welcome to the AutoBuddy roadside network.</h1>
-
-        <section class="auth-poster" aria-label="AutoBuddy preview">
-          <div class="auth-poster-copy">
-            <h2>Reliable Vehicle Repairs &amp; Roadside Dispatch</h2>
-            <p>Access verified workshops, request equipped mobile service vans, and track live dispatches with complete pricing transparency.</p>
-          </div>
-
-          <div class="auth-poster-list">
-            <div class="auth-poster-item">
-              <span class="auth-poster-check">✓</span>
-              <span>All vehicle types: Cars, SUVs, Bikes &amp; Fleets</span>
-            </div>
-            <div class="auth-poster-item">
-              <span class="auth-poster-check">✓</span>
-              <span>24/7 priority emergency roadside response</span>
-            </div>
-            <div class="auth-poster-item">
-              <span class="auth-poster-check">✓</span>
-              <span>Verified partner workshops across Pune &amp; Maharashtra</span>
-            </div>
-          </div>
-        </section>
+        <h1 class="auth-title">Sign in to continue.</h1>
+        <div class="auth-stat-row">
+          <div class="auth-stat"><strong>12+</strong><span>Workshops</span></div>
+          <div class="auth-stat"><strong>24/7</strong><span>Dispatch</span></div>
+          <div class="auth-stat"><strong>Live</strong><span>Tracking</span></div>
+        </div>
       </div>
 
       <aside class="auth-side">
         <div class="auth-card">
-          <strong class="card-title">Driver Sign In</strong>
-          <p>Enter your details to access your dashboard.</p>
-
+          <strong class="card-title">Sign In</strong>
           <form id="loginForm" class="auth-form">
             <div class="field">
               <label for="loginName">Full Name</label>
               <input id="loginName" placeholder="Vedant Sharma" autocomplete="name">
             </div>
             <div class="field">
-              <label for="loginEmail">Email Address</label>
+              <label for="loginEmail">Email</label>
               <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
             </div>
             <div class="field">
-              <label for="loginMobile">Mobile Number</label>
+              <label for="loginMobile">Mobile</label>
               <input id="loginMobile" inputmode="numeric" maxlength="10" placeholder="9876543210" autocomplete="tel">
             </div>
             <div class="field">
-              <label for="loginDistrict">District / City</label>
+              <label for="loginDistrict">City</label>
               <input id="loginDistrict" placeholder="Pune" autocomplete="address-level2">
             </div>
             <div class="field">
               <label for="loginState">State</label>
               <input id="loginState" placeholder="Maharashtra" autocomplete="address-level1">
             </div>
-            <p id="locationHelper" class="auth-note">Location access is requested only when you track nearby workshops or emergency dispatch.</p>
-            <button type="submit">Continue to Dashboard</button>
+            <button type="submit">Continue</button>
           </form>
-
           <div id="loginStatus" class="status-banner" aria-live="polite"></div>
         </div>
       </aside>

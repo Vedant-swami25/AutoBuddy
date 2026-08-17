@@ -5,23 +5,23 @@
 function renderGarageCard(garage) {
   const card = document.createElement("article");
   card.className = "list-card";
+  card.dataset.tilt3d = "";
 
   const verificationClass = garage.verified ? "badge" : "badge warning";
-  const verificationText = garage.verified ? "Verified Partner" : "Pending Verification";
+  const verificationText = garage.verified ? "Verified" : "Pending";
   const locationText = garage.address || `${garage.lat}, ${garage.lng}`;
-  const serviceText = (garage.services || garage.specialties || []).slice(0, 3).join(" • ") || "General repairs";
+  const serviceText = (garage.services || garage.specialties || []).slice(0, 2).join(" · ") || "General repairs";
   const ratingText = `${garage.rating || 4.7} ★`;
-  const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min arrival` : "Open today";
+  const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min` : "Open today";
+  const accentHue = Math.abs((garage.name || "").charCodeAt(0) * 17) % 360;
 
   card.innerHTML = `
+    <div class="garage-card-visual" style="--garage-accent: hsl(${accentHue}, 45%, 42%);">
+      <span class="${verificationClass}">${verificationText}</span>
+      <span class="garage-rating">${ratingText}</span>
+    </div>
     <div class="garage-card-main">
-      <div class="garage-header-row">
-        <div>
-          <span class="${verificationClass}">${verificationText}</span>
-          <h3 class="garage-title" style="margin-top: 8px;">${garage.name}</h3>
-        </div>
-        <span class="garage-rating">${ratingText}</span>
-      </div>
+      <h3 class="garage-title">${garage.name}</h3>
       <p class="garage-address">${locationText}</p>
       <div class="list-meta">
         <span class="meta-chip">${garage.hours || "Open today"}</span>
@@ -30,7 +30,7 @@ function renderGarageCard(garage) {
     </div>
     <div class="garage-card-action">
       <span class="garage-eta-tag">${etaText}</span>
-      <button type="button">Book Visit</button>
+      <button type="button">Book</button>
     </div>
   `;
 
@@ -41,6 +41,27 @@ function renderGarageCard(garage) {
 
   return card;
 }
+
+async function loadHomeGaragePreview() {
+  const preview = document.getElementById("homeGaragePreview");
+  if (!preview) return;
+
+  try {
+    const garages = await fetchGarages();
+    const items = garages.slice(0, 3);
+    preview.innerHTML = "";
+    if (!items.length) {
+      GARAGE_FALLBACKS.slice(0, 3).forEach((g) => preview.appendChild(renderGarageCard(g)));
+      return;
+    }
+    items.forEach((g) => preview.appendChild(renderGarageCard(g)));
+  } catch {
+    preview.innerHTML = "";
+    GARAGE_FALLBACKS.slice(0, 3).forEach((g) => preview.appendChild(renderGarageCard(g)));
+  }
+}
+
+window.loadHomeGaragePreview = loadHomeGaragePreview;
 
 async function loadGarages() {
   const list = document.getElementById("garageList");

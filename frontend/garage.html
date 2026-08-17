@@ -88,19 +88,16 @@
     </aside>
     <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
 
-    <section class="list-shell panel">
+    <section class="list-shell panel reveal">
       <div class="section-header">
         <div>
-          <div class="eyebrow">Verified Workshops</div>
-          <h1 class="page-title">Nearby partner garages you can rely on.</h1>
-          <p class="section-subtitle">Browse certified garages in your sector with verified ratings, opening hours, and direct booking.</p>
+          <div class="eyebrow">Workshops</div>
+          <h1 class="page-title">Nearby garages</h1>
         </div>
-        <button class="secondary" onclick="goToMap(event)">
-          <span>View on Map</span>
-        </button>
+        <button class="secondary" onclick="goToMap(event)"><span>Map</span></button>
       </div>
 
-      <div id="garageStatus" class="status-banner visible">Loading available garages...</div>
+      <div id="garageStatus" class="status-banner visible">Loading...</div>
       <div id="garageList" class="list-grid" aria-live="polite"></div>
     </section>
   </main>

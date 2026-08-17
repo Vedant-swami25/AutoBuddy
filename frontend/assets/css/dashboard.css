@@ -289,9 +289,11 @@
 }
 
 .workflow-card p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
+  display: none;
+}
+
+.action-card p {
+  display: none;
 }
 
 /* Quick Action Grid */
@@ -360,6 +362,59 @@
     gap: 28px;
   }
   .hero-3d-viewport {
-    height: 320px;
+    height: 300px;
   }
+}
+
+/* Nearby strip & footer */
+.nearby-strip {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nearby-strip-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.site-footer {
+  margin-top: 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.site-footer-tag {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+.site-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.site-footer-nav a {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.site-footer-nav a:hover {
+  color: var(--accent-primary);
 }

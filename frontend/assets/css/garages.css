@@ -9,35 +9,47 @@
 }
 
 .list-card {
-  padding: 24px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 20px;
-  min-height: 220px;
+  gap: 0;
+  min-height: 240px;
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   transition: all 0.25s ease;
+  overflow: hidden;
 }
 
-.list-card:hover {
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+.garage-card-visual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  min-height: 72px;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.15), transparent 60%),
+    linear-gradient(160deg, var(--garage-accent, #1e3a5f) 0%, rgba(8, 12, 20, 0.9) 100%);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .garage-card-main {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  padding: 18px 20px 0;
+  flex: 1;
 }
 
-.garage-header-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+.list-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.home-garage-preview {
+  margin-top: 20px;
 }
 
 .garage-title {
@@ -87,8 +99,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 16px 20px 20px;
+  margin-top: auto;
 }
 
 .garage-eta-tag {

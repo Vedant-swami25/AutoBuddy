@@ -28,4 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.renderFloatingTrackerLauncher === "function") {
     window.renderFloatingTrackerLauncher();
   }
+
+  if (typeof window.initRevealAnimations === "function") {
+    window.initRevealAnimations();
+  }
+
+  if (document.getElementById("homeGaragePreview") && typeof window.loadHomeGaragePreview === "function") {
+    window.loadHomeGaragePreview();
+  }
 });

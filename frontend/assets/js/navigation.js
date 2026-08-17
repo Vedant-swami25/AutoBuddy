@@ -28,7 +28,7 @@ function toggleSidebar(open = null) {
 
   sidebar.classList.toggle("open", nextState);
   sidebar.setAttribute("aria-hidden", String(!nextState));
-  backdrop.classList.toggle("visible", nextState);
+  backdrop.classList.toggle("open", nextState);
 }
 
 function initTheme() {

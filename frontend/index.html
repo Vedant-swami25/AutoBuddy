@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoBuddy — On-Demand Roadside Assistance & Garage Network</title>
+  <title>AutoBuddy — Roadside Assistance &amp; Garages</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas" aria-hidden="true"></canvas>
 
   <main class="page-shell">
     <header class="topbar">
@@ -21,13 +21,11 @@
         </button>
         <a class="brand" href="index.html">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64">
-              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
-            </svg>
+            <svg viewBox="0 0 64 64"><path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/></svg>
           </span>
           <span class="brand-text">
             <span class="brand-name">AutoBuddy</span>
-            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
+            <span class="brand-tagline">Roadside &amp; Workshop</span>
           </span>
         </a>
       </div>
@@ -36,8 +34,8 @@
         <a class="nav-link active" href="index.html">Overview</a>
         <a class="nav-link" href="services.html">Services</a>
         <a class="nav-link" href="garage.html">Workshops</a>
-        <a class="nav-link" href="tracking.html">Live Tracking</a>
-        <a class="nav-link" href="partner.html">Partner Network</a>
+        <a class="nav-link" href="tracking.html">Tracking</a>
+        <a class="nav-link" href="partner.html">Partners</a>
       </nav>
 
       <div class="topbar-right">
@@ -55,35 +53,18 @@
         <div class="sidebar-profile">
           <div class="sidebar-avatar" aria-hidden="true">A</div>
           <div>
-            <p class="sidebar-signed">Signed in as</p>
+            <p class="sidebar-signed">Signed in</p>
             <strong id="sidebarUserName">Driver</strong>
             <small id="sidebarUserContact">driver@email.com</small>
           </div>
         </div>
-
         <nav class="sidebar-nav">
-          <a class="sidebar-link active" href="index.html">
-            <span class="sidebar-link-icon">🏠</span>
-            Overview
-          </a>
-          <a class="sidebar-link" href="services.html">
-            <span class="sidebar-link-icon">🧰</span>
-            Services
-          </a>
-          <a class="sidebar-link" href="garage.html">
-            <span class="sidebar-link-icon">🛠️</span>
-            Workshops
-          </a>
-          <a class="sidebar-link" href="tracking.html">
-            <span class="sidebar-link-icon">📅</span>
-            Live Tracking
-          </a>
-          <a class="sidebar-link" href="partner.html">
-            <span class="sidebar-link-icon">🤝</span>
-            Partner Program
-          </a>
+          <a class="sidebar-link active" href="index.html"><span class="sidebar-link-icon icon-home"></span>Overview</a>
+          <a class="sidebar-link" href="services.html"><span class="sidebar-link-icon icon-services"></span>Services</a>
+          <a class="sidebar-link" href="garage.html"><span class="sidebar-link-icon icon-garage"></span>Workshops</a>
+          <a class="sidebar-link" href="tracking.html"><span class="sidebar-link-icon icon-tracking"></span>Tracking</a>
+          <a class="sidebar-link" href="partner.html"><span class="sidebar-link-icon icon-partner"></span>Partners</a>
         </nav>
-
         <div class="sidebar-footer">
           <button class="secondary auth-only" style="width: 100%;" type="button" onclick="logout()" hidden>Sign Out</button>
         </div>
@@ -91,173 +72,140 @@
     </aside>
     <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
       <div class="hero-content">
-        <div class="eyebrow">On-Demand Mobility Assistance</div>
-        <h1>Roadside assistance and workshop care. On demand.</h1>
-        <p class="lead">
-          Connect with verified nearby garages or request an immediate mobile service van dispatch in minutes with real-time tracking.
-        </p>
+        <div class="eyebrow">Roadside &amp; Workshop Care</div>
+        <h1>Assistance when you need it.</h1>
+        <p class="lead">Verified garages nearby. Mobile dispatch on demand.</p>
 
         <div class="hero-cta-group">
-          <button type="button" onclick="bookService(event)">
-            <span>Book Mobile Service</span>
-          </button>
-          <button class="secondary" type="button" onclick="window.location.href='garage.html'">
-            <span>Find Nearby Garages</span>
-          </button>
-          <button class="warning" type="button" onclick="emergency(event)">
-            <span>Emergency SOS</span>
-          </button>
+          <button type="button" onclick="bookService(event)"><span>Book Service</span></button>
+          <button class="secondary" type="button" onclick="window.location.href='garage.html'"><span>Find Garages</span></button>
+          <button class="warning" type="button" onclick="emergency(event)"><span>SOS</span></button>
         </div>
 
         <div class="hero-trust-ribbon">
-          <div class="trust-item">
-            <strong>12+</strong>
-            <span>Verified Workshops</span>
-          </div>
-          <div class="trust-item">
-            <strong>~15 min</strong>
-            <span>Average Dispatch</span>
-          </div>
-          <div class="trust-item">
-            <strong>24 / 7</strong>
-            <span>Emergency Coverage</span>
-          </div>
+          <div class="trust-item"><strong>12+</strong><span>Workshops</span></div>
+          <div class="trust-item"><strong>~15 min</strong><span>Dispatch</span></div>
+          <div class="trust-item"><strong>24/7</strong><span>Coverage</span></div>
         </div>
 
         <div id="homeStatus" class="status-banner" aria-live="polite"></div>
       </div>
 
-      <!-- 3D Vehicle Centerpiece -->
       <aside class="hero-visual">
-        <div class="hero-studio-card">
+        <div class="hero-studio-card" data-tilt-3d>
           <div class="studio-top-bar">
             <div class="studio-badge">
               <span class="studio-badge-dot"></span>
-              <span>Vehicle Overview</span>
+              <span>Live</span>
             </div>
             <div class="studio-camera-presets">
-              <button type="button" class="camera-preset-btn active" data-view="hero">3/4 View</button>
+              <button type="button" class="camera-preset-btn active" data-view="hero">3/4</button>
               <button type="button" class="camera-preset-btn" data-view="side">Side</button>
               <button type="button" class="camera-preset-btn" data-view="front">Front</button>
             </div>
           </div>
-
           <div id="hero3DViewport" class="hero-3d-viewport"></div>
-
           <div class="studio-bottom-bar">
-            <span>Drag to rotate • Tap markers to inspect &amp; book</span>
-            <span>AutoBuddy Mobility Model</span>
+            <span>Drag to explore</span>
+            <span>Tap markers to book</span>
           </div>
         </div>
       </aside>
     </section>
 
-    <!-- How AutoBuddy Works -->
-    <section class="section-spacer">
-      <div class="section-header">
-        <div>
-          <div class="eyebrow">Seamless Process</div>
-          <h2 class="page-title">How AutoBuddy Works</h2>
-          <p class="section-subtitle">A straightforward workflow to get you back on the road safely.</p>
-        </div>
-      </div>
-
-      <div class="workflow-grid">
-        <article class="workflow-card">
-          <div class="workflow-step-num">01</div>
-          <strong>Select Service or SOS</strong>
-          <p>Choose from routine care, tire support, battery assistance, or request instant emergency dispatch.</p>
-        </article>
-
-        <article class="workflow-card">
-          <div class="workflow-step-num">02</div>
-          <strong>Direct Partner Dispatch</strong>
-          <p>The closest verified workshop or mobile service van receives your coordinates and begins transit.</p>
-        </article>
-
-        <article class="workflow-card">
-          <div class="workflow-step-num">03</div>
-          <strong>Live Tracking &amp; Resolution</strong>
-          <p>Follow your mechanic's live route on the map with transparent arrival estimates and pricing.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Quick Action Cards -->
-    <section class="section-spacer">
-      <div class="section-header">
-        <div>
-          <div class="eyebrow">Immediate Action</div>
-          <h2 class="page-title">Driver Assistance Hub</h2>
-          <p class="section-subtitle">Quickly jump into verified workshop directories or emergency dispatch.</p>
-        </div>
-      </div>
-
+    <!-- Quick Actions -->
+    <section class="section-spacer reveal">
       <div class="action-grid">
-        <article class="action-card">
+        <article class="action-card reveal reveal-delay-1" data-tilt-3d>
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M3 11.5 12 4l9 7.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-7Zm5.5 7.5h7v-5.5h-7V19Z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-7Zm5.5 7.5h7v-5.5h-7V19Z"/></svg>
             </div>
             <button class="secondary" type="button" onclick="window.location.href='garage.html'">Browse</button>
           </div>
-          <div>
-            <strong>Verified Garages</strong>
-            <p>Locate vetted workshops near you with transparent ratings and service menus.</p>
-          </div>
+          <strong>Nearby Garages</strong>
         </article>
 
-        <article class="action-card">
+        <article class="action-card reveal reveal-delay-2" data-tilt-3d>
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H15a2 2 0 0 1 1.8 1.1l.9 1.9H20A2 2 0 0 1 22 11v5.5a1.5 1.5 0 0 1-1.5 1.5H19a3 3 0 0 1-6 0h-2a3 3 0 0 1-6 0H3.5A1.5 1.5 0 0 1 2 16.5V11a2.5 2.5 0 0 1 1-2.5Zm5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 9v4h11V9H5Z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H15a2 2 0 0 1 1.8 1.1l.9 1.9H20A2 2 0 0 1 22 11v5.5a1.5 1.5 0 0 1-1.5 1.5H19a3 3 0 0 1-6 0h-2a3 3 0 0 1-6 0H3.5A1.5 1.5 0 0 1 2 16.5V11a2.5 2.5 0 0 1 1-2.5Zm5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 9v4h11V9H5Z"/></svg>
             </div>
             <button type="button" onclick="bookService(event)">Book</button>
           </div>
-          <div>
-            <strong>Mobile Service Van</strong>
-            <p>Request an equipped AutoBuddy service van for on-location diagnosis and maintenance.</p>
-          </div>
+          <strong>Mobile Van</strong>
         </article>
 
-        <article class="action-card">
+        <article class="action-card reveal reveal-delay-3" data-tilt-3d>
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
             </div>
             <button class="warning" type="button" onclick="emergency(event)">SOS</button>
           </div>
-          <div>
-            <strong>Emergency Breakdown</strong>
-            <p>Immediate roadside intervention for urgent breakdowns, flat tires, or dead batteries.</p>
-          </div>
+          <strong>Emergency</strong>
         </article>
 
-        <article class="action-card">
+        <article class="action-card reveal reveal-delay-4" data-tilt-3d>
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M7.8 6.2a3 3 0 0 1 4.2 0l1 1 1-1a3 3 0 1 1 4.2 4.2l-3 3L12 10.4l-3.2 3.1-3-3a3 3 0 0 1 0-4.3Zm8.5 8.2 2.8 2.7-1.4 1.4-2.7-2.8-1.6 1.6a2 2 0 0 1-2.8 0L8.9 15.6l-2.7 2.8-1.4-1.4 2.8-2.7-1.7-1.7 1.4-1.4 4.7 4.7 4.7-4.7 1.4 1.4-1.8 1.8Z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Zm0 3a4 4 0 0 1 2.5 7.1 1 1 0 0 0-.5.9V17h-4v-3.9a1 1 0 0 0-.5-.9A4 4 0 0 1 12 5Z"/></svg>
             </div>
-            <button class="secondary" type="button" onclick="window.location.href='partner.html'">Apply</button>
+            <button class="secondary" type="button" onclick="window.location.href='map.html'">Open</button>
           </div>
-          <div>
-            <strong>Workshop Partner</strong>
-            <p>Expand your garage reach and receive direct verified booking dispatches.</p>
-          </div>
+          <strong>Live Map</strong>
         </article>
       </div>
     </section>
+
+    <!-- Workflow -->
+    <section class="section-spacer reveal">
+      <div class="workflow-grid">
+        <article class="workflow-card" data-tilt-3d>
+          <div class="workflow-step-num">01</div>
+          <strong>Request</strong>
+        </article>
+        <article class="workflow-card" data-tilt-3d>
+          <div class="workflow-step-num">02</div>
+          <strong>Dispatch</strong>
+        </article>
+        <article class="workflow-card" data-tilt-3d>
+          <div class="workflow-step-num">03</div>
+          <strong>Track &amp; Resolve</strong>
+        </article>
+      </div>
+    </section>
+
+    <!-- Nearby preview -->
+    <section class="section-spacer reveal">
+      <div class="nearby-strip">
+        <div class="nearby-strip-copy">
+          <div class="eyebrow">Nearby</div>
+          <h2 class="page-title" style="font-size: 1.6rem;">Verified workshops around you</h2>
+        </div>
+        <div class="nearby-strip-actions">
+          <button type="button" onclick="window.location.href='garage.html'">View All</button>
+          <button class="secondary" type="button" onclick="goToMap(event)">Map</button>
+        </div>
+      </div>
+      <div id="homeGaragePreview" class="list-grid home-garage-preview" aria-live="polite"></div>
+    </section>
+
+    <footer class="site-footer reveal">
+      <div class="site-footer-brand">
+        <span class="brand-name">AutoBuddy</span>
+        <span class="site-footer-tag">Roadside &amp; workshop care</span>
+      </div>
+      <nav class="site-footer-nav">
+        <a href="services.html">Services</a>
+        <a href="garage.html">Workshops</a>
+        <a href="tracking.html">Tracking</a>
+        <a href="partner.html">Partners</a>
+      </nav>
+    </footer>
   </main>
 
   <script src="assets/js/config.js" defer></script>

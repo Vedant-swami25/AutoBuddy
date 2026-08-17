@@ -7,6 +7,27 @@
 
 let nearbyMapInstance = null;
 
+function createGarageMarkerIcon(isSelected = false) {
+  const cls = isSelected ? "ab-marker ab-marker-selected" : "ab-marker";
+  return L.divIcon({
+    className: "ab-marker-wrap",
+    html: `<div class="${cls}"><span></span></div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -34]
+  });
+}
+
+function createUserMarkerIcon() {
+  return L.divIcon({
+    className: "ab-marker-wrap",
+    html: `<div class="ab-marker ab-marker-user"><span></span></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -16]
+  });
+}
+
 function updateMapBookingCard(garage) {
   const meta = document.getElementById("mapGarageMeta");
   const button = document.getElementById("mapBookButton");
@@ -86,8 +107,8 @@ async function loadMap() {
 
   map.whenReady(() => map.invalidateSize());
 
-  L.marker([lat, lng]).addTo(map)
-    .bindPopup("You are here")
+  L.marker([lat, lng], { icon: createUserMarkerIcon() }).addTo(map)
+    .bindPopup("You")
     .openPopup();
 
   try {
@@ -108,14 +129,13 @@ async function loadMap() {
     updateMapBookingCard(null);
 
     mappableGarages.forEach((garage) => {
-      const marker = L.marker([garage.lat, garage.lng]).addTo(map);
+      const marker = L.marker([garage.lat, garage.lng], { icon: createGarageMarkerIcon() }).addTo(map);
       const popupHtml = `
         <div class="map-popup">
-          <strong>${garage.name}</strong><br>
-          ${garage.address || garage.city || "Pune"}<br>
-          ${garage.hours || "Open today"} â€¢ Rating ${garage.rating || 4.7}<br>
-          ${garage.verified ? "Verified garage" : "Pending verification"}<br>
-          <button type="button" onclick="bookGarageFromMapPopup('${garage.id}')">Book Visit</button>
+          <strong>${garage.name}</strong>
+          <span>${garage.address || garage.city || "Pune"}</span>
+          <span>${garage.rating || 4.7} ★ · ${garage.verified ? "Verified" : "Pending"}</span>
+          <button type="button" onclick="bookGarageFromMapPopup('${garage.id}')">Book</button>
         </div>
       `;
 
