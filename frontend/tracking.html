@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Track Booking - AutoBuddy</title>
+  <title>Track Booking - AutoBuddy 3D Live Telemetry</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
+
   <main class="page-shell">
     <header class="topbar topbar-compact">
       <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
@@ -24,21 +27,25 @@
         </span>
         <span class="brand-text">
           <span>AutoBuddy</span>
-          <small>Trusted roadside support</small>
+          <small>3D Immersive Roadside Network</small>
         </span>
       </a>
-      <div class="topbar-right">
-        <div class="topbar-controls">
-          <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
-            <span class="theme-icon" aria-hidden="true"></span>
-          </button>
-          <div class="user-badge auth-only" hidden>
-            <span>Signed in as</span>
-            <strong id="userName">Driver</strong>
-          </div>
+
+      <div class="topbar-hud-metrics">
+        <div class="hud-chip">
+          <span class="hud-chip-dot"></span>
+          <span>SATELLITE SYNC ACTIVE</span>
         </div>
+        <button type="button" class="sound-toggle-btn" onclick="window.soundFx.toggleSound()" aria-label="Toggle Sound Effects">
+          <span class="sound-icon">🔊</span>
+          <span class="sound-label">Audio ON</span>
+        </button>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
       </div>
     </header>
+
     <aside class="page-sidebar" aria-hidden="true">
       <div class="sidebar-panel">
         <div class="sidebar-profile">
@@ -78,9 +85,30 @@
 
     <section class="tracking-layout">
       <div class="tracking-main">
-        <div class="eyebrow">My bookings</div>
+        <div class="eyebrow">
+          <span>🛰️ 3D Telemetry Dashboard</span>
+        </div>
         <h1 class="page-title">See every AutoBuddy booking and track the active one live.</h1>
         <p class="section-subtitle">Browse your booking history, pick any visit, and jump into live van tracking from one place.</p>
+
+        <!-- 3D Live Trip Telemetry Gauges -->
+        <div class="telemetry-dashboard-3d">
+          <div class="telemetry-dial" data-tilt-3d="true">
+            <span class="telemetry-dial-label">Transit Speed</span>
+            <strong class="telemetry-dial-value" style="color: #00f29d;">38 <small style="font-size: 1rem;">km/h</small></strong>
+            <span style="font-size: 0.75rem; color: var(--muted);">Live GPS Velocity</span>
+          </div>
+          <div class="telemetry-dial" data-tilt-3d="true">
+            <span class="telemetry-dial-label">Altitude &amp; Azimuth</span>
+            <strong class="telemetry-dial-value" style="color: #00e5ff;">560 <small style="font-size: 1rem;">m</small></strong>
+            <span style="font-size: 0.75rem; color: var(--muted);">Heading 42° NE</span>
+          </div>
+          <div class="telemetry-dial" data-tilt-3d="true">
+            <span class="telemetry-dial-label">Signal Telemetry</span>
+            <strong class="telemetry-dial-value" style="color: #ff8a00;">99.8%</strong>
+            <span style="font-size: 0.75rem; color: var(--muted);">Sub-10m Precision</span>
+          </div>
+        </div>
 
         <div id="trackingStatus" class="status-banner visible">Loading your latest booking...</div>
 
@@ -94,7 +122,7 @@
           <div id="bookingHistoryList" class="booking-history-grid" aria-live="polite"></div>
         </section>
 
-        <article class="tracking-hero">
+        <article class="tracking-hero" data-tilt-3d="true">
           <div>
             <span class="badge neutral" id="trackingBadge">Awaiting booking</span>
             <h2 id="trackingGarageName" class="tracking-title">No booking selected yet</h2>
@@ -135,15 +163,15 @@
       </div>
 
       <aside class="tracking-side">
-        <article class="detail-card">
+        <article class="detail-card" data-tilt-3d="true">
           <strong class="card-title">Assigned service partner</strong>
           <p id="trackingMechanic">Partner details will appear after booking confirmation.</p>
         </article>
-        <article class="detail-card">
+        <article class="detail-card" data-tilt-3d="true">
           <strong class="card-title">Vehicle</strong>
           <p id="trackingVehicle">Service vehicle details will appear here.</p>
         </article>
-        <article class="detail-card">
+        <article class="detail-card" data-tilt-3d="true">
           <strong class="card-title">Contact</strong>
           <p id="trackingPhone">Support contact will appear here.</p>
         </article>
@@ -157,6 +185,9 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/sound-fx.js" defer></script>
+  <script src="assets/js/tilt-3d.js" defer></script>
+  <script src="assets/js/three-scene.js" defer></script>
   <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/api.js" defer></script>
   <script src="assets/js/utils.js" defer></script>

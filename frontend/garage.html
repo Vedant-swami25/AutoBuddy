@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nearby Garages</title>
+  <title>Nearby Garages - AutoBuddy 3D Radar Network</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
+
   <main class="page-shell">
     <header class="topbar topbar-compact">
       <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
@@ -23,21 +26,25 @@
         </span>
         <span class="brand-text">
           <span>AutoBuddy</span>
-          <small>Trusted roadside support</small>
+          <small>3D Immersive Roadside Network</small>
         </span>
       </a>
-      <div class="topbar-right">
-        <div class="topbar-controls">
-          <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
-            <span class="theme-icon" aria-hidden="true"></span>
-          </button>
-          <div class="user-badge auth-only" hidden>
-            <span>Signed in as</span>
-            <strong id="userName">Driver</strong>
-          </div>
+
+      <div class="topbar-hud-metrics">
+        <div class="hud-chip">
+          <span class="hud-chip-dot"></span>
+          <span>RADAR SWEEP ACTIVE</span>
         </div>
+        <button type="button" class="sound-toggle-btn" onclick="window.soundFx.toggleSound()" aria-label="Toggle Sound Effects">
+          <span class="sound-icon">🔊</span>
+          <span class="sound-label">Audio ON</span>
+        </button>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
       </div>
     </header>
+
     <aside class="page-sidebar" aria-hidden="true">
       <div class="sidebar-panel">
         <div class="sidebar-profile">
@@ -78,10 +85,41 @@
     <section class="list-shell">
       <div class="section-header">
         <div>
-          <div class="eyebrow">Verified service network</div>
+          <div class="eyebrow">
+            <span>📡 3D Network Telemetry</span>
+          </div>
           <h1 class="page-title">Nearby garages you can actually trust.</h1>
         </div>
         <button class="secondary" onclick="goToMap(event)">View on Map</button>
+      </div>
+
+      <!-- 3D Radar Telemetry HUD -->
+      <div class="radar-hud-container" data-tilt-3d="true">
+        <div class="radar-sweep-animation" aria-hidden="true"></div>
+        <div class="radar-hud-header">
+          <div>
+            <strong style="font-size: 1.1rem; color: #ffffff;">Live Radar Coverage</strong>
+            <p style="margin: 4px 0 0; font-size: 0.85rem; color: var(--muted);">Real-time azimuth lock &amp; nearest partner garage pinging</p>
+          </div>
+          <span class="hud-chip">
+            <span class="hud-chip-dot"></span>
+            <span>12 PARTNERS ONLINE</span>
+          </span>
+        </div>
+        <div class="radar-telemetry-row">
+          <div class="radar-telemetry-card">
+            <small>Avg Dispatch Time</small>
+            <strong>14 Mins</strong>
+          </div>
+          <div class="radar-telemetry-card">
+            <small>Network Rating</small>
+            <strong>4.8 ★ Trusted</strong>
+          </div>
+          <div class="radar-telemetry-card">
+            <small>Emergency Van Availability</small>
+            <strong>High (Active)</strong>
+          </div>
+        </div>
       </div>
 
       <div id="garageStatus" class="status-banner visible">Loading available garages...</div>
@@ -90,6 +128,9 @@
   </main>
 
   <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/sound-fx.js" defer></script>
+  <script src="assets/js/tilt-3d.js" defer></script>
+  <script src="assets/js/three-scene.js" defer></script>
   <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/api.js" defer></script>
   <script src="assets/js/utils.js" defer></script>

@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nearby Garages Map</title>
+  <title>Nearby Garages Map - AutoBuddy 3D Radar Visualizer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
+
   <main class="page-shell">
     <header class="topbar topbar-compact">
       <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
@@ -24,21 +27,25 @@
         </span>
         <span class="brand-text">
           <span>AutoBuddy</span>
-          <small>Trusted roadside support</small>
+          <small>3D Immersive Roadside Network</small>
         </span>
       </a>
-      <div class="topbar-right">
-        <div class="topbar-controls">
-          <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
-            <span class="theme-icon" aria-hidden="true"></span>
-          </button>
-          <div class="user-badge auth-only" hidden>
-            <span>Signed in as</span>
-            <strong id="userName">Driver</strong>
-          </div>
+
+      <div class="topbar-hud-metrics">
+        <div class="hud-chip">
+          <span class="hud-chip-dot"></span>
+          <span>GEOLOCK ACTIVE</span>
         </div>
+        <button type="button" class="sound-toggle-btn" onclick="window.soundFx.toggleSound()" aria-label="Toggle Sound Effects">
+          <span class="sound-icon">🔊</span>
+          <span class="sound-label">Audio ON</span>
+        </button>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
       </div>
     </header>
+
     <aside class="page-sidebar" aria-hidden="true">
       <div class="sidebar-panel">
         <div class="sidebar-profile">
@@ -79,21 +86,23 @@
     <section class="map-layout">
       <aside class="map-sidebar">
         <div>
-          <div class="eyebrow">Live map view</div>
+          <div class="eyebrow">
+            <span>🗺️ 3D Satellite Map View</span>
+          </div>
           <h1 class="page-title">See nearby garages around your current location.</h1>
         </div>
 
-        <article class="map-card">
+        <article class="map-card" data-tilt-3d="true">
           <strong class="card-title">How to use this screen</strong>
           <p class="map-note">Tap a marker to inspect a garage, then go back to the listing page if you want a more structured comparison.</p>
         </article>
 
-        <article class="map-card">
+        <article class="map-card" data-tilt-3d="true">
           <strong class="card-title">Tips</strong>
           <p class="map-note">If the map does not center correctly, allow browser location access and run the nearby garage flow again.</p>
         </article>
 
-        <article class="map-card">
+        <article class="map-card" data-tilt-3d="true">
           <strong class="card-title">Book from map</strong>
           <p id="mapGarageMeta" class="map-note">Select a garage marker to see its details and book a visit directly from this page.</p>
           <div class="form-actions">
@@ -112,6 +121,9 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/sound-fx.js" defer></script>
+  <script src="assets/js/tilt-3d.js" defer></script>
+  <script src="assets/js/three-scene.js" defer></script>
   <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/api.js" defer></script>
   <script src="assets/js/utils.js" defer></script>
