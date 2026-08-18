@@ -1,11 +1,12 @@
 /**
- * Nearby-garage map selection, rendering, and map-page booking behavior.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
+ * Nearby-garage map discovery & two-way synchronized garage list.
  */
 
 let nearbyMapInstance = null;
+let mapGarageMarkers = new Map();
+let currentMappableGarages = [];
+let selectedGarageId = null;
+let userCoordinates = null;
 
 function createGarageMarkerIcon(isSelected = false) {
   const cls = isSelected ? "ab-marker ab-marker-selected" : "ab-marker";
@@ -28,65 +29,131 @@ function createUserMarkerIcon() {
   });
 }
 
-function updateMapBookingCard(garage) {
-  const meta = document.getElementById("mapGarageMeta");
-  const button = document.getElementById("mapBookButton");
-
-  if (!meta || !button) {
-    return;
-  }
-
-  if (!garage) {
-    meta.textContent = "Select a garage marker to see its details and book a visit directly from this page.";
-    button.disabled = true;
-    delete button.dataset.garageId;
-    return;
-  }
-
-  meta.textContent = `${garage.name} • ${garage.city || "Nearby"} • ${garage.etaMinutes || 28} min away • Rating ${garage.rating || 4.7}`;
-  button.disabled = false;
-  button.dataset.garageId = garage.id;
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+  const R = 6371; // Earth radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return (R * c).toFixed(1);
 }
 
-function getGarageById(garageId) {
-  return getMapGarageIndex().find((garage) => garage.id === garageId) || GARAGE_FALLBACKS.find((garage) => garage.id === garageId) || null;
-}
+function selectGarageOnMap(garageId, zoomTo = true) {
+  selectedGarageId = garageId;
+  const garage = currentMappableGarages.find((g) => g.id === garageId);
+  if (!garage) return;
 
-function setSelectedMapGarage(garage) {
-  if (!garage) {
-    updateMapBookingCard(null);
-    return;
-  }
+  // Highlight card in left list
+  document.querySelectorAll(".map-garage-item").forEach((item) => {
+    const isThis = item.dataset.id === garageId;
+    item.classList.toggle("active", isThis);
+    if (isThis) {
+      item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  });
+
+  // Highlight marker & fly to coordinate
+  mapGarageMarkers.forEach((marker, id) => {
+    const isSelected = id === garageId;
+    marker.setIcon(createGarageMarkerIcon(isSelected));
+    if (isSelected) {
+      marker.setZIndexOffset(1000);
+      if (zoomTo && nearbyMapInstance) {
+        nearbyMapInstance.flyTo([garage.lat, garage.lng], 15, { duration: 0.8 });
+        marker.openPopup();
+      }
+    } else {
+      marker.setZIndexOffset(0);
+    }
+  });
 
   sessionStorage.setItem("autobuddyActiveGarageId", garage.id);
-  updateMapBookingCard(garage);
+}
+
+function renderMapGaragesList(garagesToRender = currentMappableGarages) {
+  const container = document.getElementById("mapGaragesList");
+  if (!container) return;
+
+  if (!garagesToRender.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding: 24px; text-align: center; color: var(--text-secondary);">
+        No matching workshops found in this sector.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = garagesToRender.map((g) => {
+    const dist = userCoordinates
+      ? calculateDistanceKm(userCoordinates.lat, userCoordinates.lng, g.lat, g.lng)
+      : null;
+    const distText = dist ? `${dist} km • ~${g.etaMinutes || Math.round(dist * 3 + 6)} mins ETA` : `~${g.etaMinutes || 15} mins ETA`;
+    const ownerName = g.mechanic || g.ownerName || "Certified Head Mechanic";
+    const phone = g.phone || "+91 98220 11000";
+    const isSelected = g.id === selectedGarageId;
+
+    return `
+      <article class="map-garage-item ${isSelected ? "active" : ""}" data-id="${g.id}" onclick="selectGarageOnMap('${g.id}', true)">
+        <div class="map-garage-item-top">
+          <div>
+            <h3 class="map-garage-name">${g.name}</h3>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">${g.address || g.city || "Pune, Maharashtra"}</span>
+          </div>
+          <span class="badge ${g.verified ? "success-chip" : "neutral"}">★ ${g.rating || 4.8}</span>
+        </div>
+
+        <div class="map-garage-meta-row">
+          <span>👤 <strong class="map-garage-owner">${ownerName}</strong></span>
+          <span>•</span>
+          <a class="map-garage-phone" href="tel:${phone}" onclick="event.stopPropagation()">📞 ${phone}</a>
+        </div>
+
+        <div class="map-garage-footer">
+          <span class="map-garage-eta">⚡ ${distText}</span>
+          <button type="button" class="map-garage-book-btn" onclick="event.stopPropagation(); bookGarageDirectly('${g.id}')">Book Visit</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function handleMapSearch(query) {
+  const q = String(query || "").toLowerCase().trim();
+  if (!q) {
+    renderMapGaragesList(currentMappableGarages);
+    return;
+  }
+
+  const filtered = currentMappableGarages.filter((g) => {
+    return (
+      (g.name && g.name.toLowerCase().includes(q)) ||
+      (g.address && g.address.toLowerCase().includes(q)) ||
+      (g.city && g.city.toLowerCase().includes(q)) ||
+      (g.mechanic && g.mechanic.toLowerCase().includes(q)) ||
+      (g.services && g.services.some((s) => s.toLowerCase().includes(q)))
+    );
+  });
+
+  renderMapGaragesList(filtered);
 }
 
 async function loadMap() {
   const mapElement = document.getElementById("map");
-  if (!mapElement) {
-    return;
-  }
+  if (!mapElement) return;
 
   if (!isLeafletAvailable()) {
-    setStatus("mapStatus", "Map library could not be loaded. Please check your internet connection and refresh the page.", "error");
-    showToast("Map library failed to load.", "error");
+    setStatus("mapStatus", "Map library could not be loaded. Check your internet connection.", "error");
     return;
   }
 
   const coordinates = await requestCurrentLocationForAction("mapStatus", "nearby garage map");
-  const lat = Number(coordinates?.lat);
-  const lng = Number(coordinates?.lng);
-  const isDemoLocation = getSavedLocationSource() === "demo";
-
-  if (!hasValidCoordinates({ lat, lng })) {
-    setStatus("mapStatus", "No saved location was found. Redirecting you back to the home page.", "warning");
-    showToast("Location not found. Returning home.", "warning");
-    window.setTimeout(() => {
-      window.location.href = "index.html";
-    }, 1200);
-    return;
-  }
+  const lat = Number(coordinates?.lat) || 18.5204;
+  const lng = Number(coordinates?.lng) || 73.8567;
+  userCoordinates = { lat, lng };
 
   if (nearbyMapInstance?.remove) {
     nearbyMapInstance.remove();
@@ -98,7 +165,7 @@ async function loadMap() {
     mapElement.innerHTML = "";
   }
 
-  const map = L.map("map").setView([lat, lng], isDemoLocation ? 12 : 14);
+  const map = L.map("map").setView([lat, lng], 13);
   nearbyMapInstance = map;
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -107,13 +174,13 @@ async function loadMap() {
 
   map.whenReady(() => map.invalidateSize());
 
+  // User coordinate pin
   L.marker([lat, lng], { icon: createUserMarkerIcon() }).addTo(map)
-    .bindPopup("You")
+    .bindPopup("<strong style='font-size:0.9rem;'>📍 Your Current Location</strong>")
     .openPopup();
 
   try {
     let garages;
-
     try {
       garages = await fetchGarages();
     } catch (error) {
@@ -125,68 +192,85 @@ async function loadMap() {
       mappableGarages = getMappableGarages(GARAGE_FALLBACKS);
     }
 
-    setMapGarageIndex(mappableGarages);
-    updateMapBookingCard(null);
+    currentMappableGarages = mappableGarages;
+    mapGarageMarkers.clear();
 
     mappableGarages.forEach((garage) => {
-      const marker = L.marker([garage.lat, garage.lng], { icon: createGarageMarkerIcon() }).addTo(map);
+      const marker = L.marker([garage.lat, garage.lng], { icon: createGarageMarkerIcon(false) }).addTo(map);
+      const ownerName = garage.mechanic || garage.ownerName || "Certified Head Mechanic";
+      const phone = garage.phone || "+91 98220 11000";
+
       const popupHtml = `
         <div class="map-popup">
           <strong>${garage.name}</strong>
-          <span>${garage.address || garage.city || "Pune"}</span>
-          <span>${garage.rating || 4.7} ★ · ${garage.verified ? "Verified" : "Pending"}</span>
-          <button type="button" onclick="bookGarageFromMapPopup('${garage.id}')">Book</button>
+          <span>👤 ${ownerName}</span>
+          <span>📍 ${garage.address || garage.city || "Pune"}</span>
+          <span>📞 <a href="tel:${phone}" style="color:var(--accent-primary);font-weight:600;">${phone}</a></span>
+          <span>★ ${garage.rating || 4.8} Rating · ${garage.verified ? "Verified Partner" : "Workshop"}</span>
+          <button type="button" onclick="bookGarageDirectly('${garage.id}')">Book Visit</button>
         </div>
       `;
 
       marker.bindPopup(popupHtml);
       marker.on("click", () => {
-        setSelectedMapGarage(garage);
+        selectGarageOnMap(garage.id, false);
       });
+
+      mapGarageMarkers.set(garage.id, marker);
     });
 
-    if (mappableGarages.length && isDemoLocation) {
-      setStatus("mapStatus", `Using ${DEFAULT_DEMO_LOCATION.label} demo coordinates. ${mappableGarages.length} nearby garages have been added to the map.`, "warning");
-    } else if (mappableGarages.length) {
-      setStatus("mapStatus", `${mappableGarages.length} nearby garages have been added to the map.`, "success");
-    } else {
-      setStatus("mapStatus", "The map loaded, but no garage locations are available yet.", "warning");
+    renderMapGaragesList();
+
+    // Bind search input
+    const searchInput = document.getElementById("mapSearchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => handleMapSearch(e.target.value));
     }
+
+    setStatus("mapStatus", `${mappableGarages.length} verified partner garages available in your area.`, "success");
   } catch (error) {
-    setStatus("mapStatus", "The map loaded, but nearby garage data could not be fetched.", "error");
-    showToast("Could not load garage markers.", "error");
+    console.error("Map loading error:", error);
+    setStatus("mapStatus", "Could not load garage markers. Using offline database.", "warning");
+    currentMappableGarages = GARAGE_FALLBACKS;
+    renderMapGaragesList();
   }
 }
 
 async function useMyCurrentLocation(event) {
   const button = event?.currentTarget;
-  setButtonLoading(button, true, "Use My Current Location");
+  setButtonLoading(button, true, "Locating...");
 
   try {
-    await requestCurrentLocationForAction("mapStatus", "nearby garage map", {
+    const coords = await requestCurrentLocationForAction("mapStatus", "nearby garage map", {
       force: true,
-      timeout: 12000
+      timeout: 10000
     });
-    await loadMap();
+    if (coords) {
+      userCoordinates = coords;
+      await loadMap();
+    }
   } finally {
-    setButtonLoading(button, false, "Use My Current Location");
+    setButtonLoading(button, false, "📍 Center My Location");
   }
 }
 
-window.bookGarageFromMapPopup = (garageId) => {
-  const garage = getGarageById(garageId);
-  if (!garage) {
-    showToast("Could not find that garage.", "error");
-    return;
-  }
+function bookGarageDirectly(garageId) {
+  const garage = currentMappableGarages.find((g) => g.id === garageId) || GARAGE_FALLBACKS.find((g) => g.id === garageId);
+  if (!garage) return;
 
-  setSelectedMapGarage(garage);
-  const button = document.getElementById("mapBookButton");
-  if (button) {
-    bookGarage(garage, button);
+  if (typeof window.bookGarage === "function") {
+    window.bookGarage(garage);
+  } else {
+    window.location.href = `garage.html?selected=${encodeURIComponent(garage.id)}`;
   }
-};
+}
 
-window.bookSelectedGarageFromMap = bookSelectedGarageFromMap;
-window.bookPricedService = bookPricedService;
+window.selectGarageOnMap = selectGarageOnMap;
+window.bookGarageDirectly = bookGarageDirectly;
 window.useMyCurrentLocation = useMyCurrentLocation;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (getCurrentPage() === "map.html") {
+    loadMap();
+  }
+});

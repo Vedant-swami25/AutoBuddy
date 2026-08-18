@@ -28,7 +28,13 @@ const bookingSchema = new mongoose.Schema({
   garageLng: { type: Number, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  status: { type: String, default: "confirmed" }
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "rejected", "in_progress", "completed", "cancelled"],
+    default: "pending"
+  },
+  vehicleInfo: { type: String, default: null },
+  ownerNote: { type: String, default: null }
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

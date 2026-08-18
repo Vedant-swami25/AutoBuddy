@@ -1,8 +1,5 @@
 /**
  * Shared JSON request handling for all AutoBuddy integrations.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
  */
 
 async function requestJson(url, options = {}) {
@@ -16,7 +13,7 @@ async function requestJson(url, options = {}) {
         message = errorPayload.message;
       }
     } catch (error) {
-      // Ignore JSON parsing errors and fall back to the default message.
+      // Ignore JSON parsing errors and fall back to default message.
     }
 
     throw new Error(message);
@@ -24,31 +21,79 @@ async function requestJson(url, options = {}) {
   return response.json();
 }
 
-// Authentication API used by the login page.
-function saveLogin(payload) {
-  return requestJson(`${API}/login`, {
+// Authentication & OTP APIs
+function signinOtpApi(payload) {
+  return requestJson(`${API}/auth/signin-otp`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
 
-// Location API used to fill district and state from browser coordinates.
+function verifySigninApi(payload) {
+  return requestJson(`${API}/auth/verify-signin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function signupOtpApi(payload) {
+  return requestJson(`${API}/auth/signup-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function signupApi(payload) {
+  return requestJson(`${API}/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function sendOtpApi(payload) {
+  return requestJson(`${API}/auth/send-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function verifyOtpApi(payload) {
+  return requestJson(`${API}/auth/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function checkAccountApi(mobile, role) {
+  return requestJson(`${API}/auth/check-account?mobile=${encodeURIComponent(mobile)}&role=${encodeURIComponent(role)}`);
+}
+
+function saveLogin(payload) {
+  return requestJson(`${API}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+// Location API
 function reverseGeocode(latitude, longitude) {
   return requestJson(
     `${API}/location/reverse?lat=${encodeURIComponent(latitude)}&lng=${encodeURIComponent(longitude)}`
   );
 }
 
-// Booking APIs shared by dashboard, services, garages, and tracking pages.
+// Booking APIs
 function createBooking(payload) {
   return requestJson(`${API}/book`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -57,40 +102,52 @@ function fetchBookings() {
   return requestJson(`${API}/book`);
 }
 
+function fetchUserBookings(sessionOrMobile) {
+  if (typeof sessionOrMobile === "object" && sessionOrMobile !== null) {
+    const params = new URLSearchParams();
+    if (sessionOrMobile.id) params.append("userId", sessionOrMobile.id);
+    if (sessionOrMobile.mobile) params.append("mobile", sessionOrMobile.mobile);
+    return requestJson(`${API}/book/user?${params.toString()}`);
+  }
+  return requestJson(`${API}/book/user?mobile=${encodeURIComponent(sessionOrMobile)}`);
+}
+
 function fetchLatestBooking(mobile) {
   return requestJson(`${API}/book/latest?mobile=${encodeURIComponent(mobile)}`);
 }
 
-function cancelBookingRequest(bookingId) {
-  return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/cancel`, {
+function fetchGarageBookings(garageId) {
+  return requestJson(`${API}/book/garage?garageId=${encodeURIComponent(garageId)}`);
+}
+
+function updateBookingStatusApi(bookingId, payload) {
+  return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/status`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-}
-
-// Garage APIs shared by list, map, and partner pages.
-function fetchGarages() {
-  return requestJson(`${API}/garage`);
-}
-
-function submitGarageRequest(payload) {
-  return requestJson(`${API}/garage/add`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
 
-// External routing integration used only by the live tracking map.
-function fetchDrivingRoute(origin, destination) {
-  const originPoint = `${encodeURIComponent(origin.lng)},${encodeURIComponent(origin.lat)}`;
-  const destinationPoint = `${encodeURIComponent(destination.lng)},${encodeURIComponent(destination.lat)}`;
-  return requestJson(
-    `https://router.project-osrm.org/route/v1/driving/${originPoint};${destinationPoint}?overview=full&geometries=geojson`
-  );
+function cancelBookingRequest(bookingId) {
+  return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/cancel`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  });
 }
 
+// Garage APIs
+function fetchGarages() {
+  return requestJson(`${API}/garage`);
+}
+
+function fetchGarageById(garageId) {
+  return requestJson(`${API}/garage/${encodeURIComponent(garageId)}`);
+}
+
+function submitGarageApplication(payload) {
+  return requestJson(`${API}/garage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Workshop Map — AutoBuddy</title>
+  <title>Nearby Garages &amp; Live Map — AutoBuddy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -32,15 +32,17 @@
 
       <nav class="topbar-nav">
         <a class="nav-link" href="index.html">Overview</a>
-        <a class="nav-link" href="services.html">Services</a>
-        <a class="nav-link" href="garage.html">Workshops</a>
-        <a class="nav-link" href="tracking.html">Live Tracking</a>
-        <a class="nav-link" href="partner.html">Partner Network</a>
+        <a class="nav-link" href="garage.html">Garages</a>
+        <a class="nav-link active" href="map.html">Map</a>
+        <a class="nav-link" href="services.html">Services &amp; Pricing</a>
+        <a class="nav-link" href="tracking.html">My Bookings</a>
       </nav>
 
       <div class="topbar-right">
-        <div class="user-badge auth-only" hidden>
-          <span id="userName">Driver</span>
+        <a class="nav-link guest-only" href="login.html" style="font-size: 0.86rem;" hidden>Sign In</a>
+        <div class="user-badge auth-only" onclick="logout()" title="Click to Sign Out" style="cursor: pointer;" hidden>
+          <span id="userName">User</span>
+          <small style="opacity: 0.6; margin-left: 4px;">(Sign Out)</small>
         </div>
         <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true"></span>
@@ -53,9 +55,9 @@
         <div class="sidebar-profile">
           <div class="sidebar-avatar" aria-hidden="true">A</div>
           <div>
-            <p class="sidebar-signed">Signed in as</p>
-            <strong id="sidebarUserName">Driver</strong>
-            <small id="sidebarUserContact">driver@email.com</small>
+            <p class="sidebar-signed">User Account</p>
+            <strong id="sidebarUserName">User</strong>
+            <small id="sidebarUserContact">user@email.com</small>
           </div>
         </div>
 
@@ -64,55 +66,62 @@
             <span class="sidebar-link-icon">🏠</span>
             Overview
           </a>
+          <a class="sidebar-link" href="garage.html">
+            <span class="sidebar-link-icon">🏢</span>
+            Garages
+          </a>
+          <a class="sidebar-link active" href="map.html">
+            <span class="sidebar-link-icon">🗺️</span>
+            Map
+          </a>
           <a class="sidebar-link" href="services.html">
             <span class="sidebar-link-icon">🧰</span>
-            Services
-          </a>
-          <a class="sidebar-link" href="garage.html">
-            <span class="sidebar-link-icon">🛠️</span>
-            Workshops
+            Services &amp; Pricing
           </a>
           <a class="sidebar-link" href="tracking.html">
             <span class="sidebar-link-icon">📅</span>
-            Live Tracking
-          </a>
-          <a class="sidebar-link" href="partner.html">
-            <span class="sidebar-link-icon">🤝</span>
-            Partner Program
+            My Bookings &amp; Status
           </a>
         </nav>
 
         <div class="sidebar-footer">
-          <button class="secondary auth-only" style="width: 100%;" type="button" onclick="logout()" hidden>Sign Out</button>
+          <button id="sidebarLogoutBtn" class="secondary" style="width: 100%;" type="button" onclick="logout()">Sign Out</button>
         </div>
       </div>
     </aside>
     <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
 
-    <section class="map-layout panel reveal">
+    <section class="map-layout panel">
+      <!-- Left Sidebar: Compact Synchronized Garage List -->
       <aside class="map-sidebar">
-        <div>
-          <div class="eyebrow">Map</div>
-          <h1 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Nearby garages</h1>
+        <div class="map-sidebar-head">
+          <div class="eyebrow">Map Discovery</div>
+          <h1 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Nearby Garages Map</h1>
+          <p style="font-size: 0.82rem; color: var(--text-secondary);">Select any workshop marker or card to center map or book directly.</p>
         </div>
 
-        <article class="map-card">
-          <strong class="card-title">Selected</strong>
-          <p id="mapGarageMeta" class="map-note">Tap a marker to view details.</p>
-          <div class="form-actions" style="margin-top: 14px;">
-            <button id="mapBookButton" type="button" onclick="bookSelectedGarageFromMap(event)" disabled>Book</button>
-            <button class="secondary" type="button" onclick="window.location.href='garage.html'">List</button>
+        <div class="map-search-wrap">
+          <span class="map-search-icon" aria-hidden="true">🔍</span>
+          <input id="mapSearchInput" type="text" placeholder="Search by area (e.g. Kothrud, Baner)...">
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="secondary small" style="width: 100%;" type="button" onclick="useMyCurrentLocation(event)">
+            <span>📍 Center My GPS Location</span>
+          </button>
+        </div>
+
+        <div id="mapStatus" class="status-banner" style="display: none;"></div>
+
+        <div id="mapGaragesList" class="map-garages-scroll" aria-live="polite">
+          <div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+            Loading verified partner workshops...
           </div>
-        </article>
-
-        <button class="secondary" type="button" onclick="useMyCurrentLocation(event)">
-          <span>My Location</span>
-        </button>
-
-        <div id="mapStatus" class="status-banner visible">Loading map...</div>
+        </div>
       </aside>
 
-      <div id="map" aria-label="Nearby garages map"></div>
+      <!-- Right Side: Leaflet Interactive Map -->
+      <div id="map" aria-label="Nearby garages interactive map"></div>
     </section>
   </main>
 

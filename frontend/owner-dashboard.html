@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garage Owner Portal — AutoBuddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/owner.css">
+</head>
+<body>
+  <main class="page-shell owner-shell">
+    <!-- Topbar for Garage Owner -->
+    <header class="owner-topbar">
+      <div class="owner-header-info">
+        <div id="ownerGarageAvatar" class="owner-garage-avatar" aria-hidden="true">W</div>
+        <div class="owner-garage-title">
+          <h1 id="ownerGarageName">Workshop Name</h1>
+          <p id="ownerName">Owner Name • Mobile</p>
+          <small id="ownerGarageAddress" style="color: var(--text-tertiary);">Pune, Maharashtra</small>
+        </div>
+      </div>
+
+      <div class="owner-topbar-actions">
+        <button id="workshopStatusToggle" class="owner-status-toggle" type="button" onclick="toggleWorkshopAvailability()">
+          <span class="owner-status-dot"></span>
+          <span>Open for Dispatches</span>
+        </button>
+
+        <button class="secondary small" type="button" onclick="loadOwnerBookings()">
+          <span>🔄 Refresh</span>
+        </button>
+
+        <button class="secondary small" type="button" onclick="logout()">
+          <span>Sign Out</span>
+        </button>
+
+        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Row -->
+    <section class="owner-metrics-grid">
+      <article class="owner-metric-card highlight">
+        <strong id="metricPending">0</strong>
+        <span>Pending Requests (Action Required)</span>
+      </article>
+
+      <article class="owner-metric-card">
+        <strong id="metricInProgress">0</strong>
+        <span>Active / In Progress</span>
+      </article>
+
+      <article class="owner-metric-card">
+        <strong id="metricCompleted">0</strong>
+        <span>Completed Services</span>
+      </article>
+
+      <article class="owner-metric-card">
+        <strong id="metricTotal">0</strong>
+        <span>Total Lifetime Bookings</span>
+      </article>
+    </section>
+
+    <!-- Bookings Feed Panel -->
+    <section class="owner-feed-panel">
+      <div class="owner-feed-header">
+        <div class="owner-feed-title">
+          <h2>User Service Requests</h2>
+          <p>Incoming roadside and workshop visits assigned to your garage.</p>
+        </div>
+
+        <div class="owner-filter-tabs" role="tablist">
+          <button type="button" class="owner-tab-btn active" data-filter="all">All</button>
+          <button type="button" class="owner-tab-btn" data-filter="pending">Pending</button>
+          <button type="button" class="owner-tab-btn" data-filter="active">In Progress</button>
+          <button type="button" class="owner-tab-btn" data-filter="completed">Completed</button>
+          <button type="button" class="owner-tab-btn" data-filter="declined">Declined</button>
+        </div>
+      </div>
+
+      <div id="ownerStatusBanner" class="status-banner" style="display: none;"></div>
+
+      <div id="ownerBookingsList" class="owner-bookings-grid" aria-live="polite">
+        <div class="empty-state" style="padding: 40px 20px; text-align: center; color: var(--text-secondary);">
+          Loading your garage dispatch requests...
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/api.js" defer></script>
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/storage.js" defer></script>
+  <script src="assets/js/navigation.js" defer></script>
+  <script src="assets/js/auth.js" defer></script>
+  <script src="assets/js/owner.js" defer></script>
+</body>
+</html>

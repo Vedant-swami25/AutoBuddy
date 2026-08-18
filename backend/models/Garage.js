@@ -18,6 +18,9 @@ const garageSchema = new mongoose.Schema({
   vehicleTypes: [{ type: String }],
   image: { type: String, default: null },
   specialties: [{ type: String }],
+  ownerId: { type: String, default: null },
+  ownerName: { type: String, default: null },
+  available: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

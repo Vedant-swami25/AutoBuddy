@@ -2,17 +2,21 @@
  * Garage listing, partner requests, and garage booking actions.
  */
 
+let loadedGaragesList = [];
+
 function renderGarageCard(garage) {
   const card = document.createElement("article");
   card.className = "list-card";
   card.dataset.tilt3d = "";
 
-  const verificationClass = garage.verified ? "badge" : "badge warning";
-  const verificationText = garage.verified ? "Verified" : "Pending";
-  const locationText = garage.address || `${garage.lat}, ${garage.lng}`;
-  const serviceText = (garage.services || garage.specialties || []).slice(0, 2).join(" · ") || "General repairs";
-  const ratingText = `${garage.rating || 4.7} ★`;
-  const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min` : "Open today";
+  const verificationClass = garage.verified ? "badge success-chip" : "badge warning";
+  const verificationText = garage.verified ? "Verified Partner" : "Workshop";
+  const locationText = garage.address || garage.city || "Pune, Maharashtra";
+  const ownerName = garage.mechanic || garage.ownerName || "AutoBuddy Partner";
+  const phone = garage.phone || "+91 98220 11000";
+  const servicesList = garage.services || garage.specialties || ["General Service", "Diagnostics"];
+  const ratingText = `${garage.rating || 4.8} ★`;
+  const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min response` : "Open today";
   const accentHue = Math.abs((garage.name || "").charCodeAt(0) * 17) % 360;
 
   card.innerHTML = `
@@ -22,15 +26,22 @@ function renderGarageCard(garage) {
     </div>
     <div class="garage-card-main">
       <h3 class="garage-title">${garage.name}</h3>
-      <p class="garage-address">${locationText}</p>
-      <div class="list-meta">
-        <span class="meta-chip">${garage.hours || "Open today"}</span>
-        <span class="meta-chip">${serviceText}</span>
+      <p class="garage-address">📍 ${locationText}</p>
+      
+      <div style="font-size: 0.82rem; color: var(--text-secondary); margin: 6px 0; display: flex; flex-wrap: wrap; gap: 8px;">
+        <span>👤 <strong>${ownerName}</strong></span>
+        <span>•</span>
+        <a href="tel:${phone}" style="color: var(--accent-primary); font-weight: 600; text-decoration: none;">📞 ${phone}</a>
+      </div>
+
+      <div class="list-meta" style="margin-top: 8px;">
+        <span class="meta-chip">🕒 ${garage.hours || "8:00 AM - 9:00 PM"}</span>
+        ${servicesList.slice(0, 2).map((s) => `<span class="meta-chip">${s}</span>`).join("")}
       </div>
     </div>
     <div class="garage-card-action">
-      <span class="garage-eta-tag">${etaText}</span>
-      <button type="button">Book</button>
+      <span class="garage-eta-tag">⚡ ${etaText}</span>
+      <button type="button">Book Visit</button>
     </div>
   `;
 
@@ -42,26 +53,32 @@ function renderGarageCard(garage) {
   return card;
 }
 
-async function loadHomeGaragePreview() {
-  const preview = document.getElementById("homeGaragePreview");
-  if (!preview) return;
+function filterGaragesList(query) {
+  const list = document.getElementById("garageList");
+  if (!list) return;
 
-  try {
-    const garages = await fetchGarages();
-    const items = garages.slice(0, 3);
-    preview.innerHTML = "";
-    if (!items.length) {
-      GARAGE_FALLBACKS.slice(0, 3).forEach((g) => preview.appendChild(renderGarageCard(g)));
-      return;
-    }
-    items.forEach((g) => preview.appendChild(renderGarageCard(g)));
-  } catch {
-    preview.innerHTML = "";
-    GARAGE_FALLBACKS.slice(0, 3).forEach((g) => preview.appendChild(renderGarageCard(g)));
+  const q = String(query || "").toLowerCase().trim();
+  const filtered = q
+    ? loadedGaragesList.filter((g) =>
+        (g.name && g.name.toLowerCase().includes(q)) ||
+        (g.address && g.address.toLowerCase().includes(q)) ||
+        (g.city && g.city.toLowerCase().includes(q)) ||
+        (g.mechanic && g.mechanic.toLowerCase().includes(q)) ||
+        (g.ownerName && g.ownerName.toLowerCase().includes(q)) ||
+        (g.services && g.services.some((s) => s.toLowerCase().includes(q)))
+      )
+    : loadedGaragesList;
+
+  list.innerHTML = "";
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-state">No workshops match your search.</div>';
+    return;
   }
-}
 
-window.loadHomeGaragePreview = loadHomeGaragePreview;
+  filtered.forEach((garage) => {
+    list.appendChild(renderGarageCard(garage));
+  });
+}
 
 async function loadGarages() {
   const list = document.getElementById("garageList");
@@ -73,10 +90,11 @@ async function loadGarages() {
 
   try {
     const garages = await fetchGarages();
+    loadedGaragesList = garages;
     list.innerHTML = "";
 
     if (!garages.length) {
-      list.innerHTML = '<div class="empty-state">No workshops currently available in this sector. Partner applications will appear here once approved.</div>';
+      list.innerHTML = '<div class="empty-state">No workshops currently available in this sector.</div>';
       setStatus("garageStatus", "No workshops currently listed.", "warning");
       return;
     }
@@ -85,8 +103,16 @@ async function loadGarages() {
       list.appendChild(renderGarageCard(garage));
     });
 
-    setStatus("garageStatus", `${garages.length} verified workshops available nearby.`, "success");
+    // Hook up search bar if present
+    const searchInput = document.getElementById("garageSearchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => filterGaragesList(e.target.value));
+    }
+
+    setStatus("garageStatus", `${garages.length} verified workshops available in database.`, "success");
   } catch (error) {
+    console.error("Load garages error:", error);
+    loadedGaragesList = GARAGE_FALLBACKS;
     list.innerHTML = "";
     GARAGE_FALLBACKS.forEach((garage) => {
       list.appendChild(renderGarageCard(garage));
@@ -97,24 +123,26 @@ async function loadGarages() {
 
 async function bookGarage(garage, button) {
   const session = getAuthSession();
-  setButtonLoading(button, true, "Book Visit");
+  if (button) setButtonLoading(button, true, "Book Visit");
 
   const userCoordinates = await requestCurrentLocationForAction("garageStatus", `${garage.name} visit tracking`);
 
   try {
     const payload = await createBooking({
       user: {
-        name: session?.name || "Driver",
+        id: session?.id || null,
+        name: session?.name || "User",
         mobile: session?.mobile || ""
       },
       garageId: garage.id,
       garage: garage.name,
-      city: garage.city || "",
+      city: garage.city || "Pune",
       lat: userCoordinates?.lat ?? null,
       lng: userCoordinates?.lng ?? null,
       garageLat: garage.lat,
       garageLng: garage.lng,
-      service: "Garage Visit",
+      service: "Garage Visit & Inspection",
+      price: 300,
       time: new Date()
     });
 
@@ -122,25 +150,26 @@ async function bookGarage(garage, button) {
     setStatus("garageStatus", `Booking confirmed with ${garage.name}.`, "success");
     showToast(`Booking request sent to ${garage.name}.`, "success");
     window.setTimeout(() => {
-      openTrackingForBooking(payload.booking);
+      window.location.href = `tracking.html?booking=${encodeURIComponent(payload.booking.id)}`;
     }, 450);
   } catch (error) {
     if (shouldUseLocalBookingFallback(error)) {
       const localBooking = storeBookingLocally({
         id: `BK-${Date.now()}`,
         user: {
-          name: session?.name || "Driver",
+          name: session?.name || "User",
           mobile: session?.mobile || ""
         },
-        service: "Garage Visit",
+        service: "Garage Visit & Inspection",
+        price: 300,
         garageId: garage.id,
         garage: garage.name,
-        city: garage.city || "",
-        rating: garage.rating || 4.7,
-        travelMinutes: garage.etaMinutes || 28,
-        mechanic: garage.mechanic || "AutoBuddy Partner",
+        city: garage.city || "Pune",
+        rating: garage.rating || 4.8,
+        travelMinutes: garage.etaMinutes || 20,
+        mechanic: garage.mechanic || garage.ownerName || "AutoBuddy Partner",
         vehicle: garage.vehicle || "Service Van",
-        phone: garage.phone || "+91 98765 00000",
+        phone: garage.phone || "+91 98220 11000",
         createdAt: new Date().toISOString(),
         garageLocation: {
           lat: garage.lat || null,
@@ -157,62 +186,23 @@ async function bookGarage(garage, button) {
       setStatus("garageStatus", `Booking confirmed for ${garage.name}.`, "success");
       showToast(`Visit booked for ${garage.name}.`, "success");
       window.setTimeout(() => {
-        openTrackingForBooking(enrichedBooking);
+        window.location.href = `tracking.html?booking=${encodeURIComponent(enrichedBooking.id)}`;
       }, 450);
-      return;
+    } else {
+      setStatus("garageStatus", "Failed to complete booking: " + error.message, "error");
+      showToast("Booking failed: " + error.message, "error");
     }
-
-    setStatus("garageStatus", `Booking request for ${garage.name} failed. Please try again.`, "error");
-    showToast(`Could not book ${garage.name}.`, "error");
   } finally {
-    setButtonLoading(button, false, "Book Visit");
+    if (button) setButtonLoading(button, false, "Book Visit");
   }
 }
 
-function bookSelectedGarageFromMap(event) {
-  const button = event?.currentTarget || document.getElementById("mapBookButton");
-  const garageId = button?.dataset.garageId || sessionStorage.getItem("autobuddyActiveGarageId");
-  const garage = getGarageById(garageId);
+window.bookGarage = bookGarage;
+window.filterGaragesList = filterGaragesList;
+window.loadGarages = loadGarages;
 
-  if (!garage) {
-    setStatus("mapStatus", "Select a garage marker first, then try booking again.", "warning");
-    showToast("Select a garage on the map first.", "warning");
-    return;
+document.addEventListener("DOMContentLoaded", () => {
+  if (getCurrentPage() === "garage.html") {
+    loadGarages();
   }
-
-  bookGarage(garage, button);
-}
-
-async function addGarage(event) {
-  const button = event?.currentTarget;
-  const name = document.getElementById("name")?.value.trim();
-  const location = document.getElementById("location")?.value.trim();
-
-  if (!name || !location) {
-    setStatus("partnerStatus", "Please fill in both the garage name and location.", "error");
-    showToast("Please complete all required fields.", "error");
-    return;
-  }
-
-  setButtonLoading(button, true, "Submit Request");
-  setStatus("partnerStatus", "Submitting your garage application...", "neutral");
-
-  try {
-    await submitGarageRequest({
-      name,
-      lat: 0,
-      lng: 0,
-      verified: false
-    });
-
-    setStatus("partnerStatus", `Application submitted for ${name}. Our partner team will verify details shortly.`, "success");
-    showToast("Garage partner request submitted.", "success");
-    document.getElementById("name").value = "";
-    document.getElementById("location").value = "";
-  } catch (error) {
-    setStatus("partnerStatus", "We could not submit the request right now. Please try again.", "error");
-    showToast("Partner request failed.", "error");
-  } finally {
-    setButtonLoading(button, false, "Submit Request");
-  }
-}
+});

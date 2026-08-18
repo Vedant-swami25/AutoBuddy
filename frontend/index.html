@@ -9,9 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 </head>
 <body>
-  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas" aria-hidden="true"></canvas>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
 
   <main class="page-shell">
     <header class="topbar">
@@ -21,26 +23,30 @@
         </button>
         <a class="brand" href="index.html">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/></svg>
+            <svg viewBox="0 0 64 64">
+              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+            </svg>
           </span>
           <span class="brand-text">
             <span class="brand-name">AutoBuddy</span>
-            <span class="brand-tagline">Roadside &amp; Workshop</span>
+            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
           </span>
         </a>
       </div>
 
       <nav class="topbar-nav">
         <a class="nav-link active" href="index.html">Overview</a>
-        <a class="nav-link" href="services.html">Services</a>
-        <a class="nav-link" href="garage.html">Workshops</a>
-        <a class="nav-link" href="tracking.html">Tracking</a>
-        <a class="nav-link" href="partner.html">Partners</a>
+        <a class="nav-link" href="garage.html">Garages</a>
+        <a class="nav-link" href="map.html">Map</a>
+        <a class="nav-link" href="services.html">Services &amp; Pricing</a>
+        <a class="nav-link" href="tracking.html">My Bookings</a>
       </nav>
 
       <div class="topbar-right">
-        <div class="user-badge auth-only" hidden>
-          <span id="userName">Driver</span>
+        <a class="nav-link guest-only" href="login.html" style="font-size: 0.86rem;" hidden>Sign In</a>
+        <div class="user-badge auth-only" onclick="logout()" title="Click to Sign Out" style="cursor: pointer;" hidden>
+          <span id="userName">User</span>
+          <small style="opacity: 0.6; margin-left: 4px;">(Sign Out)</small>
         </div>
         <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true"></span>
@@ -53,159 +59,214 @@
         <div class="sidebar-profile">
           <div class="sidebar-avatar" aria-hidden="true">A</div>
           <div>
-            <p class="sidebar-signed">Signed in</p>
-            <strong id="sidebarUserName">Driver</strong>
-            <small id="sidebarUserContact">driver@email.com</small>
+            <p class="sidebar-signed">User Account</p>
+            <strong id="sidebarUserName">User</strong>
+            <small id="sidebarUserContact">user@email.com</small>
           </div>
         </div>
+
         <nav class="sidebar-nav">
-          <a class="sidebar-link active" href="index.html"><span class="sidebar-link-icon icon-home"></span>Overview</a>
-          <a class="sidebar-link" href="services.html"><span class="sidebar-link-icon icon-services"></span>Services</a>
-          <a class="sidebar-link" href="garage.html"><span class="sidebar-link-icon icon-garage"></span>Workshops</a>
-          <a class="sidebar-link" href="tracking.html"><span class="sidebar-link-icon icon-tracking"></span>Tracking</a>
-          <a class="sidebar-link" href="partner.html"><span class="sidebar-link-icon icon-partner"></span>Partners</a>
+          <a class="sidebar-link active" href="index.html">
+            <span class="sidebar-link-icon">🏠</span>
+            Overview
+          </a>
+          <a class="sidebar-link" href="garage.html">
+            <span class="sidebar-link-icon">🏢</span>
+            Garages
+          </a>
+          <a class="sidebar-link" href="map.html">
+            <span class="sidebar-link-icon">🗺️</span>
+            Map
+          </a>
+          <a class="sidebar-link" href="services.html">
+            <span class="sidebar-link-icon">🧰</span>
+            Services &amp; Pricing
+          </a>
+          <a class="sidebar-link" href="tracking.html">
+            <span class="sidebar-link-icon">📅</span>
+            My Bookings &amp; Status
+          </a>
         </nav>
+
         <div class="sidebar-footer">
-          <button class="secondary auth-only" style="width: 100%;" type="button" onclick="logout()" hidden>Sign Out</button>
+          <button id="sidebarLogoutBtn" class="secondary" style="width: 100%;" type="button" onclick="logout()">Sign Out</button>
         </div>
       </div>
     </aside>
     <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section class="hero">
       <div class="hero-content">
-        <div class="eyebrow">Roadside &amp; Workshop Care</div>
-        <h1>Assistance when you need it.</h1>
-        <p class="lead">Verified garages nearby. Mobile dispatch on demand.</p>
+        <div class="eyebrow">On-Demand Mobility Assistance</div>
+        <h1>Roadside assistance and workshop care. On demand.</h1>
 
         <div class="hero-cta-group">
-          <button type="button" onclick="bookService(event)"><span>Book Service</span></button>
-          <button class="secondary" type="button" onclick="window.location.href='garage.html'"><span>Find Garages</span></button>
-          <button class="warning" type="button" onclick="emergency(event)"><span>SOS</span></button>
+          <button type="button" onclick="window.location.href='garage.html'">
+            <span>Explore Garages</span>
+          </button>
+          <button class="secondary" type="button" onclick="window.location.href='map.html'">
+            <span>View Map</span>
+          </button>
+          <button class="secondary" type="button" onclick="bookService(event)">
+            <span>Book Van</span>
+          </button>
+          <button class="warning" type="button" onclick="emergency(event)">
+            <span>SOS</span>
+          </button>
         </div>
 
         <div class="hero-trust-ribbon">
-          <div class="trust-item"><strong>12+</strong><span>Workshops</span></div>
-          <div class="trust-item"><strong>~15 min</strong><span>Dispatch</span></div>
-          <div class="trust-item"><strong>24/7</strong><span>Coverage</span></div>
+          <div class="trust-item">
+            <strong>25+</strong>
+            <span>Verified Garages</span>
+          </div>
+          <div class="trust-item">
+            <strong>~15 min</strong>
+            <span>Average Dispatch</span>
+          </div>
+          <div class="trust-item">
+            <strong>24 / 7</strong>
+            <span>Emergency Helpline</span>
+          </div>
         </div>
 
         <div id="homeStatus" class="status-banner" aria-live="polite"></div>
       </div>
 
+      <!-- 3D Vehicle Centerpiece -->
       <aside class="hero-visual">
-        <div class="hero-studio-card" data-tilt-3d>
+        <div class="hero-studio-card">
           <div class="studio-top-bar">
             <div class="studio-badge">
               <span class="studio-badge-dot"></span>
-              <span>Live</span>
+              <span>Vehicle Studio</span>
             </div>
             <div class="studio-camera-presets">
-              <button type="button" class="camera-preset-btn active" data-view="hero">3/4</button>
+              <button type="button" class="camera-preset-btn active" data-view="hero">3/4 View</button>
               <button type="button" class="camera-preset-btn" data-view="side">Side</button>
               <button type="button" class="camera-preset-btn" data-view="front">Front</button>
             </div>
           </div>
+
           <div id="hero3DViewport" class="hero-3d-viewport"></div>
+
           <div class="studio-bottom-bar">
-            <span>Drag to explore</span>
-            <span>Tap markers to book</span>
+            <span>Drag to rotate • Tap markers to inspect &amp; book</span>
+            <div class="studio-paint-swatches" title="Switch Finish">
+              <button type="button" class="paint-swatch-btn active" data-color="0x091424" style="background: #091424;" aria-label="Obsidian Sapphire"></button>
+              <button type="button" class="paint-swatch-btn" data-color="0x0b2545" style="background: #0b2545;" aria-label="Midnight Cobalt"></button>
+              <button type="button" class="paint-swatch-btn" data-color="0x94a3b8" style="background: #94a3b8;" aria-label="Titanium Silver"></button>
+              <button type="button" class="paint-swatch-btn" data-color="0x881337" style="background: #881337;" aria-label="Crimson Metallic"></button>
+            </div>
           </div>
         </div>
       </aside>
     </section>
 
-    <!-- Quick Actions -->
-    <section class="section-spacer reveal">
+    <!-- Quick Action Grid -->
+    <section class="section-spacer">
+      <div class="section-header">
+        <div>
+          <div class="eyebrow">Quick Navigation</div>
+          <h2 class="page-title">Access Garages, Maps &amp; Services</h2>
+          <p class="section-subtitle">Choose from verified local workshops, live interactive map discovery, or mobile van dispatch.</p>
+        </div>
+      </div>
+
       <div class="action-grid">
-        <article class="action-card reveal reveal-delay-1" data-tilt-3d>
+        <article class="action-card">
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-7Zm5.5 7.5h7v-5.5h-7V19Z"/></svg>
+              <svg viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3Zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V18Z"/>
+              </svg>
             </div>
-            <button class="secondary" type="button" onclick="window.location.href='garage.html'">Browse</button>
+            <button type="button" onclick="window.location.href='garage.html'">View Garages</button>
           </div>
-          <strong>Nearby Garages</strong>
+          <div>
+            <strong>Garages Directory</strong>
+            <p>Browse the full list of verified automotive workshops with owner details, ratings, and phone contacts.</p>
+          </div>
         </article>
 
-        <article class="action-card reveal reveal-delay-2" data-tilt-3d>
+        <article class="action-card">
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H15a2 2 0 0 1 1.8 1.1l.9 1.9H20A2 2 0 0 1 22 11v5.5a1.5 1.5 0 0 1-1.5 1.5H19a3 3 0 0 1-6 0h-2a3 3 0 0 1-6 0H3.5A1.5 1.5 0 0 1 2 16.5V11a2.5 2.5 0 0 1 1-2.5Zm5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 9v4h11V9H5Z"/></svg>
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2a8 8 0 0 0-8 8c0 5.4 7.2 11.4 7.5 11.7.3.2.7.2 1 0 .3-.3 7.5-6.3 7.5-11.7a8 8 0 0 0-8-8Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
+              </svg>
             </div>
-            <button type="button" onclick="bookService(event)">Book</button>
+            <button class="secondary" type="button" onclick="window.location.href='map.html'">Open Map</button>
           </div>
-          <strong>Mobile Van</strong>
+          <div>
+            <strong>Interactive Map</strong>
+            <p>Discover workshops around your GPS coordinates with live route distances, ETA, and marker selection.</p>
+          </div>
         </article>
 
-        <article class="action-card reveal reveal-delay-3" data-tilt-3d>
+        <article class="action-card">
           <div class="action-card-top">
             <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+              <svg viewBox="0 0 24 24">
+                <path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H15a2 2 0 0 1 1.8 1.1l.9 1.9H20A2 2 0 0 1 22 11v5.5a1.5 1.5 0 0 1-1.5 1.5H19a3 3 0 0 1-6 0h-2a3 3 0 0 1-6 0H3.5A1.5 1.5 0 0 1 2 16.5V11a2.5 2.5 0 0 1 1-2.5Zm5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 9v4h11V9H5Z"/>
+              </svg>
+            </div>
+            <button class="secondary" type="button" onclick="bookService(event)">Book Van</button>
+          </div>
+          <div>
+            <strong>Mobile Service Van</strong>
+            <p>Request an equipped AutoBuddy technician dispatched directly to your GPS coordinates in ~15 mins.</p>
+          </div>
+        </article>
+
+        <article class="action-card">
+          <div class="action-card-top">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>
+              </svg>
             </div>
             <button class="warning" type="button" onclick="emergency(event)">SOS</button>
           </div>
-          <strong>Emergency</strong>
-        </article>
-
-        <article class="action-card reveal reveal-delay-4" data-tilt-3d>
-          <div class="action-card-top">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Zm0 3a4 4 0 0 1 2.5 7.1 1 1 0 0 0-.5.9V17h-4v-3.9a1 1 0 0 0-.5-.9A4 4 0 0 1 12 5Z"/></svg>
-            </div>
-            <button class="secondary" type="button" onclick="window.location.href='map.html'">Open</button>
+          <div>
+            <strong>Emergency Breakdown</strong>
+            <p>Urgent roadside intervention for battery jumpstart, tyre punctures, or towing assistance.</p>
           </div>
-          <strong>Live Map</strong>
         </article>
       </div>
     </section>
 
-    <!-- Workflow -->
-    <section class="section-spacer reveal">
+    <!-- How AutoBuddy Works -->
+    <section class="section-spacer">
+      <div class="section-header">
+        <div>
+          <div class="eyebrow">Seamless Process</div>
+          <h2 class="page-title">How AutoBuddy Works</h2>
+          <p class="section-subtitle">A straightforward workflow to get you back on the road safely.</p>
+        </div>
+      </div>
+
       <div class="workflow-grid">
-        <article class="workflow-card" data-tilt-3d>
+        <article class="workflow-card">
           <div class="workflow-step-num">01</div>
-          <strong>Request</strong>
+          <strong>Select Garage or Service</strong>
+          <p>Choose a verified workshop on the map or request a mobile service van to your location.</p>
         </article>
-        <article class="workflow-card" data-tilt-3d>
+
+        <article class="workflow-card">
           <div class="workflow-step-num">02</div>
-          <strong>Dispatch</strong>
+          <strong>Direct Partner Confirmation</strong>
+          <p>The selected garage owner receives your booking request instantly on their dashboard and accepts.</p>
         </article>
-        <article class="workflow-card" data-tilt-3d>
+
+        <article class="workflow-card">
           <div class="workflow-step-num">03</div>
-          <strong>Track &amp; Resolve</strong>
+          <strong>Service &amp; Transparent Resolution</strong>
+          <p>Receive your service on-site or at the workshop with clear upfront pricing and guaranteed care.</p>
         </article>
       </div>
     </section>
-
-    <!-- Nearby preview -->
-    <section class="section-spacer reveal">
-      <div class="nearby-strip">
-        <div class="nearby-strip-copy">
-          <div class="eyebrow">Nearby</div>
-          <h2 class="page-title" style="font-size: 1.6rem;">Verified workshops around you</h2>
-        </div>
-        <div class="nearby-strip-actions">
-          <button type="button" onclick="window.location.href='garage.html'">View All</button>
-          <button class="secondary" type="button" onclick="goToMap(event)">Map</button>
-        </div>
-      </div>
-      <div id="homeGaragePreview" class="list-grid home-garage-preview" aria-live="polite"></div>
-    </section>
-
-    <footer class="site-footer reveal">
-      <div class="site-footer-brand">
-        <span class="brand-name">AutoBuddy</span>
-        <span class="site-footer-tag">Roadside &amp; workshop care</span>
-      </div>
-      <nav class="site-footer-nav">
-        <a href="services.html">Services</a>
-        <a href="garage.html">Workshops</a>
-        <a href="tracking.html">Tracking</a>
-        <a href="partner.html">Partners</a>
-      </nav>
-    </footer>
   </main>
 
   <script src="assets/js/config.js" defer></script>

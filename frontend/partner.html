@@ -3,162 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partner With AutoBuddy — Workshop Network</title>
+  <title>Workshop Partner Portal — AutoBuddy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-  <main class="page-shell">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu">
-          <span aria-hidden="true"></span>
-        </button>
-        <a class="brand" href="index.html">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64">
-              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
-            </svg>
-          </span>
-          <span class="brand-text">
-            <span class="brand-name">AutoBuddy</span>
-            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
-          </span>
-        </a>
-      </div>
-
-      <nav class="topbar-nav">
-        <a class="nav-link" href="index.html">Overview</a>
-        <a class="nav-link" href="services.html">Services</a>
-        <a class="nav-link" href="garage.html">Workshops</a>
-        <a class="nav-link" href="tracking.html">Live Tracking</a>
-        <a class="nav-link active" href="partner.html">Partner Network</a>
-      </nav>
-
-      <div class="topbar-right">
-        <div class="user-badge auth-only" hidden>
-          <span id="userName">Driver</span>
-        </div>
-        <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
-          <span class="theme-icon" aria-hidden="true"></span>
-        </button>
-      </div>
+<body data-public-page="true">
+  <main class="page-shell" style="max-width: 900px; margin: 60px auto; text-align: center;">
+    <header style="margin-bottom: 36px;">
+      <a class="brand" href="index.html" style="display: inline-flex; margin-bottom: 20px;">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/></svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">AutoBuddy</span>
+          <span class="brand-tagline">Workshop Partner Portal</span>
+        </span>
+      </a>
+      <div class="eyebrow">Garage Owner Network</div>
+      <h1 class="page-title" style="font-size: 2.2rem;">Manage Your Garage &amp; Service Bookings</h1>
+      <p class="section-subtitle" style="max-width: 580px; margin: 10px auto;">
+        Sign in to your Garage Owner Dashboard using your registered mobile number and OTP to view incoming roadside service requests and user bookings.
+      </p>
     </header>
 
-    <aside class="page-sidebar" aria-hidden="true">
-      <div class="sidebar-panel">
-        <div class="sidebar-profile">
-          <div class="sidebar-avatar" aria-hidden="true">A</div>
-          <div>
-            <p class="sidebar-signed">Signed in as</p>
-            <strong id="sidebarUserName">Driver</strong>
-            <small id="sidebarUserContact">driver@email.com</small>
-          </div>
-        </div>
-
-        <nav class="sidebar-nav">
-          <a class="sidebar-link" href="index.html">
-            <span class="sidebar-link-icon">🏠</span>
-            Overview
-          </a>
-          <a class="sidebar-link" href="services.html">
-            <span class="sidebar-link-icon">🧰</span>
-            Services
-          </a>
-          <a class="sidebar-link" href="garage.html">
-            <span class="sidebar-link-icon">🛠️</span>
-            Workshops
-          </a>
-          <a class="sidebar-link" href="tracking.html">
-            <span class="sidebar-link-icon">📅</span>
-            Live Tracking
-          </a>
-          <a class="sidebar-link active" href="partner.html">
-            <span class="sidebar-link-icon">🤝</span>
-            Partner Program
-          </a>
-        </nav>
-
-        <div class="sidebar-footer">
-          <button class="secondary auth-only" style="width: 100%;" type="button" onclick="logout()" hidden>Sign Out</button>
-        </div>
-      </div>
-    </aside>
-    <div class="sidebar-backdrop" onclick="toggleSidebar(false)" aria-hidden="true"></div>
-
-    <section class="panel">
-      <div class="section-header">
-        <div>
-          <div class="eyebrow">Partner Program</div>
-          <h1 class="page-title">Join the AutoBuddy Workshop Network.</h1>
-          <p class="section-subtitle">List your garage on AutoBuddy to receive direct roadside dispatch requests and qualified service bookings.</p>
-        </div>
-      </div>
-
-      <div class="workflow-grid" style="margin-bottom: 32px;">
-        <article class="detail-card">
-          <strong class="card-title">Increased Booking Volume</strong>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
-            Receive verified vehicle owners directly routed to your workshop based on proximity and specialties.
-          </p>
-        </article>
-
-        <article class="detail-card">
-          <strong class="card-title">Instant Dispatch Flow</strong>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
-            Accept roadside assistance and mobile repair jobs with automated customer location data and ETA coordination.
-          </p>
-        </article>
-
-        <article class="detail-card">
-          <strong class="card-title">Verified Partner Badge</strong>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
-            Build credibility with transparent driver ratings and official AutoBuddy partner verification.
-          </p>
-        </article>
-      </div>
-
-      <div class="auth-card" style="max-width: 620px; margin: 0 auto;">
-        <strong class="card-title" style="font-size: 1.15rem; margin-bottom: 4px;">Workshop Application</strong>
-        <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 20px;">Submit your garage details for onboarding review.</p>
-
-        <div class="field">
-          <label for="name">Garage / Workshop Name</label>
-          <input id="name" placeholder="Downtown Auto Works" autocomplete="organization">
-        </div>
-        <div class="field">
-          <label for="location">City / Sector Location</label>
-          <input id="location" placeholder="Kothrud, Pune, Maharashtra" autocomplete="address-level2">
-        </div>
-
-        <div class="form-actions" style="display: flex; gap: 12px; margin-top: 20px;">
-          <button type="button" onclick="addGarage(event)">Submit Partner Request</button>
-          <button class="secondary" type="button" onclick="window.location.href='index.html'">Back to Overview</button>
-        </div>
-
-        <div id="partnerStatus" class="status-banner" aria-live="polite"></div>
-      </div>
-    </section>
+    <div class="panel" style="max-width: 520px; margin: 0 auto; padding: 36px 28px;">
+      <button type="button" style="width: 100%; min-height: 48px; font-size: 1rem;" onclick="window.location.href='login.html?role=owner'">
+        <span>Sign In to Garage Owner Dashboard →</span>
+      </button>
+      <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 14px;">
+        New workshop? Use mobile OTP on the sign in page to register your garage in 30 seconds.
+      </p>
+    </div>
   </main>
 
-  <script src="assets/js/config.js" defer></script>
-  <script src="assets/js/tilt-3d.js" defer></script>
-  <script src="assets/js/ui.js" defer></script>
-  <script src="assets/js/api.js" defer></script>
-  <script src="assets/js/utils.js" defer></script>
-  <script src="assets/js/storage.js" defer></script>
-  <script src="assets/js/navigation.js" defer></script>
-  <script src="assets/js/booking.js" defer></script>
-  <script src="assets/js/location.js" defer></script>
-  <script src="assets/js/auth.js" defer></script>
-  <script src="assets/js/services.js" defer></script>
-  <script src="assets/js/garage.js" defer></script>
-  <script src="assets/js/map.js" defer></script>
-  <script src="assets/js/tracking-map.js" defer></script>
-  <script src="assets/js/tracking-ui.js" defer></script>
-  <script src="assets/js/tracking-service.js" defer></script>
-  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/config.js"></script>
+  <script>
+    const session = JSON.parse(localStorage.getItem("autobuddyAuth") || "null");
+    if (session && session.role === "garage_owner") {
+      window.location.replace("owner-dashboard.html");
+    }
+  </script>
 </body>
 </html>

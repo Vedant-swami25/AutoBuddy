@@ -1,19 +1,11 @@
 /**
  * Theme, sidebar, account header, and shared navigation behavior.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
  */
 
 function applyTheme(theme) {
   const nextTheme = theme === "light" ? "light" : "dark";
   document.body.dataset.theme = nextTheme;
   localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-
-  const label = document.getElementById("themeToggleLabel");
-  if (label) {
-    label.textContent = nextTheme === "dark" ? "Light mode" : "Dark mode";
-  }
 }
 
 function toggleSidebar(open = null) {
@@ -49,36 +41,66 @@ function renderSessionUi() {
   const sidebarUserName = document.getElementById("sidebarUserName");
   const sidebarUserContact = document.getElementById("sidebarUserContact");
   const sidebarAvatar = document.querySelector(".sidebar-avatar");
+  const sidebarLogoutBtn = document.getElementById("sidebarLogoutBtn");
   const session = getAuthSession();
   const loggedIn = isAuthenticated();
+  const isOwner = session?.role === "garage_owner";
 
   authOnlyItems.forEach((item) => {
     item.hidden = !loggedIn;
+    if (loggedIn && item.style.display === "none") {
+      item.style.display = "";
+    }
   });
 
   guestOnlyItems.forEach((item) => {
     item.hidden = loggedIn;
+    if (!loggedIn && item.style.display === "none") {
+      item.style.display = "";
+    }
   });
 
-  const displayName = String(session?.name || "Driver").trim();
-  const initial = displayName ? displayName[0].toUpperCase() : "A";
+  const displayName = String(session?.name || (isOwner ? "Garage Owner" : "User")).trim();
+  const initial = displayName ? displayName[0].toUpperCase() : (isOwner ? "W" : "U");
 
-  if (userName && loggedIn) {
-    userName.textContent = displayName;
+  if (userName) {
+    if (loggedIn) {
+      userName.textContent = isOwner ? `${displayName} (Owner)` : displayName;
+    } else {
+      userName.textContent = "Sign In";
+    }
   }
 
-  if (sidebarUserName && loggedIn) {
-    sidebarUserName.textContent = displayName;
+  if (sidebarUserName) {
+    sidebarUserName.textContent = loggedIn ? displayName : "Guest User";
   }
 
-  if (sidebarUserContact && loggedIn) {
-    sidebarUserContact.textContent = session.mobile || "driver@email.com";
+  if (sidebarUserContact) {
+    sidebarUserContact.textContent = loggedIn
+      ? (isOwner ? `Workshop: ${session.garageName || session.mobile}` : (session.mobile || session.email || ""))
+      : "Not signed in";
   }
 
   if (sidebarAvatar) {
-    sidebarAvatar.textContent = initial;
+    sidebarAvatar.textContent = loggedIn ? initial : "👤";
   }
 
-  toggleTrackingLinkVisibility();
+  if (sidebarLogoutBtn) {
+    if (loggedIn) {
+      sidebarLogoutBtn.textContent = "Sign Out";
+      sidebarLogoutBtn.onclick = () => logout();
+      sidebarLogoutBtn.classList.remove("guest-btn");
+    } else {
+      sidebarLogoutBtn.textContent = "Sign In / Register";
+      sidebarLogoutBtn.onclick = () => { window.location.href = "login.html"; };
+      sidebarLogoutBtn.classList.add("guest-btn");
+    }
+    sidebarLogoutBtn.hidden = false;
+    sidebarLogoutBtn.style.display = "flex";
+  }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  renderSessionUi();
+});

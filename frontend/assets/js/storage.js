@@ -1,9 +1,27 @@
 /**
  * Typed access to browser storage for sessions, bookings, and map state.
  *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
+ * Provides central access to auth sessions, persistent storage, and local bookings.
  */
+
+function getAuthSession() {
+  try {
+    return JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+  } catch (error) {
+    return null;
+  }
+}
+
+function persistLoginSession(session) {
+  if (!session) return;
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+}
+
+function clearLoginSession() {
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem("autobuddyActiveGarageId");
+  sessionStorage.removeItem("autobuddyActiveBooking");
+}
 
 function getStoredBookings() {
   try {
@@ -81,3 +99,11 @@ function setMapGarageIndex(garages) {
   sessionStorage.setItem(MAP_SELECTED_GARAGE_KEY, JSON.stringify(garages));
 }
 
+// Global attachments
+window.getAuthSession = getAuthSession;
+window.persistLoginSession = persistLoginSession;
+window.clearLoginSession = clearLoginSession;
+window.getStoredBookings = getStoredBookings;
+window.storeBookingLocally = storeBookingLocally;
+window.setActiveBooking = setActiveBooking;
+window.getActiveBooking = getActiveBooking;

@@ -58,6 +58,78 @@ function getRouteSnapshot(booking, progress) {
 }
 
 function enrichBooking(booking) {
+  const doc = booking.toObject ? booking.toObject() : booking;
+  const status = String(doc.status || "pending").toLowerCase();
+
+  if (status === "pending") {
+    return {
+      ...doc,
+      etaMinutes: doc.travelMinutes || 28,
+      progressPercent: 0,
+      trackingStatus: "Awaiting garage confirmation",
+      timeline: [
+        { key: "pending", label: "Booking submitted", done: true, active: true },
+        { key: "accepted", label: "Garage accepted", done: false, active: false },
+        { key: "enroute", label: "On the way", done: false, active: false },
+        { key: "arrived", label: "Service completed", done: false, active: false }
+      ],
+      route: getRouteSnapshot(booking, 0)
+    };
+  }
+
+  if (status === "rejected") {
+    return {
+      ...doc,
+      etaMinutes: 0,
+      progressPercent: 0,
+      trackingStatus: "Booking rejected by garage",
+      timeline: [
+        { key: "pending", label: "Booking submitted", done: true, active: false },
+        { key: "rejected", label: "Rejected by garage", done: true, active: true }
+      ],
+      route: getRouteSnapshot(booking, 0)
+    };
+  }
+
+  if (status === "accepted" || status === "in_progress") {
+    const { progress, etaMinutes } = getProgress(booking);
+    const currentStage =
+      TRACK_STAGES.find((stage) => progress <= stage.threshold) ||
+      TRACK_STAGES[TRACK_STAGES.length - 1];
+
+    return {
+      ...doc,
+      etaMinutes,
+      progressPercent: Math.round(progress * 100),
+      trackingStatus: status === "accepted" && progress < 0.05
+        ? "Garage accepted — preparing dispatch"
+        : currentStage.label,
+      timeline: TRACK_STAGES.map((stage) => ({
+        key: stage.key,
+        label: stage.label,
+        done: progress >= stage.threshold,
+        active: stage.key === currentStage.key
+      })),
+      route: getRouteSnapshot(booking, progress)
+    };
+  }
+
+  if (status === "completed") {
+    return {
+      ...doc,
+      etaMinutes: 0,
+      progressPercent: 100,
+      trackingStatus: "Service completed",
+      timeline: TRACK_STAGES.map((stage) => ({
+        key: stage.key,
+        label: stage.label,
+        done: true,
+        active: stage.key === "arrived"
+      })),
+      route: getRouteSnapshot(booking, 1)
+    };
+  }
+
   const { progress, etaMinutes } = getProgress(booking);
   const currentStage =
     TRACK_STAGES.find((stage) => progress <= stage.threshold) ||
@@ -71,7 +143,7 @@ function enrichBooking(booking) {
   }));
 
   return {
-    ...booking.toObject(),
+    ...doc,
     etaMinutes,
     progressPercent: Math.round(progress * 100),
     trackingStatus: currentStage.label,

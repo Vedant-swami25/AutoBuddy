@@ -3,28 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — AutoBuddy</title>
+  <title>Sign In &amp; Access Portal — AutoBuddy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-public-page="true" class="auth-body">
-  <div class="auth-bg-glow" aria-hidden="true"></div>
+  <canvas id="ambientParticleCanvas" class="ambient-particle-canvas"></canvas>
 
   <main class="page-shell auth-page">
     <header class="topbar auth-topbar">
       <div class="topbar-left">
-        <a class="brand" href="login.html">
+        <a class="brand" href="index.html">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/></svg>
+            <svg viewBox="0 0 64 64">
+              <path d="M16 24.5c1.5-3.4 5-5.6 8.7-5.6h15.9c2.7 0 5.2.9 7.2 2.7l3.2-3.2a4.7 4.7 0 0 1 6.7 0 4.7 4.7 0 0 1 0 6.7l-2.7 2.7c.5 1.2.8 2.5.8 3.8v12.2a4.8 4.8 0 0 1-2.8 4.4V51a3 3 0 0 1-3 3h-2.7a3 3 0 0 1-3-3v-1.6H22.7V51a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3v-2.8a4.8 4.8 0 0 1-2.8-4.4V31.6c0-2.4.6-4.8 1.8-7.1Zm9 0-3.6 8h18.3l7.9-7.9a6.6 6.6 0 0 0-4.3-1.6H24.7c-1.7 0-3.2.6-4.4 1.5Zm-.7 17.6a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm17.2 0a2.8 2.8 0 1 0 0-5.7 2.8 2.8 0 0 0 0 5.7Zm2.1-18.4 6.9 1.4 3.5-3.4a1.8 1.8 0 0 0 0-2.6 1.8 1.8 0 0 0-2.6 0l-7.8 7.8Zm-20.9 14h20.6c.5 0 .9.4.9.9 0 2.9-2.3 5.2-5.2 5.2h-12c-2.9 0-5.2-2.3-5.2-5.2 0-.5.4-.9.9-.9Z"/>
+            </svg>
           </span>
           <span class="brand-text">
             <span class="brand-name">AutoBuddy</span>
-            <span class="brand-tagline">Roadside &amp; Workshop</span>
+            <span class="brand-tagline">Roadside Support &amp; Workshop Care</span>
           </span>
         </a>
       </div>
+
       <div class="topbar-right">
         <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true"></span>
@@ -33,43 +36,217 @@
     </header>
 
     <section class="auth-layout">
+      <!-- Left Showcase Column -->
       <div class="auth-hero-side">
-        <div class="eyebrow">Driver Portal</div>
-        <h1 class="auth-title">Sign in to continue.</h1>
-        <div class="auth-stat-row">
-          <div class="auth-stat"><strong>12+</strong><span>Workshops</span></div>
-          <div class="auth-stat"><strong>24/7</strong><span>Dispatch</span></div>
-          <div class="auth-stat"><strong>Live</strong><span>Tracking</span></div>
+        <div class="eyebrow">Authentication Portal</div>
+        <h1 class="auth-title">Unified user care and workshop management.</h1>
+        <p class="auth-lead">
+          Sign in seamlessly using your registered name, mobile number and OTP, or create a new User or Garage Owner account in seconds.
+        </p>
+
+        <div class="auth-features-list">
+          <div class="auth-feature-item">
+            <span class="auth-feature-icon" aria-hidden="true">👤</span>
+            <div class="auth-feature-text">
+              <strong>User Account</strong>
+              <span>Instant mobile dispatch, live tracking, upfront pricing &amp; 25+ verified workshops.</span>
+            </div>
+          </div>
+
+          <div class="auth-feature-item">
+            <span class="auth-feature-icon" aria-hidden="true">🛠️</span>
+            <div class="auth-feature-text">
+              <strong>Garage Owner Account</strong>
+              <span>Receive direct user bookings, manage workshop schedule, and update repair progress.</span>
+            </div>
+          </div>
+
+          <div class="auth-feature-item">
+            <span class="auth-feature-icon" aria-hidden="true">🔒</span>
+            <div class="auth-feature-text">
+              <strong>Passwordless Mobile OTP</strong>
+              <span>Fast, secure access using your registered name and mobile number without repeated full signups.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-metrics-ribbon">
+          <span><strong>25+</strong> Verified Garages</span>
+          <span>•</span>
+          <span><strong>2-Sided</strong> Real-Time Dispatch</span>
+          <span>•</span>
+          <span><strong>24/7</strong> Active</span>
         </div>
       </div>
 
+      <!-- Right Sign In / Up Card -->
       <aside class="auth-side">
-        <div class="auth-card">
-          <strong class="card-title">Sign In</strong>
-          <form id="loginForm" class="auth-form">
-            <div class="field">
-              <label for="loginName">Full Name</label>
-              <input id="loginName" placeholder="Vedant Sharma" autocomplete="name">
+        <div class="auth-card" data-tilt-3d="true">
+          <!-- 1. Role Selection Tabs -->
+          <div class="auth-role-tabs" role="tablist">
+            <button type="button" class="auth-role-tab active" data-role="user" role="tab" aria-selected="true">
+              <span>👤</span> User
+            </button>
+            <button type="button" class="auth-role-tab" data-role="garage_owner" role="tab" aria-selected="false">
+              <span>🛠️</span> Garage Owner
+            </button>
+          </div>
+
+          <!-- 2. Mode Selection (Sign In vs Sign Up) -->
+          <div class="auth-mode-tabs" role="tablist">
+            <button type="button" class="auth-mode-tab active" data-mode="signin" role="tab" aria-selected="true">
+              Sign In
+            </button>
+            <button type="button" class="auth-mode-tab" data-mode="signup" role="tab" aria-selected="false">
+              Sign Up
+            </button>
+          </div>
+
+          <div class="auth-card-header">
+            <span id="authRoleBadge" class="auth-role-badge">User Portal</span>
+            <h2 id="authCardTitle" class="auth-card-title">Sign In with Name &amp; OTP</h2>
+            <p id="authCardSubtitle" class="auth-card-subtitle">Enter your registered name and mobile number to sign in.</p>
+          </div>
+
+          <!-- Development Demo OTP Banner -->
+          <div id="demoOtpBanner" class="demo-otp-banner" style="display: none;" title="Click to autofill verification code">
+            <div>
+              <span class="demo-otp-badge">Dev Code</span>
+              <strong id="demoCodeValue" class="demo-otp-code">123456</strong>
             </div>
-            <div class="field">
-              <label for="loginEmail">Email</label>
-              <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+            <span class="demo-otp-tap">Tap to autofill ↵</span>
+          </div>
+
+          <!-- ==================== SIGN IN FLOW ==================== -->
+          <div id="flowSignIn" class="auth-flow-container">
+            <!-- Step 1: Name & Mobile Input -->
+            <div id="signinStepMobile" class="auth-step-panel">
+              <div class="auth-field">
+                <label for="signinName">Full Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">👤</span>
+                  <input id="signinName" placeholder="Enter your registered name" autocomplete="name" autofocus required>
+                </div>
+              </div>
+
+              <div class="auth-field">
+                <label for="signinMobile">Registered Mobile Number</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">📱</span>
+                  <input id="signinMobile" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" required>
+                </div>
+              </div>
+              <button type="button" id="signinSendOtpBtn" class="auth-submit-btn">Continue with OTP →</button>
             </div>
-            <div class="field">
-              <label for="loginMobile">Mobile</label>
-              <input id="loginMobile" inputmode="numeric" maxlength="10" placeholder="9876543210" autocomplete="tel">
+
+            <!-- Step 2: OTP Input -->
+            <div id="signinStepOtp" class="auth-step-panel" style="display: none;">
+              <div class="auth-inline-actions">
+                <span>Code sent to <strong id="signinDisplayMobile">+91 ...</strong></span>
+                <button type="button" id="signinChangeMobileBtn" class="auth-link-btn">Change</button>
+              </div>
+              <div class="auth-field">
+                <label for="signinOtp">6-Digit Verification Code</label>
+                <div class="auth-input-wrap">
+                  <input id="signinOtp" class="auth-input-otp" inputmode="numeric" maxlength="6" placeholder="• • • • • •" autocomplete="one-time-code">
+                </div>
+              </div>
+              <button type="button" id="signinVerifyBtn" class="auth-submit-btn">Verify &amp; Sign In →</button>
             </div>
-            <div class="field">
-              <label for="loginDistrict">City</label>
-              <input id="loginDistrict" placeholder="Pune" autocomplete="address-level2">
+
+            <!-- Direct switch to sign up prompt when no account found -->
+            <div id="signinNoAccountNotice" style="display: none; margin-top: 14px; text-align: center;">
+              <button type="button" id="signinGoToSignupBtn" class="secondary" style="width: 100%;">Create New Account Now →</button>
             </div>
-            <div class="field">
-              <label for="loginState">State</label>
-              <input id="loginState" placeholder="Maharashtra" autocomplete="address-level1">
+          </div>
+
+          <!-- ==================== SIGN UP FLOW ==================== -->
+          <div id="flowSignUp" class="auth-flow-container" style="display: none;">
+            <!-- Step 1: Profile Details -->
+            <div id="signupStepDetails" class="auth-step-panel">
+              <div class="auth-field">
+                <label for="signupName" id="labelSignupName">Full Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">👤</span>
+                  <input id="signupName" placeholder="Enter your full name" autocomplete="name" required>
+                </div>
+              </div>
+
+              <div class="auth-field">
+                <label for="signupMobile">Mobile Number</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">📱</span>
+                  <input id="signupMobile" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" required>
+                </div>
+              </div>
+
+              <!-- Owner Specific Fields -->
+              <div class="auth-field owner-only-field" style="display: none;">
+                <label for="signupGarageName">Workshop / Garage Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">🛠️</span>
+                  <input id="signupGarageName" placeholder="e.g. Apex Auto Care &amp; Service">
+                </div>
+              </div>
+
+              <div class="auth-field owner-only-field" style="display: none;">
+                <label for="signupAddress">Workshop Address</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">🏢</span>
+                  <input id="signupAddress" placeholder="e.g. Baner Main Road, Near Highway">
+                </div>
+              </div>
+
+              <div class="auth-row-2">
+                <div class="auth-field">
+                  <label for="signupDistrict">City / Sector</label>
+                  <div class="auth-input-wrap">
+                    <span class="auth-input-icon" aria-hidden="true">📍</span>
+                    <input id="signupDistrict" placeholder="Pune" value="Pune">
+                  </div>
+                </div>
+
+                <div class="auth-field">
+                  <label for="signupState">State</label>
+                  <div class="auth-input-wrap">
+                    <span class="auth-input-icon" aria-hidden="true">🏛️</span>
+                    <input id="signupState" placeholder="Maharashtra" value="Maharashtra">
+                  </div>
+                </div>
+              </div>
+
+              <div class="auth-field">
+                <label for="signupEmail">Email Address (Optional)</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">✉️</span>
+                  <input id="signupEmail" type="email" placeholder="name@example.com" autocomplete="email">
+                </div>
+              </div>
+
+              <button type="button" id="signupGetOtpBtn" class="auth-submit-btn">Get Verification Code →</button>
             </div>
-            <button type="submit">Continue</button>
-          </form>
-          <div id="loginStatus" class="status-banner" aria-live="polite"></div>
+
+            <!-- Step 2: OTP Verification & Account Creation -->
+            <div id="signupStepOtp" class="auth-step-panel" style="display: none;">
+              <div class="auth-inline-actions">
+                <span>Code sent to <strong id="signupDisplayMobile">+91 ...</strong></span>
+                <button type="button" id="signupChangeDetailsBtn" class="auth-link-btn">Edit Details</button>
+              </div>
+              <div class="auth-field">
+                <label for="signupOtp">6-Digit Verification Code</label>
+                <div class="auth-input-wrap">
+                  <input id="signupOtp" class="auth-input-otp" inputmode="numeric" maxlength="6" placeholder="• • • • • •" autocomplete="one-time-code">
+                </div>
+              </div>
+              <button type="button" id="signupCompleteBtn" class="auth-submit-btn">Verify OTP &amp; Create Account →</button>
+            </div>
+          </div>
+
+          <div id="loginStatus" class="status-banner" aria-live="polite" style="margin-top: 14px;"></div>
+
+          <p class="auth-footer-note">
+            AutoBuddy securely stores session credentials for direct service dispatches.
+          </p>
         </div>
       </aside>
     </section>
@@ -88,8 +265,6 @@
   <script src="assets/js/services.js" defer></script>
   <script src="assets/js/garage.js" defer></script>
   <script src="assets/js/map.js" defer></script>
-  <script src="assets/js/tracking-map.js" defer></script>
-  <script src="assets/js/tracking-ui.js" defer></script>
   <script src="assets/js/tracking-service.js" defer></script>
   <script src="assets/js/app.js" defer></script>
 </body>

@@ -2,6 +2,7 @@ const User = require("../models/User");
 
 /**
  * Login and user lookup handlers.
+ * Legacy endpoint — new clients should use /api/auth/otp/* routes.
  */
 function toStoredCoordinate(value) {
   return typeof value === "number" ? value : null;
@@ -15,6 +16,8 @@ function toSessionUser(user) {
     mobile: user.mobile,
     district: user.district,
     state: user.state,
+    role: user.role || "user",
+    garageId: user.garageId || null,
     lat: user.lat,
     lng: user.lng,
     createdAt: user.createdAt

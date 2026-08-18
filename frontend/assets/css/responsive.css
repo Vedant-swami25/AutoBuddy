@@ -1,97 +1,120 @@
 /**
- * Original responsive breakpoints shared by all pages.
- *
- * Moved from style.css to keep styling responsibilities easy to locate
- * while preserving the original cascade order.
+ * AutoBuddy Responsive Breakpoints
  */
 
-@media (max-width: 920px) {
-  .hero,
-  .map-layout,
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
   .auth-layout {
     grid-template-columns: 1fr;
+    padding: 24px;
+    gap: 28px;
   }
 
-  .stats-grid,
-  .action-grid {
-    grid-template-columns: 1fr;
+  .action-grid,
+  .workflow-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
 
-  .section-header,
-  .topbar,
-  .topbar-right {
-    align-items: start;
-    flex-direction: column;
+  .hero-3d-viewport {
+    height: 320px;
   }
 }
 
 @media (max-width: 640px) {
   .page-shell {
-    width: min(calc(100% - 20px), var(--max-width));
-    padding-top: 20px;
-    padding-bottom: 42px;
+    padding: 12px 12px 64px;
   }
 
-  .hero,
+  .topbar {
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    top: 8px;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .lead {
+    font-size: 0.95rem;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-cta-group button,
+  .hero-cta-group .button {
+    width: 100%;
+  }
+
+  .hero-trust-ribbon {
+    gap: 16px;
+  }
+
+  .trust-item strong {
+    font-size: 1.1rem;
+  }
+
   .panel,
   .list-shell,
-  .form-shell,
-  .map-layout,
-  .auth-layout {
-    padding: 20px;
-    border-radius: 22px;
+  .form-shell {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
   }
 
-  .list-card {
-    grid-template-columns: 1fr;
+  .hero-studio-card {
+    border-radius: var(--radius-lg);
+  }
+
+  .hero-3d-viewport {
+    height: 280px;
   }
 
   .service-card-footer {
-    align-items: stretch;
     flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
   .service-card-footer button,
   .service-price {
     width: 100%;
-    justify-content: center;
+    text-align: center;
   }
 
-  .booking-history-top {
-    align-items: start;
+  .garage-header-row {
     flex-direction: column;
-  }
-
-  .topbar-nav,
-  .topbar-controls {
-    width: 100%;
-  }
-
-  .theme-toggle,
-  .user-badge,
-  .topbar-controls .secondary {
-    width: 100%;
-    justify-content: center;
-  }
-
-  #map {
-    min-height: 400px;
-  }
-
-  .lead-highlight {
-    font-size: clamp(1.6rem, 7vw, 2.2rem);
-  }
-
-  .hero-van-art {
-    margin-top: 20px;
-    padding: 12px 12px 6px;
-    border-radius: 22px;
+    align-items: flex-start;
   }
 
   .floating-tracker {
     left: 12px;
     right: 12px;
     bottom: 12px;
-    width: auto;
+    width: calc(100% - 24px);
+    max-width: none;
   }
 }

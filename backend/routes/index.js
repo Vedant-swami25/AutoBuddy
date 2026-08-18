@@ -4,6 +4,8 @@
  * server.js imports one router table instead of knowing every feature file.
  */
 module.exports = [
+  { path: "/api/admin", router: require("./admin") },
+  { path: "/api/auth", router: require("./auth") },
   { path: "/api/book", router: require("./booking") },
   { path: "/api/garage", router: require("./garage") },
   { path: "/api/login", router: require("./login") },

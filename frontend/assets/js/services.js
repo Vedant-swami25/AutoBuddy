@@ -29,7 +29,8 @@ async function bookService(event) {
   try {
     const payload = await createBooking({
       user: {
-        name: session?.name || "Driver",
+        id: session?.id || null,
+        name: session?.name || "User",
         mobile: session?.mobile || ""
       },
       service: "Mobile Repair",
@@ -49,7 +50,7 @@ async function bookService(event) {
       const localBooking = storeBookingLocally({
         id: `BK-${Date.now()}`,
         user: {
-          name: session?.name || "Driver",
+          name: session?.name || "User",
           mobile: session?.mobile || ""
         },
         service: "Mobile Repair",
@@ -99,7 +100,8 @@ async function bookPricedService(serviceName, price, button) {
   try {
     const payload = await createBooking({
       user: {
-        name: session?.name || "Driver",
+        id: session?.id || null,
+        name: session?.name || "User",
         mobile: session?.mobile || ""
       },
       service: serviceName,
@@ -121,7 +123,7 @@ async function bookPricedService(serviceName, price, button) {
       const localBooking = storeBookingLocally({
         id: `SRV-${Date.now()}`,
         user: {
-          name: session?.name || "Driver",
+          name: session?.name || "User",
           mobile: session?.mobile || ""
         },
         service: serviceName,

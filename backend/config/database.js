@@ -9,6 +9,20 @@ async function connectDatabase() {
       serverSelectionTimeoutMS: 3000
     });
     console.log("MongoDB connected successfully");
+
+    // Clean up any legacy unique index on email
+    try {
+      const collection = mongoose.connection.collection("users");
+      const indexes = await collection.indexes();
+      const emailIndex = indexes.find((idx) => idx.name === "email_1");
+      if (emailIndex) {
+        await collection.dropIndex("email_1");
+        console.log("Cleaned up legacy email_1 unique index");
+      }
+    } catch (idxError) {
+      // Ignore if index doesn't exist
+    }
+
     return true;
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
