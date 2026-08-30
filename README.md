@@ -123,6 +123,8 @@ AutoBuddy
 │   │   └── pageRoutes.js
 │   │
 │   ├── controllers
+│   │   ├── adminController.js
+│   │   ├── authController.js
 │   │   ├── bookingController.js
 │   │   ├── garageController.js
 │   │   ├── locationController.js
@@ -133,24 +135,31 @@ AutoBuddy
 │   │   ├── garages.json
 │   │   └── pincode-cache.json
 │   │
+│   ├── middleware
+│   │   ├── adminAuth.js
+│   │   └── auth.js
+│   │
 │   ├── models
 │   │   ├── Booking.js
 │   │   ├── Garage.js
 │   │   └── User.js
 │   │
 │   ├── routes
+│   │   ├── admin.js
+│   │   ├── auth.js
 │   │   ├── booking.js
 │   │   ├── garage.js
+│   │   ├── index.js
 │   │   ├── location.js
 │   │   ├── login.js
-│   │   ├── pincode.js
-│   │   └── index.js
+│   │   └── pincode.js
 │   │
 │   ├── scripts
 │   │   └── migrate.js
 │   │
 │   ├── services
 │   │   ├── bookingTracking.js
+│   │   ├── otpService.js
 │   │   └── pincodeCache.js
 │   │
 │   ├── utils
@@ -160,13 +169,16 @@ AutoBuddy
 │
 ├── frontend
 │   ├── assets
-│   │   ├── css
-│   │   └── js
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── models/
 │   │
+│   ├── admin-dashboard.html
 │   ├── garage.html
 │   ├── index.html
 │   ├── login.html
 │   ├── map.html
+│   ├── owner-dashboard.html
 │   ├── partner.html
 │   ├── services.html
 │   └── tracking.html

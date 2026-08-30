@@ -20,6 +20,11 @@
   overflow-x: auto;
 }
 
+body[data-theme="light"] .bookings-filter-tabs {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
 .bookings-tab-btn {
   padding: 8px 16px;
   border-radius: var(--radius-sm);
@@ -47,6 +52,21 @@
   box-shadow: 0 2px 8px rgba(0, 132, 255, 0.3);
 }
 
+body[data-theme="light"] .bookings-tab-btn {
+  color: #334155;
+}
+
+body[data-theme="light"] .bookings-tab-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+body[data-theme="light"] .bookings-tab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
 .bookings-feed-list {
   display: flex;
   flex-direction: column;
@@ -70,6 +90,16 @@
 .user-booking-card:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-sm);
+}
+
+body[data-theme="light"] .user-booking-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+body[data-theme="light"] .user-booking-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
 
 .user-booking-card.status-pending {
@@ -140,6 +170,11 @@
   border: 1px solid var(--border-subtle);
 }
 
+body[data-theme="light"] .user-booking-details-grid {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
 .user-booking-item {
   display: flex;
   flex-direction: column;
@@ -182,6 +217,12 @@
   gap: 8px;
 }
 
+body[data-theme="light"] .user-booking-note {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.25);
+  color: #334155;
+}
+
 .user-booking-note strong {
   color: var(--accent-primary);
 }
@@ -206,6 +247,18 @@
   background: rgba(16, 185, 129, 0.12) !important;
   color: #10b981 !important;
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+body[data-theme="light"] .error-chip {
+  background: rgba(220, 38, 38, 0.1) !important;
+  color: #b91c1c !important;
+  border-color: rgba(220, 38, 38, 0.25) !important;
+}
+
+body[data-theme="light"] .success-chip {
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: #047857 !important;
+  border-color: rgba(5, 150, 105, 0.25) !important;
 }
 
 @media (max-width: 768px) {

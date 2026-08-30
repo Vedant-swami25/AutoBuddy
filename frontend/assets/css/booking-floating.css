@@ -28,6 +28,13 @@
   border-color: #38bdf8;
 }
 
+body[data-theme="light"] .floating-tracker {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #0284c7;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.2);
+}
+
 .floating-tracker-icon {
   display: flex;
   align-items: center;

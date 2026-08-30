@@ -1,0 +1,212 @@
+[
+  {
+    "id": "srv-001",
+    "name": "Exterior Foam Wash",
+    "category": "Vehicle Wash & Cleaning",
+    "description": "High-pressure exterior wash, wheel arches cleaning, and microfiber dry finish.",
+    "price": 300,
+    "vehicleType": "both",
+    "durationMinutes": 30,
+    "popular": true
+  },
+  {
+    "id": "srv-002",
+    "name": "Interior Vacuum & Wipe",
+    "category": "Vehicle Wash & Cleaning",
+    "description": "Cabin vacuuming, dashboard UV wipe, seat cleaning, and floor mat wash.",
+    "price": 400,
+    "vehicleType": "car",
+    "durationMinutes": 45,
+    "popular": false
+  },
+  {
+    "id": "srv-003",
+    "name": "Full Inside-Out Wash",
+    "category": "Vehicle Wash & Cleaning",
+    "description": "Complete exterior foam detailing plus complete interior vacuum and sanitize.",
+    "price": 700,
+    "vehicleType": "car",
+    "durationMinutes": 60,
+    "popular": true
+  },
+  {
+    "id": "srv-004",
+    "name": "Bike Foam Wash & Chain Care",
+    "category": "Vehicle Wash & Cleaning",
+    "description": "Pressure wash, degreasing, microfiber dry, chain degrease and high-adhesion lubrication.",
+    "price": 250,
+    "vehicleType": "bike",
+    "durationMinutes": 35,
+    "popular": true
+  },
+  {
+    "id": "srv-005",
+    "name": "Hydrophobic Wax Polish",
+    "category": "Detailing & Paint Care",
+    "description": "Multi-stage carnauba wax application for paint gloss and water repellency.",
+    "price": 1200,
+    "vehicleType": "both",
+    "durationMinutes": 60,
+    "popular": false
+  },
+  {
+    "id": "srv-006",
+    "name": "Interior Deep Upholstery Cleaning",
+    "category": "Detailing & Paint Care",
+    "description": "Deep steam extraction for seats, roof lining, and fabric shampooing.",
+    "price": 1500,
+    "vehicleType": "car",
+    "durationMinutes": 90,
+    "popular": false
+  },
+  {
+    "id": "srv-007",
+    "name": "Full Showroom Detailing",
+    "category": "Detailing & Paint Care",
+    "description": "Engine bay dress, machine polish, 6-month sealant, and complete interior overhaul.",
+    "price": 2500,
+    "vehicleType": "car",
+    "durationMinutes": 120,
+    "popular": true
+  },
+  {
+    "id": "srv-008",
+    "name": "Engine Oil & Filter Service",
+    "category": "Essential Maintenance",
+    "description": "Synthetic/semi-synthetic engine oil replacement with new oil filter install.",
+    "price": 1200,
+    "vehicleType": "both",
+    "durationMinutes": 45,
+    "popular": true
+  },
+  {
+    "id": "srv-009",
+    "name": "Brake Inspection & Adjustment",
+    "category": "Essential Maintenance",
+    "description": "Brake pad caliper inspection, rotor wear check, and handbrake tuning.",
+    "price": 500,
+    "vehicleType": "both",
+    "durationMinutes": 40,
+    "popular": false
+  },
+  {
+    "id": "srv-010",
+    "name": "Battery Health Analysis",
+    "category": "Essential Maintenance",
+    "description": "Load testing, terminal cleaning, and charging alternator check.",
+    "price": 200,
+    "vehicleType": "both",
+    "durationMinutes": 20,
+    "popular": false
+  },
+  {
+    "id": "srv-011",
+    "name": "AC Refrigerant Top-Up",
+    "category": "Essential Maintenance",
+    "description": "AC system leak test, compressor lubrication, and refrigerant gas refill.",
+    "price": 1500,
+    "vehicleType": "car",
+    "durationMinutes": 45,
+    "popular": false
+  },
+  {
+    "id": "srv-012",
+    "name": "Cooling & Radiator Flush",
+    "category": "Essential Maintenance",
+    "description": "Full cooling system flush, pressure leak test, and premium anti-freeze refill.",
+    "price": 850,
+    "vehicleType": "car",
+    "durationMinutes": 50,
+    "popular": false
+  },
+  {
+    "id": "srv-013",
+    "name": "Suspension & Struts Inspection",
+    "category": "Essential Maintenance",
+    "description": "Shock absorber check, bushing wear inspection, and steering alignment.",
+    "price": 1100,
+    "vehicleType": "both",
+    "durationMinutes": 55,
+    "popular": false
+  },
+  {
+    "id": "srv-014",
+    "name": "Exhaust & Emissions Diagnostic",
+    "category": "Essential Maintenance",
+    "description": "Catalytic converter scan, muffler inspection, and oxygen sensor test.",
+    "price": 750,
+    "vehicleType": "both",
+    "durationMinutes": 35,
+    "popular": false
+  },
+  {
+    "id": "srv-015",
+    "name": "LED Lighting & Circuit Test",
+    "category": "Essential Maintenance",
+    "description": "High-beam alignment, fuse box diagnostic, and wiring harness check.",
+    "price": 450,
+    "vehicleType": "both",
+    "durationMinutes": 30,
+    "popular": false
+  },
+  {
+    "id": "srv-016",
+    "name": "Bike Chain Clean & Lube",
+    "category": "Essential Maintenance",
+    "description": "Heavy-duty chain degreasing, O-ring inspection, and high-tack synthetic lubrication.",
+    "price": 200,
+    "vehicleType": "bike",
+    "durationMinutes": 25,
+    "popular": true
+  },
+  {
+    "id": "srv-017",
+    "name": "Bike Carburetor & Fuel Injector Service",
+    "category": "Essential Maintenance",
+    "description": "Ultrasonic nozzle cleaning, air-fuel mixture tuning, and idle speed calibration.",
+    "price": 450,
+    "vehicleType": "bike",
+    "durationMinutes": 45,
+    "popular": false
+  },
+  {
+    "id": "srv-018",
+    "name": "Bike Fork Oil & Seal Replacement",
+    "category": "Essential Maintenance",
+    "description": "Front fork disassembly, fresh hydraulic damping oil refill, and new dust seals.",
+    "price": 600,
+    "vehicleType": "bike",
+    "durationMinutes": 60,
+    "popular": false
+  },
+  {
+    "id": "srv-019",
+    "name": "Breakdown On-Site Response",
+    "category": "Emergency Assistance",
+    "description": "Priority mechanical dispatch for sudden vehicle immobilization or starting failure.",
+    "price": 1000,
+    "vehicleType": "both",
+    "durationMinutes": 20,
+    "popular": true
+  },
+  {
+    "id": "srv-020",
+    "name": "Emergency Battery Jumpstart",
+    "category": "Emergency Assistance",
+    "description": "Heavy-duty booster pack jumpstart service on-location within minutes.",
+    "price": 500,
+    "vehicleType": "both",
+    "durationMinutes": 15,
+    "popular": true
+  },
+  {
+    "id": "srv-021",
+    "name": "Flat Tire / Puncture Repair",
+    "category": "Emergency Assistance",
+    "description": "Rapid tubeless puncture sealing, air inflation, or spare wheel swap.",
+    "price": 150,
+    "vehicleType": "both",
+    "durationMinutes": 20,
+    "popular": true
+  }
+]

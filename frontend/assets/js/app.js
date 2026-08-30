@@ -1,27 +1,23 @@
 /**
- * Application bootstrap and page-level initialization only.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
+ * AutoBuddy Application Bootstrap & Global UI Enhancement
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  initTheme();
+  if (typeof initTheme === "function") {
+    initTheme();
+  }
 
-  if (!guardRoute()) {
+  if (typeof guardRoute === "function" && !guardRoute()) {
     return;
   }
 
-  renderSessionUi();
-  initLoginForm();
-  loadGarages();
-  loadMap();
-  loadTracking();
-  startBookingBackgroundTracker();
+  if (typeof renderSessionUi === "function") {
+    renderSessionUi();
+  }
 
   const params = new URLSearchParams(window.location.search);
   const notice = params.get("notice");
-  if (notice) {
+  if (notice && typeof showToast === "function") {
     showToast(notice, "warning");
   }
 
@@ -31,9 +27,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (typeof window.initRevealAnimations === "function") {
     window.initRevealAnimations();
-  }
-
-  if (document.getElementById("homeGaragePreview") && typeof window.loadHomeGaragePreview === "function") {
-    window.loadHomeGaragePreview();
   }
 });

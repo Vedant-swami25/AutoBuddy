@@ -1,8 +1,5 @@
 /**
  * Shared booking state, progress enrichment, and local fallback business rules.
- *
- * This code was moved out of app.js so this file has one feature-focused
- * responsibility while preserving the original browser behavior.
  */
 
 function enrichStoredBooking(booking) {
@@ -34,10 +31,10 @@ function enrichStoredBooking(booking) {
     lat: Number(booking.garageLocation?.lat ?? booking.garageLat),
     lng: Number(booking.garageLocation?.lng ?? booking.garageLng)
   };
-  const safeDestination = hasValidCoordinates(destination)
+  const safeDestination = typeof hasValidCoordinates === "function" && hasValidCoordinates(destination)
     ? destination
     : null;
-  const safeOrigin = hasValidCoordinates(origin)
+  const safeOrigin = typeof hasValidCoordinates === "function" && hasValidCoordinates(origin)
     ? origin
     : safeDestination
       ? { lat: safeDestination.lat + 0.028, lng: safeDestination.lng - 0.024 }
@@ -72,37 +69,11 @@ function enrichStoredBooking(booking) {
 }
 
 function openTrackingForBooking(booking) {
-  if (!booking || !isPendingBooking(booking)) {
-    return;
+  if (!booking) return;
+  if (typeof setActiveBooking === "function") {
+    setActiveBooking(booking);
   }
-
-  setActiveBooking(booking);
   window.location.href = `tracking.html?booking=${encodeURIComponent(booking.id)}`;
-}
-
-function getTrackingTargetBooking() {
-  const params = new URLSearchParams(window.location.search);
-  const bookingId = params.get("booking");
-  const activeBooking = getActiveBooking();
-  const storedBookings = getUserScopedBookings(getStoredBookings()).map(enrichStoredBooking);
-
-  if (bookingId) {
-    const targetBooking = storedBookings.find((booking) => booking.id === bookingId) || activeBooking;
-    return isPendingBooking(targetBooking) ? targetBooking : null;
-  }
-
-  if (isPendingBooking(activeBooking)) {
-    return activeBooking;
-  }
-
-  return storedBookings.find(isPendingBooking) || null;
-}
-
-function completeLogin(session, statusMessage = "Authentication successful. Opening your dashboard now...") {
-  persistLoginSession(session);
-  setStatus("loginStatus", statusMessage, "success");
-  showToast(`Welcome, ${session.name}.`, "success");
-  window.location.replace(getRedirectTarget());
 }
 
 function isPendingBooking(booking) {
@@ -110,7 +81,7 @@ function isPendingBooking(booking) {
     return false;
   }
 
-  if (String(booking.status).toLowerCase() === "cancelled") {
+  if (String(booking.status).toLowerCase() === "cancelled" || String(booking.status).toLowerCase() === "rejected") {
     return false;
   }
 
@@ -119,18 +90,21 @@ function isPendingBooking(booking) {
 }
 
 function getPendingBooking() {
-  const activeBooking = getActiveBooking();
+  const activeBooking = typeof getActiveBooking === "function" ? getActiveBooking() : null;
   if (isPendingBooking(activeBooking)) {
     return activeBooking;
   }
 
-  const storedBookings = getUserScopedBookings(getStoredBookings()).map(enrichStoredBooking);
+  const storedBookings = typeof getStoredBookings === "function"
+    ? getUserScopedBookings(getStoredBookings()).map(enrichStoredBooking)
+    : [];
   return storedBookings.find(isPendingBooking) || null;
 }
 
 function hasPendingBooking() {
-  const activeBooking = getActiveBooking();
-  return Boolean(getAuthSession()?.mobile && isPendingBooking(activeBooking));
+  const activeBooking = typeof getActiveBooking === "function" ? getActiveBooking() : null;
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
+  return Boolean(session?.mobile && isPendingBooking(activeBooking));
 }
 
 function toggleTrackingLinkVisibility() {
@@ -147,10 +121,15 @@ function shouldUseLocalBookingFallback(error) {
     message.includes("405") ||
     message.includes("failed to fetch") ||
     message.includes("networkerror") ||
-    message.includes("booking failed") ||
     message.includes("mongodb") ||
-    message.includes("mongoose") ||
-    message.includes("operation")
+    message.includes("mongoose")
   );
 }
 
+window.enrichStoredBooking = enrichStoredBooking;
+window.openTrackingForBooking = openTrackingForBooking;
+window.isPendingBooking = isPendingBooking;
+window.getPendingBooking = getPendingBooking;
+window.hasPendingBooking = hasPendingBooking;
+window.toggleTrackingLinkVisibility = toggleTrackingLinkVisibility;
+window.shouldUseLocalBookingFallback = shouldUseLocalBookingFallback;

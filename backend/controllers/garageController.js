@@ -29,16 +29,48 @@ function buildGarageDocument(payload) {
   });
 }
 
+const AUTOBUDDY_SUPPORT_PHONE = "+91 1800-889-2889";
+
+function sanitizeGarageForCustomer(garage, isPrivileged = false) {
+  const doc = garage.toObject ? garage.toObject() : { ...garage };
+  if (isPrivileged) {
+    return doc;
+  }
+  return {
+    id: doc.id,
+    name: doc.name,
+    address: doc.address,
+    lat: doc.lat,
+    lng: doc.lng,
+    city: doc.city,
+    verified: doc.verified,
+    rating: doc.rating,
+    etaMinutes: doc.etaMinutes,
+    hours: doc.hours,
+    mechanic: doc.mechanic || doc.ownerName || "Certified Head Mechanic",
+    services: doc.services,
+    vehicleTypes: doc.vehicleTypes,
+    image: doc.image,
+    specialties: doc.specialties,
+    available: doc.available,
+    phone: AUTOBUDDY_SUPPORT_PHONE,
+    supportPhone: AUTOBUDDY_SUPPORT_PHONE
+  };
+}
+
 /**
- * List garages with strict deduplication by ID and Name+Phone
+ * List garages with strict deduplication by ID and Name+Phone.
+ * Customers and guests receive sanitized privacy-safe contact info (AutoBuddy Support).
  */
-async function listGarages(_req, res) {
+async function listGarages(req, res) {
   try {
     const dbGarages = await Garage.find().sort({ createdAt: -1 });
 
     const seenIds = new Set();
     const seenNames = new Set();
     const uniqueGarages = [];
+
+    const isPrivileged = req.user && req.user.role === "admin";
 
     // Helper to add unique garage
     function addUnique(garage) {
@@ -52,7 +84,9 @@ async function listGarages(_req, res) {
 
       if (gId) seenIds.add(gId);
       if (uniqueKey) seenNames.add(uniqueKey);
-      uniqueGarages.push(garage);
+
+      const isOwnerOfGarage = req.user && req.user.role === "garage_owner" && req.user.garageId === gId;
+      uniqueGarages.push(sanitizeGarageForCustomer(garage, isPrivileged || isOwnerOfGarage));
     }
 
     dbGarages.forEach(addUnique);
@@ -61,7 +95,7 @@ async function listGarages(_req, res) {
     return res.json(uniqueGarages);
   } catch (error) {
     console.error("Fetch garages error:", error);
-    return res.json(fallbackGarages);
+    return res.json(fallbackGarages.map((g) => sanitizeGarageForCustomer(g, false)));
   }
 }
 
@@ -107,7 +141,12 @@ async function getGarageById(req, res) {
       return res.status(404).json({ message: "Garage not found" });
     }
 
-    return res.json(garage);
+    const isPrivileged = req.user && (
+      req.user.role === "admin" ||
+      (req.user.role === "garage_owner" && req.user.garageId === garage.id)
+    );
+
+    return res.json(sanitizeGarageForCustomer(garage, isPrivileged));
   } catch (error) {
     console.error("Fetch garage error:", error);
     return res.status(500).json({ message: "Failed to fetch garage: " + error.message });

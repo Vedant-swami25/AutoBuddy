@@ -8,24 +8,50 @@ async function migrateData() {
     await connectDatabase();
     console.log("Connected to MongoDB");
 
-    // Migrate garage data only
     const garageDataPath = path.join(__dirname, "..", "data", "garages.json");
     if (fs.existsSync(garageDataPath)) {
       const garageData = JSON.parse(fs.readFileSync(garageDataPath, "utf8"));
       if (Array.isArray(garageData) && garageData.length > 0) {
-        console.log(`Migrating ${garageData.length} garage records...`);
+        console.log(`Syncing ${garageData.length} verified garage records...`);
+        let inserted = 0;
+        let updated = 0;
+
         for (const entry of garageData) {
-          const exists = await Garage.findOne({ id: entry.id });
-          if (!exists) {
+          const existing = await Garage.findOne({ id: entry.id });
+          if (!existing) {
             const garage = new Garage(entry);
             await garage.save();
+            inserted++;
+          } else {
+            // Update metadata while preserving owner linkage if already set
+            existing.name = entry.name;
+            existing.address = entry.address;
+            existing.lat = entry.lat;
+            existing.lng = entry.lng;
+            existing.city = entry.city;
+            existing.verified = entry.verified;
+            existing.rating = entry.rating;
+            existing.etaMinutes = entry.etaMinutes;
+            existing.phone = entry.phone;
+            existing.hours = entry.hours;
+            existing.mechanic = existing.mechanic || entry.mechanic;
+            existing.services = entry.services;
+            existing.vehicleTypes = entry.vehicleTypes;
+            existing.specialties = entry.specialties;
+            existing.available = true;
+            existing.updatedAt = new Date();
+            await existing.save();
+            updated++;
           }
         }
-        console.log("✓ Garage data migrated successfully");
+        console.log(`✓ Sync complete: ${inserted} added, ${updated} verified/updated (Total: ${garageData.length} garages)`);
       }
     } else {
-      console.log("No garage data to migrate");
+      console.log("No garage data found at " + garageDataPath);
     }
+
+    const totalCount = await Garage.countDocuments();
+    console.log(`Total verified garages in MongoDB: ${totalCount}`);
 
     console.log("\nMigration completed successfully");
     await mongoose.connection.close();

@@ -118,7 +118,7 @@ function renderUserBookingsFeed() {
     const garageName = booking.garage || "AutoBuddy Service Partner";
     const serviceName = booking.service || "General Workshop Service";
     const location = booking.city || "Pune, Maharashtra";
-    const garagePhone = booking.phone || "+91 98220 11000";
+    const supportPhone = booking.supportPhone || (typeof AUTOBUDDY_SUPPORT_PHONE !== "undefined" ? AUTOBUDDY_SUPPORT_PHONE : "+91 1800-889-2889");
 
     const canCancel = status === "pending";
     const cancelAction = canCancel
@@ -126,7 +126,7 @@ function renderUserBookingsFeed() {
       : "";
 
     const contactAction = (status === "accepted" || status === "in_progress")
-      ? `<a href="tel:${garagePhone}" class="map-garage-phone" style="font-size: 0.84rem; font-weight: 600;">📞 Call Garage (${garagePhone})</a>`
+      ? `<span class="map-garage-phone" style="font-size: 0.84rem; font-weight: 600; color: var(--accent-primary);">📞 AutoBuddy Helpline: ${supportPhone}</span>`
       : "";
 
     return `

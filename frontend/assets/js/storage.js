@@ -19,6 +19,7 @@ function persistLoginSession(session) {
 
 function clearLoginSession() {
   localStorage.removeItem(AUTH_STORAGE_KEY);
+  localStorage.removeItem(ACTIVE_BOOKING_KEY);
   sessionStorage.removeItem("autobuddyActiveGarageId");
   sessionStorage.removeItem("autobuddyActiveBooking");
 }
@@ -28,6 +29,13 @@ function getStoredBookings() {
     return JSON.parse(localStorage.getItem(BOOKING_STORAGE_KEY) || "[]");
   } catch (error) {
     return [];
+  }
+}
+
+function saveStoredBookings(bookings) {
+  localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookings || []));
+  if (typeof toggleTrackingLinkVisibility === "function") {
+    toggleTrackingLinkVisibility();
   }
 }
 
@@ -51,8 +59,7 @@ function getUserScopedBookings(bookings) {
 function storeBookingLocally(booking) {
   const bookings = getStoredBookings();
   bookings.unshift(booking);
-  localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookings));
-  toggleTrackingLinkVisibility();
+  saveStoredBookings(bookings);
   return booking;
 }
 
@@ -63,7 +70,9 @@ function setActiveBooking(booking) {
     localStorage.setItem(ACTIVE_BOOKING_KEY, JSON.stringify(booking));
   }
 
-  toggleTrackingLinkVisibility();
+  if (typeof toggleTrackingLinkVisibility === "function") {
+    toggleTrackingLinkVisibility();
+  }
   if (typeof window !== "undefined" && typeof window.renderFloatingTrackerLauncher === "function") {
     window.renderFloatingTrackerLauncher();
   }
@@ -75,11 +84,6 @@ function getActiveBooking() {
   } catch (error) {
     return null;
   }
-}
-
-function getLatestStoredBookingForUser() {
-  const bookings = getUserScopedBookings(getStoredBookings());
-  return enrichStoredBooking(bookings[0]) || null;
 }
 
 function getMapGarageIndex() {
@@ -104,6 +108,7 @@ window.getAuthSession = getAuthSession;
 window.persistLoginSession = persistLoginSession;
 window.clearLoginSession = clearLoginSession;
 window.getStoredBookings = getStoredBookings;
+window.saveStoredBookings = saveStoredBookings;
 window.storeBookingLocally = storeBookingLocally;
 window.setActiveBooking = setActiveBooking;
 window.getActiveBooking = getActiveBooking;

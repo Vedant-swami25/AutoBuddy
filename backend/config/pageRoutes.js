@@ -12,7 +12,8 @@ const pageRoutes = {
   "/owner": "owner-dashboard.html",
   "/owner-dashboard": "owner-dashboard.html",
   "/admin": "admin-dashboard.html",
-  "/admin-dashboard": "admin-dashboard.html"
+  "/admin-dashboard": "admin-dashboard.html",
+  "/partner": "partner.html"
 };
 
 module.exports = { pageRoutes };

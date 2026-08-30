@@ -33,8 +33,18 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "rejected", "in_progress", "completed", "cancelled"],
     default: "pending"
   },
+  vehicleType: {
+    type: String,
+    enum: ["car", "bike"],
+    default: "car"
+  },
   vehicleInfo: { type: String, default: null },
   ownerNote: { type: String, default: null }
 });
 
+bookingSchema.index({ garageId: 1, createdAt: -1 });
+bookingSchema.index({ "user.mobile": 1, createdAt: -1 });
+bookingSchema.index({ status: 1 });
+
 module.exports = mongoose.model("Booking", bookingSchema);
+

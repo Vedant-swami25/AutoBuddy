@@ -12,8 +12,7 @@ function renderGarageCard(garage) {
   const verificationClass = garage.verified ? "badge success-chip" : "badge warning";
   const verificationText = garage.verified ? "Verified Partner" : "Workshop";
   const locationText = garage.address || garage.city || "Pune, Maharashtra";
-  const ownerName = garage.mechanic || garage.ownerName || "AutoBuddy Partner";
-  const phone = garage.phone || "+91 98220 11000";
+  const ownerName = garage.mechanic || garage.ownerName || "AutoBuddy Certified Workshop";
   const servicesList = garage.services || garage.specialties || ["General Service", "Diagnostics"];
   const ratingText = `${garage.rating || 4.8} ★`;
   const etaText = garage.etaMinutes ? `~${garage.etaMinutes} min response` : "Open today";
@@ -30,8 +29,6 @@ function renderGarageCard(garage) {
       
       <div style="font-size: 0.82rem; color: var(--text-secondary); margin: 6px 0; display: flex; flex-wrap: wrap; gap: 8px;">
         <span>👤 <strong>${ownerName}</strong></span>
-        <span>•</span>
-        <a href="tel:${phone}" style="color: var(--accent-primary); font-weight: 600; text-decoration: none;">📞 ${phone}</a>
       </div>
 
       <div class="list-meta" style="margin-top: 8px;">
@@ -169,7 +166,7 @@ async function bookGarage(garage, button) {
         travelMinutes: garage.etaMinutes || 20,
         mechanic: garage.mechanic || garage.ownerName || "AutoBuddy Partner",
         vehicle: garage.vehicle || "Service Van",
-        phone: garage.phone || "+91 98220 11000",
+        phone: garage.supportPhone || (typeof AUTOBUDDY_SUPPORT_PHONE !== "undefined" ? AUTOBUDDY_SUPPORT_PHONE : "+91 1800-889-2889"),
         createdAt: new Date().toISOString(),
         garageLocation: {
           lat: garage.lat || null,

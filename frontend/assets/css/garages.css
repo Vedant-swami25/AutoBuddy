@@ -1,11 +1,13 @@
 /**
  * AutoBuddy Verified Garage Network Styles
+ * Professional, grid-aligned workshop card directory.
  */
+
 .list-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-  margin-top: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
 }
 
 .list-card {
@@ -13,39 +15,51 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 0;
-  min-height: 240px;
-  border-radius: var(--radius-lg);
+  min-height: 220px;
+  border-radius: var(--radius-md);
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  transition: all 0.25s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   overflow: hidden;
+}
+
+.list-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+body[data-theme="light"] .list-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+body[data-theme="light"] .list-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
 
 .garage-card-visual {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
-  min-height: 72px;
-  background:
-    linear-gradient(135deg, rgba(0, 0, 0, 0.15), transparent 60%),
-    linear-gradient(160deg, var(--garage-accent, #1e3a5f) 0%, rgba(8, 12, 20, 0.9) 100%);
+  padding: 10px 16px;
+  min-height: 52px;
+  background: var(--bg-surface-elevated);
   border-bottom: 1px solid var(--border-subtle);
+}
+
+body[data-theme="light"] .garage-card-visual {
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 .garage-card-main {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 18px 20px 0;
+  gap: 6px;
+  padding: 16px 16px 0;
   flex: 1;
-}
-
-.list-card:hover {
-  border-color: var(--border-hover);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
 }
 
 .home-garage-preview {
@@ -53,26 +67,34 @@
 }
 
 .garage-title {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .garage-rating {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.85rem;
+  font-size: 0.80rem;
   font-weight: 700;
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.06);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+body[data-theme="light"] .garage-rating {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
 .garage-address {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -81,40 +103,54 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   margin-top: 6px;
 }
 
 .meta-chip {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
   background: var(--surface-soft);
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
+}
+
+body[data-theme="light"] .meta-chip {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
 }
 
 .garage-card-action {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 20px;
+  padding: 12px 16px 16px;
   margin-top: auto;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .garage-eta-tag {
-  font-size: 0.84rem;
+  font-size: 0.80rem;
   font-weight: 600;
   color: var(--accent-primary);
 }
 
 .empty-state {
   grid-column: 1 / -1;
-  padding: 48px 24px;
+  padding: 36px 20px;
   text-align: center;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--bg-surface);
-  border: 1px dashed var(--border-subtle);
+  border: 1px dashed var(--border-medium);
   color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+body[data-theme="light"] .empty-state {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
 }

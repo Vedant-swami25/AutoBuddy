@@ -1,26 +1,28 @@
 /**
  * AutoBuddy Services Catalog Styles
+ * Professional, high-contrast automotive service catalog.
  */
+
 .services-tabs-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 28px;
-  padding-bottom: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .service-filter-pill {
-  padding: 8px 16px;
-  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
   background: var(--surface-soft);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 36px;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  min-height: 32px;
   box-shadow: none;
 }
 
@@ -35,33 +37,51 @@
   background: var(--accent-primary);
   color: #ffffff;
   border-color: var(--accent-primary);
-  box-shadow: 0 2px 8px rgba(0, 132, 255, 0.3);
+}
+
+body[data-theme="light"] .service-filter-pill {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+body[data-theme="light"] .service-filter-pill:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+body[data-theme="light"] .service-filter-pill.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
 }
 
 .services-stack {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 32px;
 }
 
 .services-group-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .services-group-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
   background: var(--accent-primary-soft);
   color: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
+  flex-shrink: 0;
 }
 
 .services-group-emergency .services-group-icon {
@@ -71,20 +91,20 @@
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
 .service-card {
-  padding: 24px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 200px;
-  border-radius: var(--radius-lg);
+  min-height: 180px;
+  border-radius: var(--radius-md);
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  transition: all 0.25s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
 .service-card:hover {
@@ -93,37 +113,50 @@
   box-shadow: var(--shadow-md);
 }
 
+body[data-theme="light"] .service-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+body[data-theme="light"] .service-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
 .service-card .card-title {
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  line-height: 1.25;
 }
 
 .service-card p {
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
-  line-height: 1.55;
-  margin-bottom: 20px;
+  line-height: 1.5;
+  margin-top: 4px;
+  margin-bottom: 14px;
 }
 
 .service-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-subtle);
+  margin-top: auto;
 }
 
 .service-price {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .service-card-footer button {
-  min-height: 38px;
-  padding: 6px 14px;
-  font-size: 0.84rem;
+  min-height: 32px;
+  padding: 5px 12px;
+  font-size: 0.80rem;
 }

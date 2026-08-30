@@ -1,9 +1,24 @@
 /**
- * Shared JSON request handling for all AutoBuddy integrations.
+ * Shared JSON request handling with automatic session credential attachment.
  */
 
 async function requestJson(url, options = {}) {
-  const response = await fetch(url, options);
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+
+  if (session?.mobile) {
+    headers["x-user-mobile"] = session.mobile;
+    if (session.id) headers["x-user-id"] = session.id;
+    if (session.role) headers["x-user-role"] = session.role;
+    if (session.role === "admin" || session.mobile === "9579278177") {
+      headers["x-admin-mobile"] = session.mobile;
+    }
+  }
+
+  const response = await fetch(url, { ...options, headers });
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
 
@@ -25,7 +40,6 @@ async function requestJson(url, options = {}) {
 function signinOtpApi(payload) {
   return requestJson(`${API}/auth/signin-otp`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -33,7 +47,6 @@ function signinOtpApi(payload) {
 function verifySigninApi(payload) {
   return requestJson(`${API}/auth/verify-signin`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -41,7 +54,6 @@ function verifySigninApi(payload) {
 function signupOtpApi(payload) {
   return requestJson(`${API}/auth/signup-otp`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -49,7 +61,6 @@ function signupOtpApi(payload) {
 function signupApi(payload) {
   return requestJson(`${API}/auth/signup`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -57,7 +68,6 @@ function signupApi(payload) {
 function sendOtpApi(payload) {
   return requestJson(`${API}/auth/send-otp`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -65,21 +75,12 @@ function sendOtpApi(payload) {
 function verifyOtpApi(payload) {
   return requestJson(`${API}/auth/verify-otp`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
 
 function checkAccountApi(mobile, role) {
   return requestJson(`${API}/auth/check-account?mobile=${encodeURIComponent(mobile)}&role=${encodeURIComponent(role)}`);
-}
-
-function saveLogin(payload) {
-  return requestJson(`${API}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
 }
 
 // Location API
@@ -93,7 +94,6 @@ function reverseGeocode(latitude, longitude) {
 function createBooking(payload) {
   return requestJson(`${API}/book`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
@@ -123,15 +123,13 @@ function fetchGarageBookings(garageId) {
 function updateBookingStatusApi(bookingId, payload) {
   return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/status`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }
 
 function cancelBookingRequest(bookingId) {
   return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/cancel`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" }
+    method: "POST"
   });
 }
 
@@ -147,7 +145,6 @@ function fetchGarageById(garageId) {
 function submitGarageApplication(payload) {
   return requestJson(`${API}/garage`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 }

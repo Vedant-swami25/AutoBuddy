@@ -14,26 +14,22 @@ let authState = {
   demoOtp: null
 };
 
-function getCurrentPage() {
-  const page = window.location.pathname.split("/").pop();
-  return page || "index.html";
-}
+const PUBLIC_PAGES = ["login.html", "partner.html"];
 
-function getAuthSession() {
-  try {
-    return JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) || "null");
-  } catch (error) {
-    return null;
-  }
+function getCurrentPage() {
+  let page = window.location.pathname.split("/").pop();
+  if (!page || page === "home" || page === "") page = "index.html";
+  if (!page.endsWith(".html")) page = `${page}.html`;
+  return page;
 }
 
 function isAuthenticated() {
-  const session = getAuthSession();
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
   return Boolean(session?.mobile);
 }
 
 function getUserRole() {
-  const session = getAuthSession();
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
   return session?.role || "user";
 }
 
@@ -42,7 +38,7 @@ function isGarageOwner() {
 }
 
 function isAdmin() {
-  const session = getAuthSession();
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
   return session?.role === "admin" || session?.mobile === ADMIN_MOBILE;
 }
 
@@ -50,13 +46,13 @@ function getRedirectTarget() {
   const params = new URLSearchParams(window.location.search);
   const redirect = params.get("redirect");
 
-  if (!redirect || redirect.includes("login.html") || redirect === "login") {
-    if (isAdmin()) return "admin-dashboard.html";
-    if (isGarageOwner()) return "owner-dashboard.html";
-    return "index.html";
+  if (redirect && !redirect.includes("login.html") && redirect !== "login") {
+    return redirect;
   }
 
-  return redirect;
+  if (isAdmin()) return "admin-dashboard.html";
+  if (isGarageOwner()) return "owner-dashboard.html";
+  return "index.html";
 }
 
 function guardRoute() {
@@ -64,38 +60,98 @@ function guardRoute() {
   const role = getUserRole();
   const currentPage = getCurrentPage();
 
-  // Protect Admin Dashboard
+  // 1. Unauthenticated users must NOT access protected pages (Login-First architecture)
+  if (!loggedIn) {
+    if (!PUBLIC_PAGES.includes(currentPage)) {
+      let redirectQuery = "";
+      if (currentPage === "owner-dashboard.html") {
+        redirectQuery = "?role=owner&redirect=owner-dashboard.html";
+      } else if (currentPage === "admin-dashboard.html") {
+        redirectQuery = "?redirect=admin-dashboard.html";
+      } else if (currentPage !== "index.html") {
+        redirectQuery = `?redirect=${encodeURIComponent(currentPage)}`;
+      }
+      window.location.replace(`login.html${redirectQuery}`);
+      return false;
+    }
+    return true;
+  }
+
+  // 2. Authenticated users visiting login page -> Redirect to their role destination
+  if (currentPage === "login.html") {
+    const target = getRedirectTarget();
+    window.location.replace(target);
+    return false;
+  }
+
+  // 3. Protect Admin Dashboard from non-admins
   if (currentPage === "admin-dashboard.html") {
-    if (!loggedIn || !isAdmin()) {
-      showToast("Access restricted: Administrator credentials required.", "warning");
-      window.location.replace("login.html?redirect=admin-dashboard.html");
-      return;
+    if (!isAdmin()) {
+      if (typeof showToast === "function") {
+        showToast("Access restricted: Administrator credentials required.", "warning");
+      }
+      const redirectHome = isGarageOwner() ? "owner-dashboard.html" : "index.html";
+      window.location.replace(redirectHome);
+      return false;
     }
   }
 
-  // Protect Owner Dashboard from unauthenticated users or normal users
+  // 4. Protect Owner Dashboard from customer accounts
   if (currentPage === "owner-dashboard.html") {
-    if (!loggedIn) {
-      window.location.replace("login.html?role=owner&redirect=owner-dashboard.html");
-      return;
-    }
-    if (role !== "garage_owner") {
-      showToast("Access restricted: Garage Owner account required.", "warning");
-      window.location.replace("login.html?role=owner&redirect=owner-dashboard.html");
-      return;
+    if (role !== "garage_owner" && role !== "admin") {
+      if (typeof showToast === "function") {
+        showToast("Access restricted: Garage Owner account required.", "warning");
+      }
+      window.location.replace("index.html");
+      return false;
     }
   }
 
-  // If user visits partner landing while logged in as garage owner
-  if (currentPage === "partner.html" && loggedIn && role === "garage_owner") {
-    window.location.replace("owner-dashboard.html");
+  // 5. If normal customer visits partner landing -> redirect to Customer Home
+  if (role === "user" && currentPage === "partner.html") {
+    window.location.replace("index.html");
+    return false;
   }
+
+  // 6. Garage owners visiting partner landing or customer home -> route to owner dashboard
+  if (role === "garage_owner") {
+    if (currentPage === "partner.html" || (currentPage === "index.html" && !window.location.search)) {
+      window.location.replace("owner-dashboard.html");
+      return false;
+    }
+  }
+
+  // 7. Administrator visiting customer home or partner landing -> route to admin dashboard
+  if (isAdmin()) {
+    if (currentPage === "index.html" || currentPage === "partner.html") {
+      window.location.replace("admin-dashboard.html");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function completeLogin(session, statusMessage = "Authentication successful. Opening your dashboard now...") {
+  persistLoginSession(session);
+  if (typeof setStatus === "function") {
+    setStatus("loginStatus", statusMessage, "success");
+  }
+  if (typeof showToast === "function") {
+    showToast(`Welcome, ${session.name}.`, "success");
+  }
+  const target = getRedirectTarget();
+  window.setTimeout(() => {
+    window.location.replace(target);
+  }, 350);
 }
 
 function logout() {
   clearLoginSession();
-  showToast("You have been signed out.", "neutral");
-  window.location.replace("index.html");
+  if (typeof showToast === "function") {
+    showToast("You have been signed out.", "neutral");
+  }
+  window.location.replace("login.html");
 }
 
 function setAuthRole(role) {
@@ -285,21 +341,20 @@ async function handleSigninSendOtp(event) {
     }
   } catch (error) {
     console.warn("Signin OTP error:", error);
-    const roleLabel = authState.role === "garage_owner" ? "Garage Owner" : "User";
-    setStatus("loginStatus", "Account not found. Please create an account first.", "warning");
-    showToast("Account not found. Please create an account first.", "warning");
+    const msg = error.message || "Account not found. Please create an account first.";
+    setStatus("loginStatus", msg, "warning");
+    showToast(msg, "warning");
 
     if (noAccNotice) {
       noAccNotice.style.display = "block";
       const goToSignupBtn = document.getElementById("signinGoToSignupBtn");
       if (goToSignupBtn) {
-        goToSignupBtn.textContent = `Create New ${roleLabel} Account →`;
         goToSignupBtn.onclick = () => {
           setAuthMode("signup");
-          const signupNameInput = document.getElementById("signupName");
-          const signupMobileInput = document.getElementById("signupMobile");
-          if (signupNameInput) signupNameInput.value = name;
-          if (signupMobileInput) signupMobileInput.value = mobile;
+          const signupName = document.getElementById("signupName");
+          const signupMobile = document.getElementById("signupMobile");
+          if (signupName && name) signupName.value = name;
+          if (signupMobile && mobile) signupMobile.value = mobile;
         };
       }
     }
@@ -534,13 +589,29 @@ function initAuthPage() {
 }
 
 window.logout = logout;
+window.completeLogin = completeLogin;
 window.setAuthRole = setAuthRole;
 window.setAuthMode = setAuthMode;
 window.isAdmin = isAdmin;
+window.isGarageOwner = isGarageOwner;
+window.isAuthenticated = isAuthenticated;
+window.getUserRole = getUserRole;
+window.guardRoute = guardRoute;
+window.initAuthPage = initAuthPage;
+
+// Run immediate route guard check on script load
+guardRoute();
 
 document.addEventListener("DOMContentLoaded", () => {
   guardRoute();
   if (getCurrentPage() === "login.html") {
     initAuthPage();
+  }
+});
+
+// Enforce route guarding on browser back/forward cache navigation
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted || (window.performance && window.performance.navigation && window.performance.navigation.type === 2)) {
+    guardRoute();
   }
 });

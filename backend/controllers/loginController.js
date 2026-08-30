@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const LoginHistory = require("../models/LoginHistory");
 
 /**
  * Login and user lookup handlers.
@@ -72,9 +73,28 @@ async function login(req, res) {
     const user = await upsertUser(payload);
     await user.save();
 
+    const sessionUser = toSessionUser(user);
+
+    try {
+      const ip = req?.headers?.["x-forwarded-for"] || req?.socket?.remoteAddress || "";
+      await LoginHistory.create({
+        id: `LOG-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        userId: sessionUser.id || null,
+        name: sessionUser.name || "Authenticated User",
+        email: sessionUser.email || "",
+        mobile: sessionUser.mobile || "",
+        role: sessionUser.role || "user",
+        garageId: sessionUser.garageId || null,
+        ip: String(ip).substring(0, 45),
+        timestamp: new Date()
+      });
+    } catch (logErr) {
+      console.error("Failed to record login history:", logErr);
+    }
+
     return res.json({
       message: "Login successful",
-      user: toSessionUser(user)
+      user: sessionUser
     });
   } catch (error) {
     console.error("Login error:", error);

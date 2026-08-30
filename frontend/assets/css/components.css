@@ -1,5 +1,6 @@
 /**
  * AutoBuddy Core Components Design System
+ * Clean, tactile, authentic automotive interface components.
  */
 
 /* ==========================================================================
@@ -11,38 +12,49 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 46px;
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
   color: #ffffff;
-  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 132, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   text-decoration: none;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .button:hover,
 button:hover {
+  background: var(--accent-primary-hover);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 132, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  filter: brightness(1.05);
 }
 
 .button:active,
 button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 132, 255, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
+.button:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--border-focus);
+}
+
+/* Secondary Button */
 .button.secondary,
 button.secondary {
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-medium);
   box-shadow: var(--shadow-sm);
 }
 
@@ -51,192 +63,465 @@ button.secondary:hover {
   background: var(--surface-soft);
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
-  filter: none;
+  color: var(--text-primary);
 }
 
+body[data-theme="light"] .button.secondary,
+body[data-theme="light"] button.secondary {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+body[data-theme="light"] .button.secondary:hover,
+body[data-theme="light"] button.secondary:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+/* Small Button Modifier */
+.button.small,
+button.small {
+  min-height: 32px;
+  padding: 5px 12px;
+  font-size: 0.80rem;
+  border-radius: var(--radius-xs);
+}
+
+/* Large Button Modifier */
+.button.large,
+button.large {
+  min-height: 46px;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+}
+
+/* Warning / Emergency SOS Buttons */
 .button.warning,
 button.warning {
-  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  background: #d97706;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .button.warning:hover,
 button.warning:hover {
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+  background: #b45309;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
+}
+
+.button.danger,
+button.danger {
+  background: var(--status-danger);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.button.danger:hover,
+button.danger:hover {
+  background: #b91c1c;
 }
 
 button:disabled,
 .button:disabled,
 .button.is-loading,
 button.is-loading {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
 }
 
 /* ==========================================================================
-   Badges & Indicators
+   Badges & Micro Chips
    ========================================================================== */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.76rem;
-  font-weight: 600;
-  background: var(--status-success-soft);
-  color: var(--status-success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.badge.warning {
-  background: var(--status-warning-soft);
-  color: var(--status-warning);
-  border-color: rgba(245, 158, 11, 0.2);
-}
-
-.badge.neutral {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  border-color: var(--border-subtle);
-}
-
-body[data-theme="light"] .badge.neutral {
-  background: rgba(15, 23, 42, 0.05);
-}
-
-/* ==========================================================================
-   Cards & Panels
-   ========================================================================== */
-.panel,
-.list-shell,
-.form-shell,
-.map-layout,
-.auth-card,
-.detail-card,
-.action-card,
-.service-card,
-.list-card {
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.panel {
-  padding: 32px;
-}
-
-.section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.page-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  line-height: 1.15;
-  margin-top: 4px;
-}
-
-.section-subtitle {
-  color: var(--text-secondary);
-  font-size: 0.98rem;
-  max-width: 600px;
-  margin-top: 8px;
-  line-height: 1.6;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent-primary);
-  margin-bottom: 6px;
-}
-
-/* Form inputs */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.field label {
-  font-size: 0.84rem;
-  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-soft);
   color: var(--text-secondary);
 }
 
-.field input,
-.field select,
-.field textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  background: var(--input-bg);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-  font-size: 0.92rem;
-  transition: all 0.2s ease;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-primary-soft);
-}
-
-.status-banner {
-  display: none;
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  font-size: 0.88rem;
-  font-weight: 500;
-  margin-top: 16px;
-  border: 1px solid var(--border-subtle);
-}
-
-.status-banner.visible {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.status-banner.success {
+.badge.success-chip,
+.badge.verified {
   background: var(--status-success-soft);
   color: var(--status-success);
   border-color: rgba(16, 185, 129, 0.25);
 }
 
-.status-banner.warning {
+.badge.warning {
   background: var(--status-warning-soft);
   color: var(--status-warning);
   border-color: rgba(245, 158, 11, 0.25);
 }
 
-.status-banner.error {
+.badge.error-chip {
   background: var(--status-danger-soft);
   color: var(--status-danger);
   border-color: rgba(239, 68, 68, 0.25);
 }
+
+.badge.neutral {
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary);
+  border-color: rgba(2, 132, 199, 0.25);
+}
+
+body[data-theme="light"] .badge {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+body[data-theme="light"] .badge.verified,
+body[data-theme="light"] .badge.success-chip {
+  background: rgba(5, 150, 105, 0.1);
+  color: #047857;
+  border-color: rgba(5, 150, 105, 0.25);
+}
+
+body[data-theme="light"] .badge.warning {
+  background: rgba(180, 83, 9, 0.1);
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.25);
+}
+
+body[data-theme="light"] .badge.error-chip {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+body[data-theme="light"] .badge.neutral {
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  border-color: rgba(2, 132, 199, 0.25);
+}
+
+/* ==========================================================================
+   Section Headers & Typography Hierarchy
+   ========================================================================== */
+.eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  font-size: 0.90rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: 4px;
+  max-width: 620px;
+}
+
+/* ==========================================================================
+   Status Banners & Toast Notifications
+   ========================================================================== */
+.status-banner {
+  display: none;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 12px 0;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.status-banner.success {
+  display: block;
+  background: var(--status-success-soft);
+  color: var(--status-success);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.status-banner.warning {
+  display: block;
+  background: var(--status-warning-soft);
+  color: var(--status-warning);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.status-banner.error {
+  display: block;
+  background: var(--status-danger-soft);
+  color: var(--status-danger);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+body[data-theme="light"] .status-banner.success {
+  background: rgba(5, 150, 105, 0.1);
+  color: #047857;
+  border-color: rgba(5, 150, 105, 0.25);
+}
+
+body[data-theme="light"] .status-banner.warning {
+  background: rgba(180, 83, 9, 0.1);
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.25);
+}
+
+body[data-theme="light"] .status-banner.error {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.success {
+  border-left: 4px solid var(--status-success);
+}
+
+.toast.warning {
+  border-left: 4px solid var(--status-warning);
+}
+
+.toast.error {
+  border-left: 4px solid var(--status-danger);
+}
+
+.toast.neutral {
+  border-left: 4px solid var(--accent-primary);
+}
+
+body[data-theme="light"] .toast {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+}
+
+/* ==========================================================================
+   Form Fields & Inputs
+   ========================================================================== */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.90rem;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-placeholder);
+  opacity: 1;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-soft);
+}
+
+body[data-theme="light"] input[type="text"],
+body[data-theme="light"] input[type="tel"],
+body[data-theme="light"] input[type="email"],
+body[data-theme="light"] input[type="password"],
+body[data-theme="light"] input[type="number"],
+body[data-theme="light"] select,
+body[data-theme="light"] textarea {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+body[data-theme="light"] input:focus,
+body[data-theme="light"] select:focus,
+body[data-theme="light"] textarea:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==========================================================================
+   Horizontal Flowchart — How AutoBuddy Works
+   ========================================================================== */
+.flowchart-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 16px 0 20px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flowchart-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 720px;
+  position: relative;
+  padding: 8px 4px;
+}
+
+.flowchart-node {
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px 14px 18px 14px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.flowchart-node:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.18);
+}
+
+.flowchart-step-badge {
+  position: absolute;
+  top: -11px;
+  background: linear-gradient(135deg, var(--accent-primary), #0369a1);
+  color: #ffffff;
+  font-family: var(--font-display, inherit);
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  letter-spacing: 0.5px;
+}
+
+.flowchart-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  margin-bottom: 12px;
+  margin-top: 2px;
+  transition: transform 0.2s ease;
+}
+
+.flowchart-node:hover .flowchart-icon-box {
+  transform: scale(1.1);
+}
+
+.flowchart-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.flowchart-desc {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.flowchart-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  animation: floatArrow 2s ease-in-out infinite;
+}
+
+@keyframes floatArrow {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+@media (max-width: 768px) {
+  .flowchart-horizontal {
+    min-width: 650px;
+  }
+}
+

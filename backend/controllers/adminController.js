@@ -1,6 +1,7 @@
 const Garage = require("../models/Garage");
 const Booking = require("../models/Booking");
 const User = require("../models/User");
+const LoginHistory = require("../models/LoginHistory");
 const fallbackGarages = require("../data/garages.json");
 
 /**
@@ -151,12 +152,37 @@ async function updateAdminBookingStatus(req, res) {
 }
 
 /**
- * Get all registered users and garage owners
+ * Get all registered users and garage owners with full linked details
  */
 async function getAdminUsers(_req, res) {
   try {
-    const users = await User.find({ role: { $ne: "admin" } }).sort({ createdAt: -1 });
-    return res.json(users);
+    const rawUsers = await User.find({ role: { $ne: "admin" } }).sort({ createdAt: -1 });
+    const garages = await Garage.find();
+    const garageMap = new Map();
+    garages.forEach((g) => {
+      garageMap.set(g.id, g);
+      if (g.ownerId) garageMap.set(g.ownerId, g);
+    });
+
+    const enriched = rawUsers.map((u) => {
+      const linkedGarage = (u.garageId && garageMap.get(u.garageId)) || garageMap.get(u.id) || null;
+      return {
+        id: u.id,
+        name: u.name || "Authenticated User",
+        email: u.email || "",
+        mobile: u.mobile || "",
+        role: u.role || "user",
+        district: u.district || "Pune",
+        state: u.state || "Maharashtra",
+        vehicleType: u.vehicleType || "all",
+        garageId: u.garageId || (linkedGarage ? linkedGarage.id : null),
+        garageName: linkedGarage ? linkedGarage.name : null,
+        garageAddress: linkedGarage ? (linkedGarage.address || linkedGarage.city) : null,
+        createdAt: u.createdAt || new Date()
+      };
+    });
+
+    return res.json(enriched);
   } catch (error) {
     console.error("Admin users error:", error);
     return res.status(500).json({ message: "Failed to fetch users: " + error.message });
@@ -193,12 +219,50 @@ async function deleteAdminUser(req, res) {
   }
 }
 
+/**
+ * Get latest 50 successful login audit records
+ */
+async function getAdminRecentLogins(_req, res) {
+  try {
+    const rawLogins = await LoginHistory.find().sort({ timestamp: -1 }).limit(50);
+
+    const formatted = rawLogins.map((item) => {
+      let roleLabel = "Customer";
+      if (item.role === "admin") {
+        roleLabel = "Administrator";
+      } else if (item.role === "garage_owner" || item.role === "owner") {
+        roleLabel = "Garage Owner";
+      }
+
+      return {
+        id: item.id,
+        userId: item.userId || null,
+        name: item.name || "Authenticated User",
+        email: item.email || "",
+        mobile: item.mobile || "",
+        role: item.role,
+        roleLabel,
+        garageId: item.garageId || null,
+        garageName: item.garageName || null,
+        timestamp: item.timestamp,
+        ip: item.ip || ""
+      };
+    });
+
+    return res.json(formatted);
+  } catch (error) {
+    console.error("Admin recent logins error:", error);
+    return res.status(500).json({ message: "Failed to fetch recent logins: " + error.message });
+  }
+}
+
 module.exports = {
   cancelAdminBooking,
   deleteAdminGarage,
   deleteAdminUser,
   getAdminBookings,
   getAdminGarages,
+  getAdminRecentLogins,
   getAdminStats,
   getAdminUsers,
   updateAdminBookingStatus

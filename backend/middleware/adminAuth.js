@@ -39,7 +39,7 @@ async function adminAuthMiddleware(req, res, next) {
             createdAt: new Date()
           }
         },
-        { new: true, upsert: true }
+        { returnDocument: "after", upsert: true }
       );
     }
 

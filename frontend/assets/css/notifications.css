@@ -54,6 +54,28 @@
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), var(--bg-surface-elevated));
 }
 
+body[data-theme="light"] .toast {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+body[data-theme="light"] .toast.success {
+  background: #ffffff;
+  border-color: #059669;
+}
+
+body[data-theme="light"] .toast.warning {
+  background: #ffffff;
+  border-color: #d97706;
+}
+
+body[data-theme="light"] .toast.error {
+  background: #ffffff;
+  border-color: #dc2626;
+}
+
 .footer-note {
   margin-top: 36px;
   text-align: center;

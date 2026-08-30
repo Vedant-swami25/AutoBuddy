@@ -91,9 +91,10 @@ function renderMapGaragesList(garagesToRender = currentMappableGarages) {
     const dist = userCoordinates
       ? calculateDistanceKm(userCoordinates.lat, userCoordinates.lng, g.lat, g.lng)
       : null;
-    const distText = dist ? `${dist} km • ~${g.etaMinutes || Math.round(dist * 3 + 6)} mins ETA` : `~${g.etaMinutes || 15} mins ETA`;
-    const ownerName = g.mechanic || g.ownerName || "Certified Head Mechanic";
-    const phone = g.phone || "+91 98220 11000";
+    const distNum = dist !== null ? Number(dist) : null;
+    const etaMin = distNum !== null && !isNaN(distNum) ? Math.round(distNum * 4) : (g.etaMinutes || 15);
+    const distText = dist ? `${dist} km • ~${etaMin} min` : `~${etaMin} min`;
+    const ownerName = g.mechanic || g.ownerName || "AutoBuddy Certified Workshop";
     const isSelected = g.id === selectedGarageId;
 
     return `
@@ -109,7 +110,7 @@ function renderMapGaragesList(garagesToRender = currentMappableGarages) {
         <div class="map-garage-meta-row">
           <span>👤 <strong class="map-garage-owner">${ownerName}</strong></span>
           <span>•</span>
-          <a class="map-garage-phone" href="tel:${phone}" onclick="event.stopPropagation()">📞 ${phone}</a>
+          <span style="color: var(--accent-primary); font-weight: 600;">📞 AutoBuddy Helpline: +91 1800-889-2889</span>
         </div>
 
         <div class="map-garage-footer">
@@ -192,20 +193,27 @@ async function loadMap() {
       mappableGarages = getMappableGarages(GARAGE_FALLBACKS);
     }
 
+    if (userCoordinates && hasValidCoordinates(userCoordinates)) {
+      mappableGarages.sort((a, b) => {
+        const distA = Number(calculateDistanceKm(userCoordinates.lat, userCoordinates.lng, a.lat, a.lng)) || 999;
+        const distB = Number(calculateDistanceKm(userCoordinates.lat, userCoordinates.lng, b.lat, b.lng)) || 999;
+        return distA - distB;
+      });
+    }
+
     currentMappableGarages = mappableGarages;
     mapGarageMarkers.clear();
 
     mappableGarages.forEach((garage) => {
       const marker = L.marker([garage.lat, garage.lng], { icon: createGarageMarkerIcon(false) }).addTo(map);
-      const ownerName = garage.mechanic || garage.ownerName || "Certified Head Mechanic";
-      const phone = garage.phone || "+91 98220 11000";
+      const ownerName = garage.mechanic || garage.ownerName || "AutoBuddy Certified Workshop";
 
       const popupHtml = `
         <div class="map-popup">
           <strong>${garage.name}</strong>
           <span>👤 ${ownerName}</span>
           <span>📍 ${garage.address || garage.city || "Pune"}</span>
-          <span>📞 <a href="tel:${phone}" style="color:var(--accent-primary);font-weight:600;">${phone}</a></span>
+          <span>📞 <strong>AutoBuddy Helpline:</strong> +91 1800-889-2889</span>
           <span>★ ${garage.rating || 4.8} Rating · ${garage.verified ? "Verified Partner" : "Workshop"}</span>
           <button type="button" onclick="bookGarageDirectly('${garage.id}')">Book Visit</button>
         </div>

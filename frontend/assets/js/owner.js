@@ -45,20 +45,15 @@ async function initOwnerDashboard() {
 
 async function loadOwnerBookings() {
   const session = getAuthSession();
-  if (!session?.garageId && !session?.name) return;
+  if (!session || session.role !== "garage_owner") return;
 
   const statusBanner = document.getElementById("ownerStatusBanner");
 
   try {
-    let bookings = [];
-    if (session.garageId) {
-      bookings = await fetchGarageBookings(session.garageId);
-    } else {
-      const allBookings = await fetchBookings();
-      bookings = allBookings.filter((b) => b.garageId === session.garageId || b.garage === session.garageName);
-    }
+    // Calling /api/book with garage_owner session returns strictly this garage's bookings from backend
+    const bookings = await fetchBookings();
 
-    currentOwnerBookings = bookings || [];
+    currentOwnerBookings = Array.isArray(bookings) ? bookings : [];
     updateOwnerMetrics();
     renderOwnerBookingsList();
 
@@ -66,12 +61,12 @@ async function loadOwnerBookings() {
       statusBanner.style.display = "none";
     }
   } catch (error) {
-    console.warn("Could not fetch remote garage bookings, using local fallback:", error);
-    // Fallback from localStorage
-    const stored = getStoredBookings();
-    currentOwnerBookings = stored.filter((b) => b.garageId === session.garageId || b.garage === session.garageName || b.phone === session.mobile);
-    updateOwnerMetrics();
-    renderOwnerBookingsList();
+    console.error("Could not fetch workshop bookings:", error);
+    if (statusBanner) {
+      statusBanner.textContent = error.message || "Failed to load workshop dispatches.";
+      statusBanner.className = "status-banner error";
+      statusBanner.style.display = "block";
+    }
   }
 }
 

@@ -22,6 +22,11 @@
   overflow: hidden;
 }
 
+body[data-theme="light"] .map-sidebar {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
 .map-sidebar-head {
   display: flex;
   flex-direction: column;
@@ -49,6 +54,12 @@
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 2px var(--accent-primary-soft);
+}
+
+body[data-theme="light"] .map-search-wrap input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
 }
 
 .map-search-icon {
@@ -93,6 +104,21 @@
     radial-gradient(ellipse at top right, rgba(0, 132, 255, 0.1), transparent 70%),
     var(--bg-surface-elevated);
   box-shadow: 0 0 0 2px var(--accent-primary-soft), var(--shadow-md);
+}
+
+body[data-theme="light"] .map-garage-item {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+body[data-theme="light"] .map-garage-item:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+body[data-theme="light"] .map-garage-item.active {
+  background: #f8fafc;
+  border-color: #0284c7;
 }
 
 .map-garage-item-top {
@@ -254,6 +280,17 @@ body[data-theme="light"] .leaflet-container {
 
 .leaflet-popup-tip {
   background: var(--bg-surface-elevated) !important;
+}
+
+body[data-theme="light"] .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15) !important;
+}
+
+body[data-theme="light"] .leaflet-popup-tip {
+  background: #ffffff !important;
 }
 
 @media (max-width: 900px) {

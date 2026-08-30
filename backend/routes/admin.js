@@ -1,11 +1,12 @@
 const express = require("express");
-const { adminAuthMiddleware } = require("../middleware/adminAuth");
+const { authenticate, requireAdmin } = require("../middleware/auth");
 const {
   cancelAdminBooking,
   deleteAdminGarage,
   deleteAdminUser,
   getAdminBookings,
   getAdminGarages,
+  getAdminRecentLogins,
   getAdminStats,
   getAdminUsers,
   updateAdminBookingStatus
@@ -13,8 +14,9 @@ const {
 
 const router = express.Router();
 
-// Apply admin authentication middleware to all /api/admin routes
-router.use(adminAuthMiddleware);
+// Apply authentication then admin authorization to all /api/admin routes
+router.use(authenticate);
+router.use(requireAdmin);
 
 router.get("/stats", getAdminStats);
 router.get("/garages", getAdminGarages);
@@ -24,5 +26,6 @@ router.post("/bookings/:id/cancel", cancelAdminBooking);
 router.put("/bookings/:id/status", updateAdminBookingStatus);
 router.get("/users", getAdminUsers);
 router.delete("/users/:id", deleteAdminUser);
+router.get("/recent-logins", getAdminRecentLogins);
 
 module.exports = router;

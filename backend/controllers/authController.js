@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Garage = require("../models/Garage");
+const LoginHistory = require("../models/LoginHistory");
 const {
   clearOtp,
   isDemoMode,
@@ -10,6 +11,26 @@ const {
 } = require("../services/otpService");
 
 const ADMIN_MOBILE = "9579278177";
+
+async function recordSuccessfulLogin(userData, req) {
+  try {
+    const ip = req?.headers?.["x-forwarded-for"] || req?.socket?.remoteAddress || "";
+    await LoginHistory.create({
+      id: `LOG-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      userId: userData.id || null,
+      name: userData.name || "Authenticated User",
+      email: userData.email || "",
+      mobile: userData.mobile || "",
+      role: userData.role || "user",
+      garageId: userData.garageId || null,
+      garageName: userData.garageName || null,
+      ip: String(ip).substring(0, 45),
+      timestamp: new Date()
+    });
+  } catch (err) {
+    console.error("Failed to record login history:", err);
+  }
+}
 
 function escapeRegex(text) {
   return String(text || "").replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -73,7 +94,7 @@ async function signinOtpHandler(req, res) {
             createdAt: new Date()
           }
         },
-        { new: true, upsert: true }
+        { returnDocument: "after", upsert: true }
       );
 
       const customTtl = typeof testTtlMs === "number" ? testTtlMs : null;
@@ -106,27 +127,72 @@ async function signinOtpHandler(req, res) {
     }
 
     const nameRegex = new RegExp("^" + escapeRegex(normalizedName) + "$", "i");
-    const user = await User.findOne({
-      mobile: normalizedMobile,
-      role: selectedRole,
-      name: nameRegex
-    });
+    // Lookup user by mobile first (Primary Identifier)
+    let user = await User.findOne({ mobile: normalizedMobile });
+
+    if (!user && selectedRole === "garage_owner") {
+      // Check if this mobile belongs to a pre-verified garage
+      const matchingGarage = await Garage.findOne({
+        $or: [
+          { phone: `+91${normalizedMobile}` },
+          { phone: normalizedMobile },
+          { phone: `+91 ${normalizedMobile}` }
+        ]
+      });
+
+      if (matchingGarage) {
+        user = await User.findOneAndUpdate(
+          { mobile: normalizedMobile },
+          {
+            $set: {
+              name: normalizedName || matchingGarage.ownerName || matchingGarage.mechanic || "Garage Owner",
+              role: "garage_owner",
+              garageId: matchingGarage.id,
+              district: matchingGarage.city || "Pune",
+              state: "Maharashtra",
+              lat: matchingGarage.lat,
+              lng: matchingGarage.lng,
+              updatedAt: new Date()
+            },
+            $setOnInsert: {
+              id: `OWN-${Date.now()}`,
+              createdAt: new Date()
+            }
+          },
+          { returnDocument: "after", upsert: true }
+        );
+      }
+    }
 
     if (!user) {
-      return res.status(404).json({
-        exists: false,
-        message: "Account not found. Please create an account first."
-      });
+      if (normalizedName) {
+        // Auto-provision user account so sign-in never fails
+        user = await User.create({
+          id: `${selectedRole === "garage_owner" ? "OWN" : "USR"}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          name: normalizedName,
+          email: `${normalizedMobile}@autobuddy.local`,
+          mobile: normalizedMobile,
+          role: selectedRole,
+          district: "Pune",
+          state: "Maharashtra"
+        });
+      } else {
+        return res.status(404).json({
+          exists: false,
+          message: "Account not found. Please create an account or enter your name."
+        });
+      }
     }
 
     const customTtl = typeof testTtlMs === "number" ? testTtlMs : null;
-    const { otp, expiresAt, expiresIn } = storeOtp(normalizedMobile, selectedRole, customTtl);
+    const { otp, expiresIn } = storeOtp(normalizedMobile, user.role || selectedRole, customTtl);
 
     const response = {
       exists: true,
       message: "Verification code sent successfully.",
       expiresIn,
       user: {
+        id: user.id,
         name: user.name,
         mobile: user.mobile,
         role: user.role
@@ -186,27 +252,35 @@ async function verifySigninHandler(req, res) {
         createdAt: new Date()
       };
 
+      await recordSuccessfulLogin(adminSession, req);
+
       return res.json({
         message: "Admin login successful",
         user: adminSession
       });
     }
 
-    if (!normalizedName) {
-      return res.status(400).json({ message: "Name is required for Sign In." });
-    }
-
-    const nameRegex = new RegExp("^" + escapeRegex(normalizedName) + "$", "i");
-    const user = await User.findOne({
-      mobile: normalizedMobile,
-      role: selectedRole,
-      name: nameRegex
-    });
+    let user = await User.findOne({ mobile: normalizedMobile });
 
     if (!user) {
-      return res.status(404).json({
-        message: "Account not found. Please create an account first."
-      });
+      if (normalizedName) {
+        user = await User.create({
+          id: `${selectedRole === "garage_owner" ? "OWN" : "USR"}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          name: normalizedName,
+          email: `${normalizedMobile}@autobuddy.local`,
+          mobile: normalizedMobile,
+          role: selectedRole,
+          district: "Pune",
+          state: "Maharashtra"
+        });
+      } else {
+        return res.status(404).json({
+          message: "Account not found. Please create an account first."
+        });
+      }
+    } else if (normalizedName && (!user.name || user.name === "User" || user.name === "Garage Owner")) {
+      user.name = normalizedName;
+      await user.save();
     }
 
     const result = verifyOtp(normalizedMobile, otp);
@@ -217,13 +291,33 @@ async function verifySigninHandler(req, res) {
     clearOtp(normalizedMobile);
 
     let garageName = null;
-    if (user.garageId) {
-      const garage = await Garage.findOne({ id: user.garageId });
-      if (garage) garageName = garage.name;
+    if (user.role === "garage_owner") {
+      let garage = user.garageId ? await Garage.findOne({ id: user.garageId }) : null;
+      if (!garage) {
+        garage = await Garage.findOne({
+          $or: [
+            { ownerId: user.id },
+            { phone: `+91${normalizedMobile}` },
+            { phone: normalizedMobile }
+          ]
+        });
+        if (garage) {
+          user.garageId = garage.id;
+          if (!garage.ownerId) garage.ownerId = user.id;
+          if (!garage.ownerName) garage.ownerName = user.name;
+          await user.save();
+          await garage.save();
+        }
+      }
+      if (garage) {
+        garageName = garage.name;
+      }
     }
 
     const sessionObj = toSessionUser(user);
     if (garageName) sessionObj.garageName = garageName;
+
+    await recordSuccessfulLogin(sessionObj, req);
 
     return res.json({
       message: "Login successful",
@@ -263,22 +357,6 @@ async function signupOtpHandler(req, res) {
         exists: true,
         message: `An account already exists for +91 ${normalizedMobile} as a ${roleLabel}. Please Sign In instead.`
       });
-    }
-
-    // If Garage Owner, check for duplicate garage name + phone
-    if (selectedRole === "garage_owner" && garageName) {
-      const trimmedGarageName = String(garageName).trim();
-      const duplicateGarage = await Garage.findOne({
-        name: new RegExp("^" + escapeRegex(trimmedGarageName) + "$", "i"),
-        phone: `+91${normalizedMobile}`
-      });
-
-      if (duplicateGarage) {
-        return res.status(409).json({
-          exists: true,
-          message: `Garage "${trimmedGarageName}" already exists with this mobile number. Please Sign In instead.`
-        });
-      }
     }
 
     const customTtl = typeof testTtlMs === "number" ? testTtlMs : null;
@@ -340,21 +418,24 @@ async function signupHandler(req, res) {
     let linkedGarageId = null;
     let finalGarageName = garageName ? String(garageName).trim() : `${name.trim()}'s Auto Care`;
 
-    // If garage owner, check for duplicate garage in MongoDB
+    // If garage owner, check for existing garage in MongoDB by phone or name
     if (selectedRole === "garage_owner") {
       const garagePhone = `+91${normalizedMobile}`;
-      const duplicateGarage = await Garage.findOne({
-        name: new RegExp("^" + escapeRegex(finalGarageName) + "$", "i"),
-        phone: garagePhone
+      const existingGarage = await Garage.findOne({
+        $or: [
+          { phone: garagePhone },
+          { phone: normalizedMobile },
+          { name: new RegExp("^" + escapeRegex(finalGarageName) + "$", "i") }
+        ]
       });
 
-      if (duplicateGarage) {
-        linkedGarageId = duplicateGarage.id;
-        finalGarageName = duplicateGarage.name;
-        await Garage.updateOne(
-          { id: linkedGarageId },
-          { $set: { ownerName: name.trim(), phone: garagePhone, updatedAt: new Date() } }
-        );
+      if (existingGarage) {
+        linkedGarageId = existingGarage.id;
+        finalGarageName = existingGarage.name;
+        existingGarage.ownerName = name.trim();
+        existingGarage.phone = garagePhone;
+        existingGarage.updatedAt = new Date();
+        await existingGarage.save();
       } else {
         const newGarageId = `GAR-${Date.now()}`;
         const newGarage = new Garage({
@@ -401,7 +482,7 @@ async function signupHandler(req, res) {
           createdAt: new Date()
         }
       },
-      { new: true, upsert: true }
+      { returnDocument: "after", upsert: true }
     );
 
     if (linkedGarageId) {
@@ -415,6 +496,8 @@ async function signupHandler(req, res) {
 
     const sessionObj = toSessionUser(user);
     if (finalGarageName) sessionObj.garageName = finalGarageName;
+
+    await recordSuccessfulLogin(sessionObj, req);
 
     return res.json({
       message: "Account created successfully",
@@ -465,14 +548,107 @@ async function checkAccountHandler(req, res) {
   }
 }
 
+async function getProfileHandler(req, res) {
+  try {
+    if (!req.user || !req.isAuthenticated) {
+      return res.status(401).json({ message: "Authentication required to view profile." });
+    }
+
+    const user = await User.findOne({ mobile: req.user.mobile });
+    if (!user) {
+      return res.status(404).json({ message: "User account not found." });
+    }
+
+    let garageName = null;
+    if (user.role === "garage_owner" && user.garageId) {
+      const garage = await Garage.findOne({ id: user.garageId });
+      if (garage) garageName = garage.name;
+    }
+
+    const sessionObj = toSessionUser(user);
+    if (garageName) sessionObj.garageName = garageName;
+
+    return res.json({ user: sessionObj });
+  } catch (error) {
+    console.error("Get profile error:", error);
+    return res.status(500).json({ message: "Failed to fetch profile: " + error.message });
+  }
+}
+
+async function updateProfileHandler(req, res) {
+  try {
+    if (!req.user || !req.isAuthenticated) {
+      return res.status(401).json({ message: "Authentication required to update profile." });
+    }
+
+    const { name, email, district, state } = req.body || {};
+    const normalizedName = String(name || "").trim();
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const normalizedDistrict = String(district || "").trim();
+    const normalizedState = String(state || "").trim();
+
+    if (!normalizedName) {
+      return res.status(400).json({ message: "Name cannot be empty." });
+    }
+
+    if (normalizedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return res.status(400).json({ message: "Please provide a valid email address." });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { mobile: req.user.mobile },
+      {
+        $set: {
+          name: normalizedName,
+          email: normalizedEmail,
+          district: normalizedDistrict || "Pune",
+          state: normalizedState || "Maharashtra",
+          updatedAt: new Date()
+        }
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User account not found." });
+    }
+
+    if (updatedUser.role === "garage_owner" && updatedUser.garageId) {
+      await Garage.updateOne(
+        { id: updatedUser.garageId },
+        { $set: { ownerName: normalizedName, updatedAt: new Date() } }
+      );
+    }
+
+    let garageName = null;
+    if (updatedUser.role === "garage_owner" && updatedUser.garageId) {
+      const garage = await Garage.findOne({ id: updatedUser.garageId });
+      if (garage) garageName = garage.name;
+    }
+
+    const sessionObj = toSessionUser(updatedUser);
+    if (garageName) sessionObj.garageName = garageName;
+
+    return res.json({
+      message: "Profile updated successfully.",
+      user: sessionObj
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return res.status(500).json({ message: "Failed to update profile: " + error.message });
+  }
+}
+
 module.exports = {
   ADMIN_MOBILE,
   checkAccountHandler,
+  getProfileHandler,
   sendOtpHandler,
   signinOtpHandler,
   signupHandler,
   signupOtpHandler,
   toSessionUser,
+  updateProfileHandler,
   verifyOtpHandler,
   verifySigninHandler
 };
