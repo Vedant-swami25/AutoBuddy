@@ -25,6 +25,23 @@ async function initOwnerDashboard() {
   if (garageAddressEl) garageAddressEl.textContent = session.district || session.address || "Pune, Maharashtra";
   if (garageAvatarEl) garageAvatarEl.textContent = (garageName[0] || "W").toUpperCase();
 
+  // Admin Impersonation Return: Show "Back to Admin Dashboard" option ONLY when entered through Admin -> Sign In as Owner
+  const adminReturnSessionRaw = sessionStorage.getItem("autobuddy_admin_return_session");
+  const actionsContainer = document.querySelector(".owner-topbar-actions");
+  if (adminReturnSessionRaw && session.fromAdminImpersonation && actionsContainer) {
+    let returnBtn = document.getElementById("backToAdminBtn");
+    if (!returnBtn) {
+      returnBtn = document.createElement("button");
+      returnBtn.id = "backToAdminBtn";
+      returnBtn.type = "button";
+      returnBtn.className = "primary small";
+      returnBtn.style.cssText = "background: linear-gradient(135deg, #4f46e5, #4338ca); color: #ffffff; border: 1px solid rgba(255,255,255,0.25); font-weight: 700; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); cursor: pointer;";
+      returnBtn.innerHTML = `<span>🛡️ Back to Admin Dashboard</span>`;
+      returnBtn.onclick = returnToAdminDashboard;
+      actionsContainer.insertBefore(returnBtn, actionsContainer.firstChild);
+    }
+  }
+
   // Load Bookings
   await loadOwnerBookings();
 
@@ -116,14 +133,14 @@ function renderOwnerBookingsList() {
     const status = b.status || "pending";
     const statusBadgeClass =
       status === "pending" ? "warning" :
-      status === "accepted" ? "neutral" :
+      status === "accepted" ? "success-chip" :
       status === "in_progress" ? "neutral" :
       status === "completed" ? "success-chip" : "error-chip";
 
     const statusLabel =
       status === "pending" ? "Pending Action" :
-      status === "accepted" ? "Accepted • Assigned" :
-      status === "in_progress" ? "In Progress" :
+      status === "accepted" ? "Service Partner Assigned" :
+      status === "in_progress" ? "Service In Progress" :
       status === "completed" ? "Completed" :
       status === "rejected" ? "Declined" : "Cancelled";
 
@@ -234,6 +251,35 @@ function toggleWorkshopAvailability() {
   }
 }
 
+function returnToAdminDashboard() {
+  const adminReturnSessionRaw = sessionStorage.getItem("autobuddy_admin_return_session");
+  if (!adminReturnSessionRaw) {
+    window.location.href = "admin-dashboard.html";
+    return;
+  }
+
+  try {
+    const adminSession = JSON.parse(adminReturnSessionRaw);
+    sessionStorage.removeItem("autobuddy_admin_return_session");
+
+    if (typeof persistLoginSession === "function") {
+      persistLoginSession(adminSession);
+    }
+
+    if (typeof showToast === "function") {
+      showToast("Restoring Administrator session...", "success");
+    }
+
+    setTimeout(() => {
+      window.location.href = "admin-dashboard.html";
+    }, 250);
+  } catch (err) {
+    console.error("Return to admin error:", err);
+    window.location.href = "admin-dashboard.html";
+  }
+}
+
+window.returnToAdminDashboard = returnToAdminDashboard;
 window.handleOwnerAction = handleOwnerAction;
 window.toggleWorkshopAvailability = toggleWorkshopAvailability;
 

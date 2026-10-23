@@ -28,8 +28,11 @@ async function authenticate(req, _res, next) {
       return next();
     }
 
+    const reqRole = req.headers["x-user-role"] || req.query?.role || req.body?.role || null;
+    const reqUserId = req.headers["x-user-id"] || null;
+
     // Special Administrator Account
-    if (normalized === ADMIN_MOBILE) {
+    if (normalized === ADMIN_MOBILE && (reqRole === "admin" || req.headers["x-admin-mobile"] || !reqRole)) {
       let adminUser = await User.findOne({ mobile: ADMIN_MOBILE, role: "admin" });
       if (!adminUser) {
         adminUser = await User.findOneAndUpdate(
@@ -55,7 +58,17 @@ async function authenticate(req, _res, next) {
       return next();
     }
 
-    const user = await User.findOne({ mobile: normalized });
+    let user = null;
+    if (reqUserId) {
+      user = await User.findOne({ id: reqUserId, mobile: normalized });
+    }
+    if (!user && reqRole) {
+      user = await User.findOne({ mobile: normalized, role: reqRole });
+    }
+    if (!user) {
+      user = await User.findOne({ mobile: normalized });
+    }
+
     if (user) {
       req.user = user;
       req.isAuthenticated = true;

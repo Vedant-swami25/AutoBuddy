@@ -8,7 +8,12 @@ const VERIFIED_WINDOW_MS = 15 * 60 * 1000; // 15 minutes window for completing r
 const otpStore = new Map();
 
 function normalizeMobile(mobile) {
-  return String(mobile || "").replace(/\D/g, "").slice(-10);
+  const digits = String(mobile || "").replace(/\D/g, "").slice(-10);
+  // Validate that we have exactly 10 digits (valid Indian mobile format)
+  if (digits.length !== 10 || !/^\d{10}$/.test(digits)) {
+    return null;
+  }
+  return digits;
 }
 
 function generateOtp() {

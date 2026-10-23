@@ -12,14 +12,23 @@
 }
 
 .map-sidebar {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   max-height: 760px;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-subtle);
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.map-sidebar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 body[data-theme="light"] .map-sidebar {
@@ -77,6 +86,15 @@ body[data-theme="light"] .map-search-wrap input {
   overflow-y: auto;
   padding-right: 4px;
   flex: 1;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.map-garages-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 /* Individual Garage Card on Map Sidebar */
@@ -307,4 +325,245 @@ body[data-theme="light"] .leaflet-popup-tip {
     min-height: 420px;
     border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   }
+}
+
+/* =======================================================
+   Live Booking Tracking Panel (Uber/Food Delivery Style)
+   ======================================================= */
+.tracking-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.tracking-panel::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+.tracking-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--accent-primary-soft, rgba(0, 132, 255, 0.12));
+  color: var(--accent-primary, #0084ff);
+}
+
+.tracking-header-badge .live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-primary, #0084ff);
+  animation: trackingPulse 1.5s infinite;
+}
+
+@keyframes trackingPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 132, 255, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 132, 255, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 132, 255, 0); }
+}
+
+.tracking-route-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.tracking-metric-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tracking-metric-label {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.tracking-metric-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tracking-steps-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 6px 0;
+  padding-left: 28px;
+}
+
+.tracking-steps-line {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 9px;
+  width: 2px;
+  background: var(--border-subtle);
+}
+
+.tracking-step-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 18px;
+}
+
+.tracking-step-item:last-child {
+  padding-bottom: 0;
+}
+
+.tracking-step-icon {
+  position: absolute;
+  left: -28px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.tracking-step-item.done .tracking-step-icon {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.tracking-step-item.active .tracking-step-icon {
+  background: var(--accent-primary, #0084ff);
+  border-color: var(--accent-primary, #0084ff);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.25);
+}
+
+.tracking-step-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tracking-step-item.done .tracking-step-title,
+.tracking-step-item.active .tracking-step-title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.tracking-step-sub {
+  font-size: 0.76rem;
+  color: var(--text-tertiary);
+}
+
+/* Custom Leaflet Map Tracking Pins */
+.track-pin-user, .track-pin-garage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.track-pin-user-inner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0084ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.5);
+  border: 2px solid #ffffff;
+}
+
+.track-pin-pulse {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #0084ff;
+  animation: pinPulseRing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pinPulseRing {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.track-pin-garage-inner {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #1e293b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border: 2px solid #f59e0b;
+}
+
+body[data-theme="light"] .track-pin-garage-inner {
+  background: #0f172a;
+  border-color: #f59e0b;
+}
+
+/* Completely remove browser scrollbar slider on map layout and all descendants */
+.map-layout,
+.map-layout *,
+.map-sidebar,
+.map-sidebar *,
+.tracking-panel,
+.tracking-panel * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.map-layout::-webkit-scrollbar,
+.map-layout *::-webkit-scrollbar,
+.map-sidebar::-webkit-scrollbar,
+.map-sidebar *::-webkit-scrollbar,
+.tracking-panel::-webkit-scrollbar,
+.tracking-panel *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+
+
+/* Dark Mode Map Filter */
+body:not([data-theme="light"]) .leaflet-layer,
+body:not([data-theme="light"]) .leaflet-control-zoom-in,
+body:not([data-theme="light"]) .leaflet-control-zoom-out,
+body:not([data-theme="light"]) .leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }

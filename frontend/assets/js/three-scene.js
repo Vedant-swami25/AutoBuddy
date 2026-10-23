@@ -31,13 +31,34 @@ class VehicleStudio3D {
     this.spherical = { radius: 6.8, theta: 2.45, phi: 1.25 };
     this.targetSpherical = { radius: 6.8, theta: 2.45, phi: 1.25 };
 
-    // Default Paint: Pure Glacial White Pearl (matching modern luxury sports sedan reference)
-    this.currentColor = 0xf8fafc;
+    // Initial Paint Color: dynamically synchronized with the active finish swatch in UI
+    this.currentColor = 0x091424;
+    this.syncSelectedPaintColor();
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2(-1000, -1000);
 
     this.init();
+  }
+
+  syncSelectedPaintColor() {
+    const activeBtn = document.querySelector(".paint-swatch-btn.active");
+    if (activeBtn && activeBtn.dataset.color) {
+      const hex = parseInt(activeBtn.dataset.color, 16);
+      if (!isNaN(hex)) {
+        this.currentColor = hex;
+        return hex;
+      }
+    }
+    const firstBtn = document.querySelector(".paint-swatch-btn");
+    if (firstBtn && firstBtn.dataset.color) {
+      const hex = parseInt(firstBtn.dataset.color, 16);
+      if (!isNaN(hex)) {
+        this.currentColor = hex;
+        return hex;
+      }
+    }
+    return this.currentColor;
   }
 
   init() {
@@ -82,6 +103,7 @@ class VehicleStudio3D {
     this.setupStudioLighting();
     this.setupStudioFloor();
     this.currentVehicleType = typeof getVehicleMode === "function" ? getVehicleMode() : "car";
+    this.syncSelectedPaintColor();
     this.setupVehicle();
     this.setupEventListeners();
     this.setupCameraControls();
@@ -277,8 +299,8 @@ class VehicleStudio3D {
         loader.setDRACOLoader(dracoLoader);
       }
 
-      // Load the intended car GLB model file with cache-busting
-      const modelUrl = "assets/models/car.glb?v=" + Date.now();
+      // Load the intended car GLB model file (fixed version for browser caching)
+      const modelUrl = "assets/models/car.glb?v=1";
 
       loader.load(
         modelUrl,
@@ -345,6 +367,7 @@ class VehicleStudio3D {
           });
 
           this.vehicleGroup.add(this.currentModel);
+          this.setPaintColor(this.currentColor);
         },
         undefined,
         (err) => {
@@ -369,8 +392,8 @@ class VehicleStudio3D {
         loader.setDRACOLoader(dracoLoader);
       }
 
-      // Load the intended bike GLB model file with cache-busting
-      const modelUrl = "assets/models/bike.glb?v=" + Date.now();
+      // Load the intended bike GLB model file (fixed version for browser caching)
+      const modelUrl = "assets/models/bike.glb?v=1";
 
       loader.load(
         modelUrl,
@@ -1005,6 +1028,11 @@ class VehicleStudio3D {
   }
 
   setupColorSwatches() {
+    this.syncSelectedPaintColor();
+    if (this.currentVehicleType === "car") {
+      this.setPaintColor(this.currentColor);
+    }
+
     document.querySelectorAll(".paint-swatch-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         document.querySelectorAll(".paint-swatch-btn").forEach((b) => b.classList.remove("active"));

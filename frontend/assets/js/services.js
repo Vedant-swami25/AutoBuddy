@@ -58,6 +58,7 @@ async function bookService(event) {
 
     setStatus("homeStatus", "Nearest verified workshop identified. Confirming dispatch...", "neutral");
 
+    const vanPrice = currentVehicle === "bike" ? 500 : 1000;
     const payload = await createBooking({
       user: {
         id: session?.id || null,
@@ -65,6 +66,7 @@ async function bookService(event) {
         mobile: session?.mobile || ""
       },
       service: "Book Van",
+      price: vanPrice,
       vehicleType: currentVehicle,
       vehicleInfo: currentVehicle === "bike" ? "Two-Wheeler Rapid Support Van" : "AutoBuddy Emergency Service Van",
       lat: userCoordinates.lat,
@@ -96,6 +98,12 @@ async function bookService(event) {
 
 async function bookPricedService(serviceName, price, button) {
   const session = getAuthSession();
+  if (!session) {
+    showToast("Please sign in to book this service.", "warning");
+    window.location.href = "login.html";
+    return;
+  }
+
   const currentVehicle = typeof getVehicleMode === "function" ? getVehicleMode() : "car";
 
   setButtonLoading(button, true, "Book Now");

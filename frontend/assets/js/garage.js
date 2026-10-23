@@ -9,8 +9,9 @@ function renderGarageCard(garage) {
   card.className = "list-card";
   card.dataset.tilt3d = "";
 
-  const verificationClass = garage.verified ? "badge success-chip" : "badge warning";
-  const verificationText = garage.verified ? "Verified Partner" : "Workshop";
+  const isVerified = Boolean(garage.verified);
+  const verificationClass = isVerified ? "badge success-chip" : "badge warning";
+  const verificationText = isVerified ? "Verified Partner" : "Unverified";
   const locationText = garage.address || garage.city || "Pune, Maharashtra";
   const ownerName = garage.mechanic || garage.ownerName || "AutoBuddy Certified Workshop";
   const servicesList = garage.services || garage.specialties || ["General Service", "Diagnostics"];
@@ -38,16 +39,17 @@ function renderGarageCard(garage) {
     </div>
     <div class="garage-card-action">
       <span class="garage-eta-tag">⚡ ${etaText}</span>
-      <button type="button">Book Visit</button>
+      <button type="button" class="primary small book-garage-btn" onclick="handleGarageCardBook('${garage.id}', this)">Book Visit</button>
     </div>
   `;
 
-  const button = card.querySelector("button");
-  button.addEventListener("click", () => {
-    bookGarage(garage, button);
-  });
-
   return card;
+}
+
+function handleGarageCardBook(garageId, button) {
+  const garage = loadedGaragesList.find((g) => g.id === garageId) || GARAGE_FALLBACKS.find((g) => g.id === garageId);
+  if (!garage) return;
+  bookGarage(garage, button);
 }
 
 function filterGaragesList(query) {
@@ -83,7 +85,7 @@ async function loadGarages() {
     return;
   }
 
-  setStatus("garageStatus", "Loading verified partner garages...", "neutral");
+  setStatus("garageStatus", "Loading partner garages...", "neutral");
 
   try {
     const garages = await fetchGarages();
@@ -106,7 +108,13 @@ async function loadGarages() {
       searchInput.addEventListener("input", (e) => filterGaragesList(e.target.value));
     }
 
-    setStatus("garageStatus", `${garages.length} verified workshops available in database.`, "success");
+    const verifiedCount = garages.filter((g) => Boolean(g.verified)).length;
+    const unverifiedCount = garages.length - verifiedCount;
+    let statusText = `${verifiedCount} Verified Garages`;
+    if (unverifiedCount > 0) {
+      statusText += ` • ${unverifiedCount} Unverified Garage${unverifiedCount > 1 ? "s" : ""}`;
+    }
+    setStatus("garageStatus", statusText, "success");
   } catch (error) {
     console.error("Load garages error:", error);
     loadedGaragesList = GARAGE_FALLBACKS;
@@ -114,12 +122,24 @@ async function loadGarages() {
     GARAGE_FALLBACKS.forEach((garage) => {
       list.appendChild(renderGarageCard(garage));
     });
-    setStatus("garageStatus", `${GARAGE_FALLBACKS.length} verified workshops loaded.`, "success");
+    const verifiedCount = GARAGE_FALLBACKS.filter((g) => Boolean(g.verified)).length;
+    const unverifiedCount = GARAGE_FALLBACKS.length - verifiedCount;
+    let statusText = `${verifiedCount} Verified Garages`;
+    if (unverifiedCount > 0) {
+      statusText += ` • ${unverifiedCount} Unverified Garage${unverifiedCount > 1 ? "s" : ""}`;
+    }
+    setStatus("garageStatus", statusText, "success");
   }
 }
 
 async function bookGarage(garage, button) {
   const session = getAuthSession();
+  if (!session) {
+    showToast("Please sign in to book a garage visit.", "warning");
+    window.location.href = "login.html";
+    return;
+  }
+
   if (button) setButtonLoading(button, true, "Book Visit");
 
   const userCoordinates = await requestCurrentLocationForAction("garageStatus", `${garage.name} visit tracking`);
@@ -147,7 +167,7 @@ async function bookGarage(garage, button) {
     setStatus("garageStatus", `Booking confirmed with ${garage.name}.`, "success");
     showToast(`Booking request sent to ${garage.name}.`, "success");
     window.setTimeout(() => {
-      window.location.href = `tracking.html?booking=${encodeURIComponent(payload.booking.id)}`;
+      window.location.href = `map.html?tracking=${encodeURIComponent(payload.booking.id)}`;
     }, 450);
   } catch (error) {
     if (shouldUseLocalBookingFallback(error)) {
@@ -183,7 +203,7 @@ async function bookGarage(garage, button) {
       setStatus("garageStatus", `Booking confirmed for ${garage.name}.`, "success");
       showToast(`Visit booked for ${garage.name}.`, "success");
       window.setTimeout(() => {
-        window.location.href = `tracking.html?booking=${encodeURIComponent(enrichedBooking.id)}`;
+        openTrackingForBooking(enrichedBooking);
       }, 450);
     } else {
       setStatus("garageStatus", "Failed to complete booking: " + error.message, "error");
@@ -195,6 +215,7 @@ async function bookGarage(garage, button) {
 }
 
 window.bookGarage = bookGarage;
+window.handleGarageCardBook = handleGarageCardBook;
 window.filterGaragesList = filterGaragesList;
 window.loadGarages = loadGarages;
 

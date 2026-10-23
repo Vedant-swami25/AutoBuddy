@@ -12,18 +12,19 @@ const {
 
 const ADMIN_MOBILE = "9579278177";
 
-async function recordSuccessfulLogin(userData, req) {
+async function recordSuccessfulLogin(userData, req, actualRole = null) {
   try {
     const ip = req?.headers?.["x-forwarded-for"] || req?.socket?.remoteAddress || "";
+    const loginRole = actualRole || userData.role || "user";
     await LoginHistory.create({
       id: `LOG-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       userId: userData.id || null,
       name: userData.name || "Authenticated User",
       email: userData.email || "",
       mobile: userData.mobile || "",
-      role: userData.role || "user",
-      garageId: userData.garageId || null,
-      garageName: userData.garageName || null,
+      role: loginRole,
+      garageId: loginRole === "garage_owner" ? (userData.garageId || null) : null,
+      garageName: loginRole === "garage_owner" ? (userData.garageName || null) : null,
       ip: String(ip).substring(0, 45),
       timestamp: new Date()
     });
@@ -40,7 +41,8 @@ function toStoredCoordinate(value) {
   return typeof value === "number" && !isNaN(value) && value !== 0 ? value : null;
 }
 
-function toSessionUser(user) {
+function toSessionUser(user, activeRole = null) {
+  const role = activeRole || user.role || "user";
   return {
     id: user.id,
     name: user.name,
@@ -48,9 +50,9 @@ function toSessionUser(user) {
     mobile: user.mobile,
     district: user.district || "Pune",
     state: user.state || "Maharashtra",
-    role: user.role || "user",
-    garageId: user.garageId || null,
-    garageName: user.garageName || null,
+    role: role,
+    garageId: role === "garage_owner" ? (user.garageId || null) : null,
+    garageName: role === "garage_owner" ? (user.garageName || null) : null,
     lat: user.lat,
     lng: user.lng,
     createdAt: user.createdAt
@@ -126,12 +128,14 @@ async function signinOtpHandler(req, res) {
       return res.status(400).json({ message: "Name is required for Sign In." });
     }
 
-    const nameRegex = new RegExp("^" + escapeRegex(normalizedName) + "$", "i");
-    // Lookup user by mobile first (Primary Identifier)
-    let user = await User.findOne({ mobile: normalizedMobile });
+    if (selectedRole === "garage_owner") {
+      // Check if this mobile has an existing Garage Owner account
+      let user = await User.findOne({ mobile: normalizedMobile, role: "garage_owner" });
+      if (!user) {
+        user = await User.findOne({ mobile: normalizedMobile, garageId: { $ne: null } });
+      }
 
-    if (!user && selectedRole === "garage_owner") {
-      // Check if this mobile belongs to a pre-verified garage
+      // Also check if a registered garage exists for this mobile number
       const matchingGarage = await Garage.findOne({
         $or: [
           { phone: `+91${normalizedMobile}` },
@@ -140,52 +144,64 @@ async function signinOtpHandler(req, res) {
         ]
       });
 
-      if (matchingGarage) {
-        user = await User.findOneAndUpdate(
-          { mobile: normalizedMobile },
-          {
-            $set: {
-              name: normalizedName || matchingGarage.ownerName || matchingGarage.mechanic || "Garage Owner",
-              role: "garage_owner",
-              garageId: matchingGarage.id,
-              district: matchingGarage.city || "Pune",
-              state: "Maharashtra",
-              lat: matchingGarage.lat,
-              lng: matchingGarage.lng,
-              updatedAt: new Date()
-            },
-            $setOnInsert: {
-              id: `OWN-${Date.now()}`,
-              createdAt: new Date()
-            }
-          },
-          { returnDocument: "after", upsert: true }
-        );
+      if (!user && matchingGarage) {
+        user = await User.findOne({ mobile: normalizedMobile });
+        if (user) {
+          user.role = "garage_owner";
+          user.garageId = matchingGarage.id;
+          await user.save();
+        }
       }
-    }
 
-    if (!user) {
-      if (normalizedName) {
-        // Auto-provision user account so sign-in never fails
-        user = await User.create({
-          id: `${selectedRole === "garage_owner" ? "OWN" : "USR"}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-          name: normalizedName,
-          email: `${normalizedMobile}@autobuddy.local`,
-          mobile: normalizedMobile,
-          role: selectedRole,
-          district: "Pune",
-          state: "Maharashtra"
-        });
-      } else {
+      // If no registered garage owner account exists in MongoDB, do NOT allow sign in
+      if (!user && !matchingGarage) {
         return res.status(404).json({
           exists: false,
-          message: "Account not found. Please create an account or enter your name."
+          role: "garage_owner",
+          redirect: "login.html?role=owner&mode=signup",
+          message: "No registered Garage Owner account found for this mobile number. Please register your garage first."
         });
       }
+
+      const customTtl = typeof testTtlMs === "number" ? testTtlMs : null;
+      const { otp, expiresIn } = storeOtp(normalizedMobile, "garage_owner", customTtl);
+
+      const response = {
+        exists: true,
+        message: "Verification code sent successfully.",
+        expiresIn,
+        user: {
+          id: user ? user.id : (matchingGarage ? matchingGarage.id : null),
+          name: user ? user.name : (matchingGarage ? (matchingGarage.ownerName || matchingGarage.name) : normalizedName),
+          mobile: normalizedMobile,
+          role: "garage_owner"
+        }
+      };
+
+      if (isDemoMode()) {
+        response.demoMode = true;
+        response.demoOtp = otp;
+        response.demoNote = "Development mode: use the OTP shown here. Connect an SMS provider for production.";
+      }
+
+      return res.json(response);
+    }
+
+    // Standard User: Look up existing user account by mobile and role === "user"
+    const user = await User.findOne({ mobile: normalizedMobile, role: "user" });
+
+    // Only existing registered accounts should be able to Sign In
+    if (!user) {
+      return res.status(404).json({
+        exists: false,
+        role: "user",
+        redirect: "login.html?role=user&mode=signup",
+        message: "No registered User account found for this mobile number. Please create an account first."
+      });
     }
 
     const customTtl = typeof testTtlMs === "number" ? testTtlMs : null;
-    const { otp, expiresIn } = storeOtp(normalizedMobile, user.role || selectedRole, customTtl);
+    const { otp, expiresIn } = storeOtp(normalizedMobile, "user", customTtl);
 
     const response = {
       exists: true,
@@ -195,7 +211,7 @@ async function signinOtpHandler(req, res) {
         id: user.id,
         name: user.name,
         mobile: user.mobile,
-        role: user.role
+        role: "user"
       }
     };
 
@@ -252,7 +268,7 @@ async function verifySigninHandler(req, res) {
         createdAt: new Date()
       };
 
-      await recordSuccessfulLogin(adminSession, req);
+      await recordSuccessfulLogin(adminSession, req, "admin");
 
       return res.json({
         message: "Admin login successful",
@@ -260,25 +276,50 @@ async function verifySigninHandler(req, res) {
       });
     }
 
-    let user = await User.findOne({ mobile: normalizedMobile });
-
-    if (!user) {
-      if (normalizedName) {
-        user = await User.create({
-          id: `${selectedRole === "garage_owner" ? "OWN" : "USR"}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-          name: normalizedName,
-          email: `${normalizedMobile}@autobuddy.local`,
-          mobile: normalizedMobile,
-          role: selectedRole,
-          district: "Pune",
-          state: "Maharashtra"
+    let user = null;
+    if (selectedRole === "garage_owner") {
+      user = await User.findOne({ mobile: normalizedMobile, role: "garage_owner" });
+      if (!user) {
+        user = await User.findOne({ mobile: normalizedMobile, garageId: { $ne: null } });
+      }
+      if (!user) {
+        const matchingGarage = await Garage.findOne({
+          $or: [
+            { phone: `+91${normalizedMobile}` },
+            { phone: normalizedMobile },
+            { phone: `+91 ${normalizedMobile}` }
+          ]
         });
-      } else {
+        if (matchingGarage) {
+          user = await User.findOne({ mobile: normalizedMobile });
+          if (user) {
+            user.role = "garage_owner";
+            user.garageId = matchingGarage.id;
+            await user.save();
+          }
+        }
+      }
+      if (!user) {
         return res.status(404).json({
-          message: "Account not found. Please create an account first."
+          exists: false,
+          role: "garage_owner",
+          redirect: "login.html?role=owner&mode=signup",
+          message: "No registered Garage Owner account found. Please register your garage first."
         });
       }
-    } else if (normalizedName && (!user.name || user.name === "User" || user.name === "Garage Owner")) {
+    } else {
+      user = await User.findOne({ mobile: normalizedMobile, role: "user" });
+      if (!user) {
+        return res.status(404).json({
+          exists: false,
+          role: "user",
+          redirect: "login.html?role=user&mode=signup",
+          message: "No registered account found. Please create an account first."
+        });
+      }
+    }
+
+    if (normalizedName && (!user.name || user.name === "User" || user.name === "Garage Owner")) {
       user.name = normalizedName;
       await user.save();
     }
@@ -291,7 +332,7 @@ async function verifySigninHandler(req, res) {
     clearOtp(normalizedMobile);
 
     let garageName = null;
-    if (user.role === "garage_owner") {
+    if (selectedRole === "garage_owner") {
       let garage = user.garageId ? await Garage.findOne({ id: user.garageId }) : null;
       if (!garage) {
         garage = await Garage.findOne({
@@ -314,10 +355,10 @@ async function verifySigninHandler(req, res) {
       }
     }
 
-    const sessionObj = toSessionUser(user);
+    const sessionObj = toSessionUser(user, selectedRole);
     if (garageName) sessionObj.garageName = garageName;
 
-    await recordSuccessfulLogin(sessionObj, req);
+    await recordSuccessfulLogin(sessionObj, req, selectedRole);
 
     return res.json({
       message: "Login successful",
@@ -445,7 +486,7 @@ async function signupHandler(req, res) {
           city: district || "Pune",
           lat: toStoredCoordinate(lat) || (18.5204 + (Math.random() - 0.5) * 0.05),
           lng: toStoredCoordinate(lng) || (73.8567 + (Math.random() - 0.5) * 0.05),
-          verified: true,
+          verified: false,
           rating: 4.8,
           etaMinutes: 14,
           phone: garagePhone,
@@ -462,9 +503,9 @@ async function signupHandler(req, res) {
       }
     }
 
-    // Upsert User
+    // Upsert User strictly scoped to { mobile, role }
     const user = await User.findOneAndUpdate(
-      { mobile: normalizedMobile },
+      { mobile: normalizedMobile, role: selectedRole },
       {
         $set: {
           name: name.trim(),
@@ -494,10 +535,10 @@ async function signupHandler(req, res) {
 
     clearOtp(normalizedMobile);
 
-    const sessionObj = toSessionUser(user);
+    const sessionObj = toSessionUser(user, selectedRole);
     if (finalGarageName) sessionObj.garageName = finalGarageName;
 
-    await recordSuccessfulLogin(sessionObj, req);
+    await recordSuccessfulLogin(sessionObj, req, selectedRole);
 
     return res.json({
       message: "Account created successfully",
@@ -554,7 +595,9 @@ async function getProfileHandler(req, res) {
       return res.status(401).json({ message: "Authentication required to view profile." });
     }
 
-    const user = await User.findOne({ mobile: req.user.mobile });
+    const query = { mobile: req.user.mobile };
+    if (req.user.role) query.role = req.user.role;
+    let user = await User.findOne(query) || (req.user.id ? await User.findOne({ id: req.user.id }) : null);
     if (!user) {
       return res.status(404).json({ message: "User account not found." });
     }
@@ -565,7 +608,7 @@ async function getProfileHandler(req, res) {
       if (garage) garageName = garage.name;
     }
 
-    const sessionObj = toSessionUser(user);
+    const sessionObj = toSessionUser(user, req.user.role);
     if (garageName) sessionObj.garageName = garageName;
 
     return res.json({ user: sessionObj });
@@ -595,8 +638,11 @@ async function updateProfileHandler(req, res) {
       return res.status(400).json({ message: "Please provide a valid email address." });
     }
 
+    const filter = { mobile: req.user.mobile };
+    if (req.user.role) filter.role = req.user.role;
+
     const updatedUser = await User.findOneAndUpdate(
-      { mobile: req.user.mobile },
+      filter,
       {
         $set: {
           name: normalizedName,

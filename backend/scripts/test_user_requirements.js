@@ -46,8 +46,58 @@ async function run() {
   }
 
   try {
-    // 1. Test Login & Account Lookup (Fix "Account not found" issue)
-    console.log("\n[TEST 1] Testing Resilient Sign In / Account Auto-Provisioning...");
+    // 1. Test Strict Sign In Validation (Reject unregistered, redirect to signup, allow registered)
+    console.log("\n[TEST 1] Testing Strict Sign In Validation & Direct Redirect...");
+    // Clean any previous test accounts
+    await User.deleteMany({ mobile: { $in: ["9555123456", "9777123456"] } });
+
+    // 1.1 Unregistered User Sign In Attempt -> Must return 404 and redirect info
+    const unregUserRes = await api("/api/auth/signin-otp", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Unregistered User",
+        mobile: "9555123456",
+        role: "user"
+      })
+    });
+    assert.strictEqual(unregUserRes.status, 404, "Unregistered user signin must return 404");
+    assert.strictEqual(unregUserRes.data.exists, false, "exists must be false");
+    assert(unregUserRes.data.redirect.includes("role=user"), "Must provide redirect to user signup");
+    console.log("  ✓ Unregistered user signin rejected with 404 & redirect to User Sign Up");
+
+    // 1.2 Unregistered Garage Owner Sign In Attempt -> Must return 404 and redirect info
+    const unregOwnerRes = await api("/api/auth/signin-otp", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Unregistered Owner",
+        mobile: "9777123456",
+        role: "garage_owner"
+      })
+    });
+    assert.strictEqual(unregOwnerRes.status, 404, "Unregistered owner signin must return 404");
+    assert.strictEqual(unregOwnerRes.data.exists, false, "exists must be false");
+    assert(unregOwnerRes.data.redirect.includes("role=owner"), "Must provide redirect to garage owner signup");
+    console.log("  ✓ Unregistered garage owner signin rejected with 404 & redirect to Garage Owner Sign Up");
+
+    // 1.3 Register user via proper Sign Up flow
+    const signupOtp = await api("/api/auth/signup-otp", {
+      method: "POST",
+      body: JSON.stringify({ name: "Vedant Swami", mobile: "9555123456", role: "user" })
+    });
+    await api("/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Vedant Swami",
+        mobile: "9555123456",
+        role: "user",
+        district: "Pune",
+        state: "Maharashtra",
+        otp: signupOtp.data.demoOtp
+      })
+    });
+    console.log("  ✓ Account properly registered via Sign Up flow");
+
+    // 1.4 Registered User Sign In Attempt -> Now succeeds normally!
     const signinOtpRes = await api("/api/auth/signin-otp", {
       method: "POST",
       body: JSON.stringify({
@@ -56,9 +106,9 @@ async function run() {
         role: "user"
       })
     });
-    assert.strictEqual(signinOtpRes.status, 200, "Signin OTP must succeed with 200");
-    assert(signinOtpRes.data.exists, "Account must exist or be auto-provisioned");
-    console.log("  ✓ Signin OTP sent successfully without 'Account not found' error");
+    assert.strictEqual(signinOtpRes.status, 200, "Registered user signin must succeed with 200");
+    assert(signinOtpRes.data.exists, "Account must exist");
+    console.log("  ✓ Registered user sign in OTP sent successfully");
 
     const verifyRes = await api("/api/auth/verify-signin", {
       method: "POST",
@@ -71,7 +121,7 @@ async function run() {
     });
     assert.strictEqual(verifyRes.status, 200, "Verify signin must succeed with 200");
     assert.strictEqual(verifyRes.data.user.name, "Vedant Swami");
-    console.log("  ✓ Verification & session creation completed successfully");
+    console.log("  ✓ Existing registered user signed in successfully");
 
     // 2. Test Recent Logins
     console.log("\n[TEST 2] Testing Admin Recent Logins API...");

@@ -30,15 +30,43 @@ const ACTIVE_BOOKING_KEY = "autobuddyActiveBooking";
 const LOCATION_SOURCE_KEY = "autobuddyLocationSource";
 const AUTOBUDDY_SUPPORT_PHONE = "+91 1800-889-2889";
 const VEHICLE_MODE_KEY = "autobuddyVehicleMode";
+const OSM_API_KEY_STORAGE_KEY = "autobuddyOsmApiKey";
 const DEFAULT_DEMO_LOCATION = {
   lat: 18.5204,
   lng: 73.8567,
   label: "Pune"
 };
 
+function getOpenStreetMapApiKey() {
+  if (typeof window !== "undefined") {
+    if (window.OPENSTREETMAP_API_KEY) return String(window.OPENSTREETMAP_API_KEY).trim();
+    try {
+      const stored = localStorage.getItem(OSM_API_KEY_STORAGE_KEY);
+      if (stored) return String(stored).trim();
+    } catch (e) {}
+  }
+  return "";
+}
+
+function setOpenStreetMapApiKey(key) {
+  if (typeof window !== "undefined") {
+    const val = key ? String(key).trim() : "";
+    window.OPENSTREETMAP_API_KEY = val;
+    try {
+      if (val) {
+        localStorage.setItem(OSM_API_KEY_STORAGE_KEY, val);
+      } else {
+        localStorage.removeItem(OSM_API_KEY_STORAGE_KEY);
+      }
+    } catch (e) {}
+  }
+}
+
 if (typeof window !== "undefined") {
   window.AUTOBUDDY_SUPPORT_PHONE = AUTOBUDDY_SUPPORT_PHONE;
   window.VEHICLE_MODE_KEY = VEHICLE_MODE_KEY;
+  window.getOpenStreetMapApiKey = getOpenStreetMapApiKey;
+  window.setOpenStreetMapApiKey = setOpenStreetMapApiKey;
 }
 
 const GARAGE_FALLBACKS = [

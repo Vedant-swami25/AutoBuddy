@@ -1,5 +1,6 @@
 const express = require("express");
 const { authenticate } = require("../middleware/auth");
+const { otpRateLimiter } = require("../middleware/rateLimiter");
 const {
   checkAccountHandler,
   getProfileHandler,
@@ -14,11 +15,11 @@ const {
 
 const router = express.Router();
 
-// Specific and universal routes
-router.post("/signin-otp", signinOtpHandler);
+// Apply rate limiting to OTP endpoints
+router.post("/signin-otp", otpRateLimiter, signinOtpHandler);
 router.post("/verify-signin", verifySigninHandler);
 router.post("/signin", verifySigninHandler);
-router.post("/signup-otp", signupOtpHandler);
+router.post("/signup-otp", otpRateLimiter, signupOtpHandler);
 router.post("/signup", signupHandler);
 
 // Profile routes (requires authentication)
@@ -27,8 +28,8 @@ router.get("/profile", authenticate, getProfileHandler);
 router.put("/profile", authenticate, updateProfileHandler);
 
 // Aliases
-router.post("/send-otp", sendOtpHandler);
-router.post("/otp/send", sendOtpHandler);
+router.post("/send-otp", otpRateLimiter, sendOtpHandler);
+router.post("/otp/send", otpRateLimiter, sendOtpHandler);
 router.post("/verify-otp", verifyOtpHandler);
 router.post("/otp/verify", verifyOtpHandler);
 router.get("/check-account", checkAccountHandler);

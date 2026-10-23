@@ -31,7 +31,8 @@ async function findEmailConflict(email, mobile) {
 
 async function upsertUser(payload) {
   const { name, email, mobile, district, state, lat, lng } = payload;
-  let user = await User.findOne({ mobile });
+  const role = payload.role === "garage_owner" ? "garage_owner" : "user";
+  let user = await User.findOne({ mobile, role });
 
   if (user) {
     user.name = name;
@@ -45,10 +46,11 @@ async function upsertUser(payload) {
   }
 
   return new User({
-    id: `USR-${Date.now()}`,
+    id: `${role === "garage_owner" ? "OWN" : "USR"}-${Date.now()}`,
     name,
     email,
     mobile,
+    role,
     district,
     state,
     lat: toStoredCoordinate(lat),

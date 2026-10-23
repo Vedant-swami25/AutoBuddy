@@ -13,27 +13,51 @@ async function requestJson(url, options = {}) {
     headers["x-user-mobile"] = session.mobile;
     if (session.id) headers["x-user-id"] = session.id;
     if (session.role) headers["x-user-role"] = session.role;
-    if (session.role === "admin" || session.mobile === "9579278177") {
+    if (session.role === "admin") {
       headers["x-admin-mobile"] = session.mobile;
     }
   }
 
   const response = await fetch(url, { ...options, headers });
+  
+  // Handle error responses
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
+    let payload = null;
 
     try {
-      const errorPayload = await response.json();
-      if (errorPayload?.message) {
-        message = errorPayload.message;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const errorPayload = await response.json();
+        payload = errorPayload;
+        if (errorPayload?.message) {
+          message = errorPayload.message;
+        }
+      } else {
+        message = await response.text() || message;
       }
     } catch (error) {
-      // Ignore JSON parsing errors and fall back to default message.
+      // Ignore parsing errors and fall back to default message
+      console.warn("Could not parse error response:", error);
     }
 
-    throw new Error(message);
+    const err = new Error(message);
+    err.status = response.status;
+    err.payload = payload;
+    throw err;
   }
-  return response.json();
+
+  // Handle success responses - safely parse JSON
+  try {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    }
+    return null;
+  } catch (error) {
+    console.warn("Could not parse response JSON:", error);
+    throw new Error("Invalid response format from server");
+  }
 }
 
 // Authentication & OTP APIs
@@ -120,6 +144,10 @@ function fetchGarageBookings(garageId) {
   return requestJson(`${API}/book/garage?garageId=${encodeURIComponent(garageId)}`);
 }
 
+function fetchBookingByIdApi(bookingId) {
+  return requestJson(`${API}/book/${encodeURIComponent(bookingId)}`);
+}
+
 function updateBookingStatusApi(bookingId, payload) {
   return requestJson(`${API}/book/${encodeURIComponent(bookingId)}/status`, {
     method: "PUT",
@@ -147,4 +175,32 @@ function submitGarageApplication(payload) {
     method: "POST",
     body: JSON.stringify(payload)
   });
+}
+
+// Export all API functions to global window scope
+if (typeof window !== 'undefined') {
+  // Authentication APIs
+  window.signinOtpApi = signinOtpApi;
+  window.verifySigninApi = verifySigninApi;
+  window.signupOtpApi = signupOtpApi;
+  window.signupApi = signupApi;
+  window.sendOtpApi = sendOtpApi;
+  window.verifyOtpApi = verifyOtpApi;
+  window.checkAccountApi = checkAccountApi;
+  window.reverseGeocode = reverseGeocode;
+  
+  // Booking APIs
+  window.createBooking = createBooking;
+  window.fetchBookings = fetchBookings;
+  window.fetchUserBookings = fetchUserBookings;
+  window.fetchLatestBooking = fetchLatestBooking;
+  window.fetchGarageBookings = fetchGarageBookings;
+  window.fetchBookingByIdApi = fetchBookingByIdApi;
+  window.updateBookingStatusApi = updateBookingStatusApi;
+  window.cancelBookingRequest = cancelBookingRequest;
+  
+  // Garage APIs
+  window.fetchGarages = fetchGarages;
+  window.fetchGarageById = fetchGarageById;
+  window.submitGarageApplication = submitGarageApplication;
 }

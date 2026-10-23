@@ -2,7 +2,9 @@ const { mongoose } = require("../config/database");
 
 const bookingSchema = new mongoose.Schema({
   id: { type: String, unique: true, required: true },
+  userId: { type: String, default: null },
   user: {
+    id: { type: String, default: null },
     name: { type: String, required: true },
     mobile: { type: String, required: true }
   },
@@ -12,7 +14,8 @@ const bookingSchema = new mongoose.Schema({
   garageId: { type: String, default: null },
   city: { type: String, default: null },
   rating: { type: Number, default: 4.7 },
-  travelMinutes: { type: Number, default: 28 },
+  travelMinutes: { type: Number, default: 20 },
+  distanceKm: { type: Number, default: null },
   mechanic: { type: String, default: null },
   vehicle: { type: String, default: null },
   phone: { type: String, default: null },
@@ -28,6 +31,7 @@ const bookingSchema = new mongoose.Schema({
   garageLng: { type: Number, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  acceptedAt: { type: Date, default: null },
   status: {
     type: String,
     enum: ["pending", "accepted", "rejected", "in_progress", "completed", "cancelled"],
@@ -44,6 +48,8 @@ const bookingSchema = new mongoose.Schema({
 
 bookingSchema.index({ garageId: 1, createdAt: -1 });
 bookingSchema.index({ "user.mobile": 1, createdAt: -1 });
+bookingSchema.index({ userId: 1, createdAt: -1 });
+bookingSchema.index({ "user.id": 1, createdAt: -1 });
 bookingSchema.index({ status: 1 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

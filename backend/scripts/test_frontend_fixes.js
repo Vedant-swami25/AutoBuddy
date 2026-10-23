@@ -12,7 +12,8 @@ assert(threeScene.includes("loadCarModel"), "three-scene.js must have loadCarMod
 assert(threeScene.includes("loadMotorcycleModel"), "three-scene.js must have loadMotorcycleModel");
 assert(threeScene.includes("setVehicleType"), "three-scene.js must have setVehicleType");
 assert(threeScene.includes("setPaintColor"), "three-scene.js must have setPaintColor");
-console.log("  ✓ three-scene.js has complete 3D Car & Bike GLTF pipelines, methods, and zero syntax errors");
+assert(threeScene.includes("syncSelectedPaintColor"), "three-scene.js must implement syncSelectedPaintColor");
+console.log("  ✓ three-scene.js has complete 3D Car & Bike GLTF pipelines, color synchronization, and zero syntax errors");
 
 // 2. Check garage.js
 const garageJs = fs.readFileSync("frontend/assets/js/garage.js", "utf8");

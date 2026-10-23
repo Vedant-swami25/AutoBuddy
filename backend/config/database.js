@@ -10,17 +10,22 @@ async function connectDatabase() {
     });
     console.log("MongoDB connected successfully");
 
-    // Clean up any legacy unique index on email
+    // Clean up legacy single unique indexes to allow dual User and Garage Owner roles
     try {
       const collection = mongoose.connection.collection("users");
       const indexes = await collection.indexes();
       const emailIndex = indexes.find((idx) => idx.name === "email_1");
       if (emailIndex) {
         await collection.dropIndex("email_1");
-        console.log("Cleaned up legacy email_1 unique index");
       }
+      const mobileIndex = indexes.find((idx) => idx.name === "mobile_1");
+      if (mobileIndex) {
+        await collection.dropIndex("mobile_1");
+        console.log("Cleaned up legacy mobile_1 unique index to allow dual role accounts");
+      }
+      await collection.createIndex({ mobile: 1, role: 1 }, { unique: true });
     } catch (idxError) {
-      // Ignore if index doesn't exist
+      // Ignore index errors
     }
 
     return true;

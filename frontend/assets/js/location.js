@@ -6,28 +6,36 @@
  */
 
 async function autofillLocationFromCoordinates(latitude, longitude) {
-  const districtInput = document.getElementById("loginDistrict");
-  const stateInput = document.getElementById("loginState");
-  const helper = document.getElementById("locationHelper");
+  // Support both ID conventions (signupDistrict/signupState from login.html,
+  // or loginDistrict/loginState if used elsewhere)
+  const districtInput = document.getElementById("signupDistrict") || document.getElementById("loginDistrict");
+  const stateInput = document.getElementById("signupState") || document.getElementById("loginState");
+  const helper = document.getElementById("locationHelper") || document.getElementById("loginStatus");
 
-  if (!districtInput || !stateInput || !helper) {
+  if (!districtInput && !stateInput) {
     return;
   }
 
-  helper.textContent = "Location access granted. Filling district and state...";
+  if (helper) {
+    helper.textContent = "Location access granted. Filling district and state...";
+  }
 
   try {
     const payload = await reverseGeocode(latitude, longitude);
 
-    if (!districtInput.value) {
+    if (districtInput && !districtInput.value) {
       districtInput.value = payload.district || "";
     }
-    if (!stateInput.value) {
+    if (stateInput && !stateInput.value) {
       stateInput.value = payload.state || "";
     }
-    helper.textContent = "District and state were filled from your current location. You can still edit them.";
+    if (helper) {
+      helper.textContent = "District and state were filled from your current location. You can still edit them.";
+    }
   } catch (error) {
-    helper.textContent = error.message || "We could not auto-fill district and state from your location.";
+    if (helper) {
+      helper.textContent = error.message || "We could not auto-fill district and state from your location.";
+    }
   }
 }
 

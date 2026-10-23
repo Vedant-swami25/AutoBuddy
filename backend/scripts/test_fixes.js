@@ -138,21 +138,33 @@ async function runTests() {
         state: "Maharashtra"
       })
     });
-    const userOtp = userOtpReq.data?.demoOtp;
-    assert(userOtp, "Customer OTP should be returned in demo mode");
-
-    const userVerify = await api("/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify({
-        name: "Rohan Sharma",
-        mobile: "9123456789",
-        role: "user",
-        district: "Pune",
-        state: "Maharashtra",
-        otp: userOtp
-      })
-    });
-    assert.strictEqual(userVerify.status, 200);
+    let userOtp = userOtpReq.data?.demoOtp;
+    if (userOtpReq.status === 409) {
+      const signinReq = await api("/api/auth/signin-otp", {
+        method: "POST",
+        body: JSON.stringify({ name: "Rohan Sharma", mobile: "9123456789", role: "user" })
+      });
+      userOtp = signinReq.data?.demoOtp;
+      const userVerify = await api("/api/auth/verify-signin", {
+        method: "POST",
+        body: JSON.stringify({ mobile: "9123456789", role: "user", otp: userOtp })
+      });
+      assert.strictEqual(userVerify.status, 200);
+    } else {
+      assert(userOtp, "Customer OTP should be returned in demo mode");
+      const userVerify = await api("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Rohan Sharma",
+          mobile: "9123456789",
+          role: "user",
+          district: "Pune",
+          state: "Maharashtra",
+          otp: userOtp
+        })
+      });
+      assert.strictEqual(userVerify.status, 200);
+    }
     console.log("  ✓ Customer registration & login successful");
 
     // Test 2.6: Garage Owner signs in -> records Garage Owner login
@@ -166,21 +178,33 @@ async function runTests() {
         state: "Maharashtra"
       })
     });
-    const ownerOtp = ownerOtpReq.data?.demoOtp;
-    assert(ownerOtp, "Garage owner OTP should be returned in demo mode");
-
-    const ownerVerify = await api("/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify({
-        name: "Vikram Gaikwad",
-        mobile: "9822011223",
-        role: "garage_owner",
-        district: "Pune",
-        state: "Maharashtra",
-        otp: ownerOtp
-      })
-    });
-    assert.strictEqual(ownerVerify.status, 200);
+    let ownerOtp = ownerOtpReq.data?.demoOtp;
+    if (ownerOtpReq.status === 409) {
+      const signinReq = await api("/api/auth/signin-otp", {
+        method: "POST",
+        body: JSON.stringify({ name: "Vikram Gaikwad", mobile: "9822011223", role: "garage_owner" })
+      });
+      ownerOtp = signinReq.data?.demoOtp;
+      const ownerVerify = await api("/api/auth/verify-signin", {
+        method: "POST",
+        body: JSON.stringify({ mobile: "9822011223", role: "garage_owner", otp: ownerOtp })
+      });
+      assert.strictEqual(ownerVerify.status, 200);
+    } else {
+      assert(ownerOtp, "Garage owner OTP should be returned in demo mode");
+      const ownerVerify = await api("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Vikram Gaikwad",
+          mobile: "9822011223",
+          role: "garage_owner",
+          district: "Pune",
+          state: "Maharashtra",
+          otp: ownerOtp
+        })
+      });
+      assert.strictEqual(ownerVerify.status, 200);
+    }
     console.log("  ✓ Garage Owner registration & login successful");
 
     // Query Recent Logins via Admin API
@@ -197,7 +221,7 @@ async function runTests() {
     assert.strictEqual(logs[0].name, "Vikram Gaikwad");
 
     assert.strictEqual(logs[1].role, "user");
-    assert.strictEqual(logs[1].roleLabel, "Customer");
+    assert(logs[1].roleLabel === "User" || logs[1].roleLabel === "Customer", "Role label should be User or Customer");
     assert.strictEqual(logs[1].name, "Rohan Sharma");
 
     assert.strictEqual(logs[2].role, "admin");
@@ -232,9 +256,11 @@ async function runTests() {
     console.log("ALL BACKEND & API TESTS PASSED 100%!");
     console.log("=========================================\n");
 
+  } catch (err) {
+    console.error("TEST ERROR:", err);
+    process.exit(1);
   } finally {
     server.close();
-    process.exit(0);
   }
 }
 

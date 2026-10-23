@@ -73,8 +73,8 @@ function setActiveBooking(booking) {
   if (typeof toggleTrackingLinkVisibility === "function") {
     toggleTrackingLinkVisibility();
   }
-  if (typeof window !== "undefined" && typeof window.renderFloatingTrackerLauncher === "function") {
-    window.renderFloatingTrackerLauncher();
+  if (typeof renderFloatingTrackerLauncher === "function") {
+    renderFloatingTrackerLauncher();
   }
 }
 

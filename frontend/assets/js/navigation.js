@@ -323,14 +323,7 @@ function renderSessionUi() {
   const displayName = String(session?.name || (isAdminUser ? "System Administrator" : (isOwner ? "Garage Owner" : "User"))).trim();
   const initial = displayName ? displayName[0].toUpperCase() : (isAdminUser ? "🛡️" : (isOwner ? "W" : "U"));
 
-  // Ensure AutoBuddy logo opens sidebar
-  document.querySelectorAll("a.brand").forEach((brandEl) => {
-    brandEl.style.cursor = "pointer";
-    brandEl.onclick = (e) => {
-      e.preventDefault();
-      toggleSidebar(true);
-    };
-  });
+  // Brand logo navigates to index.html via its href (no override needed)
 
   // Ensure user badge in topbar opens sidebar
   const userBadge = document.querySelector(".user-badge");

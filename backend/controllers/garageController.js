@@ -1,4 +1,5 @@
 const Garage = require("../models/Garage");
+const User = require("../models/User");
 const fallbackGarages = require("../data/garages.json");
 
 function escapeRegex(text) {
@@ -120,7 +121,25 @@ async function addGarage(req, res) {
     }
 
     const newGarage = buildGarageDocument(payload);
+
+    // Associate garage with authenticated owner
+    if (req.user && req.user.id) {
+      newGarage.ownerId = req.user.id;
+    }
+
     await newGarage.save();
+
+    // Update owner's user record to link to the new garage
+    if (req.user && req.user.id) {
+      try {
+        await User.findOneAndUpdate(
+          { id: req.user.id },
+          { $set: { garageId: newGarage.id } }
+        );
+      } catch (linkError) {
+        console.warn("Could not link garage to owner profile:", linkError.message);
+      }
+    }
 
     return res.json({ message: "Garage registered successfully", garage: newGarage });
   } catch (error) {

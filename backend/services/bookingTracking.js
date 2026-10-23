@@ -9,7 +9,7 @@ const { getCoordinatePair } = require("../utils/coordinates");
 const TRACK_STAGES = [
   { key: "confirmed", label: "Booking confirmed", threshold: 0.05 },
   { key: "assigned", label: "Service partner assigned", threshold: 0.22 },
-  { key: "enroute", label: "On the way", threshold: 0.5 },
+  { key: "enroute", label: "Service Partner Assigned", threshold: 0.5 },
   { key: "nearby", label: "Service expert is nearby", threshold: 0.8 },
   { key: "arrived", label: "Arrived at your location", threshold: 1 }
 ];
@@ -69,25 +69,29 @@ function enrichBooking(booking) {
       trackingStatus: "Awaiting garage confirmation",
       timeline: [
         { key: "pending", label: "Booking submitted", done: true, active: true },
-        { key: "accepted", label: "Garage accepted", done: false, active: false },
-        { key: "enroute", label: "On the way", done: false, active: false },
+        { key: "accepted", label: "Service Partner Assigned", done: false, active: false },
+        { key: "in_progress", label: "Service In Progress", done: false, active: false },
         { key: "arrived", label: "Service completed", done: false, active: false }
       ],
       route: getRouteSnapshot(booking, 0)
     };
   }
 
-  if (status === "rejected") {
+  if (status === "cancelled" || status === "declined" || status === "rejected") {
+    const label =
+      status === "cancelled" ? "Booking cancelled" :
+      status === "declined" ? "Booking declined" : "Booking rejected by garage";
+
     return {
       ...doc,
       etaMinutes: 0,
       progressPercent: 0,
-      trackingStatus: "Booking rejected by garage",
+      trackingStatus: label,
       timeline: [
         { key: "pending", label: "Booking submitted", done: true, active: false },
-        { key: "rejected", label: "Rejected by garage", done: true, active: true }
+        { key: status, label, done: true, active: true }
       ],
-      route: getRouteSnapshot(booking, 0)
+      route: null
     };
   }
 

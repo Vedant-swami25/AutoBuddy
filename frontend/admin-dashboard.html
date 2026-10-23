@@ -45,6 +45,18 @@
         </div>
 
         <div class="admin-stat-card">
+          <span class="admin-stat-title">Verified Garages</span>
+          <strong id="adminStatVerified" class="admin-stat-number" style="color: #34d399;">0</strong>
+          <span class="admin-stat-sub">Approved &amp; Active</span>
+        </div>
+
+        <div class="admin-stat-card">
+          <span class="admin-stat-title">Pending Verification</span>
+          <strong id="adminStatUnverified" class="admin-stat-number" style="color: #fbbf24;">0</strong>
+          <span class="admin-stat-sub">Awaiting Admin Approval</span>
+        </div>
+
+        <div class="admin-stat-card">
           <span class="admin-stat-title">Total Bookings</span>
           <strong id="adminStatBookings" class="admin-stat-number">0</strong>
           <span class="admin-stat-sub">Across All Workshops</span>
@@ -65,51 +77,51 @@
 
       <!-- Tab Navigation -->
       <nav class="admin-tab-nav" role="tablist">
-        <button type="button" class="admin-tab-btn active" data-tab="garages" role="tab">🏢 Garages Management</button>
+        <button type="button" class="admin-tab-btn active" data-tab="users" role="tab">👥 Users</button>
+        <button type="button" class="admin-tab-btn" data-tab="owners" role="tab">🏢 Garage Owners</button>
         <button type="button" class="admin-tab-btn" data-tab="bookings" role="tab">📅 All Bookings</button>
-        <button type="button" class="admin-tab-btn" data-tab="users" role="tab">👥 Users &amp; Garage Owners</button>
         <button type="button" class="admin-tab-btn" data-tab="logins" role="tab">🔐 Recent Logins</button>
       </nav>
 
-      <!-- Section 1: Garages Management -->
-      <section id="sec-garages" class="admin-tab-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+      <!-- Section 1: Users (Customer Driver Accounts) -->
+      <section id="sec-users" class="admin-tab-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Registered Garages</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary);">Manage, review, and delete invalid or duplicate workshop listings.</p>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Registered Users</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">All registered customer driver accounts from MongoDB database.</p>
           </div>
-          <button class="secondary small" type="button" onclick="loadAdminGarages()">🔄 Refresh Garages</button>
+          <button class="secondary small" type="button" onclick="loadAdminUsers()">🔄 Refresh Users</button>
         </div>
-        <div id="adminGaragesContainer"></div>
+        <div id="adminUsersContainer"></div>
       </section>
 
-      <!-- Section 2: Bookings Management -->
+      <!-- Section 2: Garage Owners & Workshop Management -->
+      <section id="sec-owners" class="admin-tab-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Garage Owners &amp; Workshops</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">Review registered workshop owners, approve pending garages, manage verification status, and launch dashboard sessions.</p>
+          </div>
+          <button class="secondary small" type="button" onclick="loadAdminGarageOwners()">🔄 Refresh Garage Owners</button>
+        </div>
+        <div id="adminOwnersContainer"></div>
+      </section>
+
+      <!-- Section 3: Bookings Management -->
       <section id="sec-bookings" class="admin-tab-section" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
             <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Platform Bookings &amp; Service Requests</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary);">View all customer service dispatches and cancel bookings when required.</p>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">Real-time dispatch requests with synchronized MongoDB statuses and pricing.</p>
           </div>
           <button class="secondary small" type="button" onclick="loadAdminBookings()">🔄 Refresh Bookings</button>
         </div>
         <div id="adminBookingsContainer"></div>
       </section>
 
-      <!-- Section 3: Users & Garage Owners -->
-      <section id="sec-users" class="admin-tab-section" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <div>
-            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Registered Accounts</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary);">View all registered users, workshop owners, and manage database records.</p>
-          </div>
-          <button class="secondary small" type="button" onclick="loadAdminUsers()">🔄 Refresh Accounts</button>
-        </div>
-        <div id="adminUsersContainer"></div>
-      </section>
-
       <!-- Section 4: Recent Logins -->
       <section id="sec-logins" class="admin-tab-section" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
             <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Recent Logins</h2>
             <p style="font-size: 0.82rem; color: var(--text-secondary);">Real-time audit log of the latest 50 successful authentications across Customers, Workshop Owners, and Administrators.</p>

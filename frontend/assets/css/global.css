@@ -62,3 +62,11 @@ img, svg {
     padding: 16px 14px 60px;
   }
 }
+
+/* Suppress ugly system scrollbars and buttons across the application */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+

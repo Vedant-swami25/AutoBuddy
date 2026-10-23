@@ -46,6 +46,18 @@ async function loadTrackingBookings() {
   try {
     const bookings = await fetchBookingsForCurrentUser();
     currentUserBookings = bookings || [];
+
+    // Ensure active booking is synced for floating tracker launcher
+    if (currentUserBookings.length) {
+      const active = currentUserBookings.find((b) => {
+        const s = (b.status || "").toLowerCase();
+        return s === "pending" || s === "accepted" || s === "in_progress";
+      });
+      if (active && (!getActiveBooking() || getActiveBooking()?.status === "completed")) {
+        setActiveBooking(active);
+      }
+    }
+
     renderUserBookingsFeed();
   } catch (error) {
     console.error("Error loading user bookings:", error);
@@ -59,31 +71,31 @@ function renderUserBookingsFeed() {
   if (!container) return;
 
   let filtered = currentUserBookings;
-  if (currentBookingsFilter === "pending") {
-    filtered = currentUserBookings.filter((b) => (b.status || "pending").toLowerCase() === "pending");
-  } else if (currentBookingsFilter === "active") {
+  if (currentBookingsFilter === "pending_cancelled") {
     filtered = currentUserBookings.filter((b) => {
-      const s = (b.status || "").toLowerCase();
-      return s === "accepted" || s === "in_progress";
+      const s = (b.status || "pending").toLowerCase();
+      return s === "pending" || s === "cancelled" || s === "rejected";
     });
   } else if (currentBookingsFilter === "completed") {
     filtered = currentUserBookings.filter((b) => (b.status || "").toLowerCase() === "completed");
-  } else if (currentBookingsFilter === "declined") {
-    filtered = currentUserBookings.filter((b) => {
-      const s = (b.status || "").toLowerCase();
-      return s === "rejected" || s === "cancelled";
-    });
+  } else {
+    filtered = currentUserBookings;
   }
 
   if (!filtered.length) {
+    let emptyMsg = "You have not made any service appointments or workshop bookings yet.";
+    if (currentBookingsFilter === "pending_cancelled") {
+      emptyMsg = "No pending or cancelled bookings found.";
+    } else if (currentBookingsFilter === "completed") {
+      emptyMsg = "No completed bookings found.";
+    }
+
     container.innerHTML = `
       <div class="empty-state" style="padding: 48px 20px; text-align: center;">
         <div style="font-size: 2.2rem; margin-bottom: 12px;">📅</div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">No bookings yet.</h3>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">No bookings found.</h3>
         <p style="font-size: 0.86rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto 20px;">
-          ${currentBookingsFilter === "all"
-            ? "You have not made any service appointments or workshop bookings yet."
-            : "No bookings found matching this filter."}
+          ${emptyMsg}
         </p>
         <button type="button" class="secondary" onclick="window.location.href='garage.html'">Browse Garages Directory →</button>
       </div>
@@ -100,11 +112,11 @@ function renderUserBookingsFeed() {
       status === "completed" ? "success-chip" : "error-chip";
 
     const statusLabel =
-      status === "pending" ? "Pending Confirmation" :
-      status === "accepted" ? "Accepted by Garage" :
-      status === "in_progress" ? "In Progress" :
-      status === "completed" ? "Service Completed" :
-      status === "rejected" ? "Declined by Workshop" : "Cancelled";
+      status === "pending" ? "Booking Confirmed" :
+      status === "accepted" ? "Service Partner Assigned" :
+      status === "in_progress" ? "Service In Progress" :
+      status === "completed" ? "Completed" :
+      (status === "rejected" || status === "declined") ? "Declined by Workshop" : "Cancelled";
 
     const priceText = booking.price ? `₹${booking.price}` : "Estimate on inspection";
     const dateFormatted = new Date(booking.createdAt || Date.now()).toLocaleString("en-IN", {
@@ -118,16 +130,31 @@ function renderUserBookingsFeed() {
     const garageName = booking.garage || "AutoBuddy Service Partner";
     const serviceName = booking.service || "General Workshop Service";
     const location = booking.city || "Pune, Maharashtra";
+    const garagePhone = booking.phone || "+91 1800-889-2889";
     const supportPhone = booking.supportPhone || (typeof AUTOBUDDY_SUPPORT_PHONE !== "undefined" ? AUTOBUDDY_SUPPORT_PHONE : "+91 1800-889-2889");
 
-    const canCancel = status === "pending";
-    const cancelAction = canCancel
-      ? `<button type="button" class="secondary small" onclick="handleCancelUserBooking('${booking.id}')">Cancel Booking</button>`
-      : "";
+    const canCancel = status === "pending" || status === "accepted";
+    const isInProgress = status === "in_progress";
+    let cancelAction = "";
+    if (canCancel) {
+      cancelAction = `<button type="button" class="secondary small cancel-booking-btn" style="border-color: rgba(239, 68, 68, 0.5); color: #f87171;" onclick="handleCancelUserBooking('${booking.id}')">Cancel Booking</button>`;
+    } else if (isInProgress) {
+      cancelAction = `<button type="button" class="secondary small disabled" style="opacity: 0.5; cursor: not-allowed;" title="Service is already in progress and cannot be cancelled." onclick="showToast('Service is already in progress and cannot be cancelled.', 'error')">Cancel Disabled</button>`;
+    }
 
     const contactAction = (status === "accepted" || status === "in_progress")
-      ? `<span class="map-garage-phone" style="font-size: 0.84rem; font-weight: 600; color: var(--accent-primary);">📞 AutoBuddy Helpline: ${supportPhone}</span>`
+      ? `<span class="map-garage-phone" style="font-size: 0.84rem; font-weight: 600; color: var(--accent-primary);">📞 Helpline: ${supportPhone}</span>`
       : "";
+
+    const isCancelledOrInactive = status === "cancelled" || status === "rejected" || status === "declined";
+    let trackAction = "";
+    if (!isCancelledOrInactive) {
+      if (status === "completed") {
+        trackAction = `<button type="button" class="primary small track-booking-btn" onclick="openTrackingForBooking('${booking.id}')">🗺️ View Route & Details</button>`;
+      } else if (status === "accepted" || status === "in_progress" || status === "pending") {
+        trackAction = `<button type="button" class="primary small track-booking-btn" onclick="openTrackingForBooking('${booking.id}')">📍 Track Booking</button>`;
+      }
+    }
 
     return `
       <article class="user-booking-card status-${status}">
@@ -168,10 +195,11 @@ function renderUserBookingsFeed() {
           </div>
         ` : ""}
 
-        ${(cancelAction || contactAction) ? `
-          <div class="user-booking-actions">
+        ${(contactAction || cancelAction || trackAction) ? `
+          <div class="user-booking-actions" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
             ${contactAction}
             ${cancelAction}
+            ${trackAction}
           </div>
         ` : ""}
       </article>
@@ -180,6 +208,12 @@ function renderUserBookingsFeed() {
 }
 
 async function handleCancelUserBooking(bookingId) {
+  const found = currentUserBookings.find((b) => b.id === bookingId);
+  if (found && found.status === "in_progress") {
+    showToast("Service is already in progress and cannot be cancelled.", "error");
+    return;
+  }
+
   if (!confirm("Are you sure you want to cancel this booking?")) {
     return;
   }
@@ -188,16 +222,32 @@ async function handleCancelUserBooking(bookingId) {
     await cancelBookingRequest(bookingId);
     showToast("Booking cancelled successfully", "success");
 
-    const found = currentUserBookings.find((b) => b.id === bookingId);
     if (found) {
       found.status = "cancelled";
     }
+
+    // Clean active booking state and remove floating tracker launcher
+    if (typeof getActiveBooking === "function") {
+      const active = getActiveBooking();
+      if (active && (active.id === bookingId || active._id === bookingId)) {
+        if (typeof clearActiveBooking === "function") {
+          clearActiveBooking();
+        } else if (typeof setActiveBooking === "function") {
+          setActiveBooking(null);
+        }
+      }
+    }
+    const launcher = document.getElementById("floatingTrackerLauncher");
+    if (launcher) launcher.remove();
+
     renderUserBookingsFeed();
   } catch (error) {
     console.error("Cancel booking error:", error);
     showToast("Failed to cancel: " + error.message, "error");
   }
 }
+
+let userBookingsPollInterval = null;
 
 // Setup filter tabs
 function initBookingsPage() {
@@ -211,6 +261,9 @@ function initBookingsPage() {
   });
 
   loadTrackingBookings();
+
+  if (userBookingsPollInterval) clearInterval(userBookingsPollInterval);
+  userBookingsPollInterval = setInterval(loadTrackingBookings, 8000);
 }
 
 window.loadTrackingBookings = loadTrackingBookings;

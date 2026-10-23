@@ -4,6 +4,9 @@
  */
 
 const ADMIN_PHONE = "9579278177";
+let adminPollingInterval = null;
+let currentAdminOwners = [];
+let currentAdminTab = "users";
 
 function getAdminHeaders() {
   const session = typeof getAuthSession === "function" ? getAuthSession() : null;
@@ -25,11 +28,15 @@ async function loadAdminStats() {
     const stats = await res.json();
 
     const statGarages = document.getElementById("adminStatGarages");
+    const statVerified = document.getElementById("adminStatVerified");
+    const statUnverified = document.getElementById("adminStatUnverified");
     const statBookings = document.getElementById("adminStatBookings");
     const statUsers = document.getElementById("adminStatUsers");
     const statOwners = document.getElementById("adminStatOwners");
 
     if (statGarages) statGarages.textContent = stats.garagesCount || 0;
+    if (statVerified) statVerified.textContent = stats.verifiedGaragesCount || 0;
+    if (statUnverified) statUnverified.textContent = stats.unverifiedGaragesCount || 0;
     if (statBookings) statBookings.textContent = stats.bookingsCount || 0;
     if (statUsers) statUsers.textContent = stats.usersCount || 0;
     if (statOwners) statOwners.textContent = stats.ownersCount || 0;
@@ -38,72 +45,124 @@ async function loadAdminStats() {
   }
 }
 
-async function loadAdminGarages() {
-  const container = document.getElementById("adminGaragesContainer");
+/**
+ * Load Garage Owners only (role: 'garage_owner') with workshop details & actions
+ */
+async function loadAdminGarageOwners() {
+  const container = document.getElementById("adminOwnersContainer");
   if (!container) return;
 
-  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered garages...</div>`;
+  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered garage owners from database...</div>`;
 
   try {
-    const res = await fetch(`${API}/admin/garages`, {
+    const res = await fetch(`${API}/admin/owners`, {
       headers: getAdminHeaders()
     });
-    if (!res.ok) throw new Error("Failed to load garages");
-    const garages = await res.json();
+    if (!res.ok) throw new Error("Failed to load garage owners");
 
-    if (!garages.length) {
-      container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No garages found.</div>`;
+    const owners = await res.json();
+    currentAdminOwners = Array.isArray(owners) ? owners : [];
+
+    if (currentAdminOwners.length === 0) {
+      container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No garage owners registered in the system.</div>`;
       return;
     }
 
     container.innerHTML = `
-      <div class="admin-table-wrap">
+      <div class="admin-table-wrapper">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Garage Name</th>
-              <th>Owner / Contact</th>
-              <th>Phone</th>
+              <th>Owner Name &amp; ID</th>
+              <th>Contact Details</th>
+              <th>Workshop Name &amp; ID</th>
               <th>Location</th>
-              <th>Source</th>
-              <th>Rating</th>
-              <th>Action</th>
+              <th>Verification Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            ${garages.map((g) => `
-              <tr>
-                <td><strong>${g.name}</strong><br><small style="color: var(--text-tertiary);">${g.id}</small></td>
-                <td>${g.ownerName || g.mechanic || "N/A"}</td>
-                <td><a href="tel:${g.phone || ""}" style="color: var(--accent-primary); font-weight: 600;">${g.phone || "N/A"}</a></td>
-                <td>${g.city || g.address || "Pune"}</td>
-                <td>
-                  <span class="${g.source === "database" ? "admin-badge-db" : "admin-badge-sys"}">
-                    ${g.source === "database" ? "MongoDB" : "System Preset"}
-                  </span>
-                </td>
-                <td>⭐ ${g.rating || 4.8}</td>
-                <td>
-                  ${g.canDelete ? `
-                    <button type="button" class="admin-action-btn-danger" onclick="deleteGarageAsAdmin('${g.id}', '${g.name.replace(/'/g, "\\'")}')">
-                      🗑️ Delete
-                    </button>
-                  ` : `<span style="color: var(--text-tertiary); font-size: 0.76rem;">System Locked</span>`}
-                </td>
-              </tr>
-            `).join("")}
+            ${currentAdminOwners.map((o) => {
+              const isVerified = Boolean(o.verified);
+              const badgeClass = isVerified ? "admin-badge-verified" : "admin-badge-pending";
+              const badgeText = isVerified ? "✓ Verified Partner" : "⏳ Pending Verification";
+              const targetOwnerId = o.id || o.garageId;
+              const targetGarageId = o.garageId || o.id;
+
+              return `
+                <tr>
+                  <td>
+                    <strong>${o.name}</strong>
+                    <br><small style="color: var(--text-tertiary);">${o.id}</small>
+                  </td>
+                  <td>
+                    <a href="tel:${o.mobile}" style="color: var(--accent-primary); font-weight: 600;">+91 ${o.mobile}</a>
+                    ${o.email ? `<br><small style="color: var(--text-tertiary);">${o.email}</small>` : ""}
+                  </td>
+                  <td>
+                    <strong style="color: var(--text-primary); font-size: 0.88rem;">🏢 ${o.garageName || "Workshop"}</strong>
+                    <br><small style="color: var(--text-tertiary); font-family: monospace;">${o.garageId || "N/A"}</small>
+                  </td>
+                  <td>${o.district || "Pune"}, ${o.state || "Maharashtra"}</td>
+                  <td>
+                    <span class="${badgeClass}">${badgeText}</span>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                      ${isVerified ? `
+                        <button type="button" class="admin-action-btn-danger" onclick="deleteGarageAsAdmin('${targetGarageId}')">
+                          🗑️ Delete Garage
+                        </button>
+                        <button type="button" class="admin-action-btn-primary" onclick="adminLoginAsOwner('${targetOwnerId}')">
+                          🚀 Sign in as Owner
+                        </button>
+                      ` : `
+                        <button type="button" class="admin-action-btn-success" onclick="verifyGarageAsAdmin('${targetGarageId}')">
+                          ✓ Accept / Verify
+                        </button>
+                        <button type="button" class="admin-action-btn-danger" onclick="unverifyOrRejectGarageAsAdmin('${targetGarageId}', '${o.id}')">
+                          ✕ Reject / Delete
+                        </button>
+                      `}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
           </tbody>
         </table>
       </div>
     `;
   } catch (error) {
-    console.error("Load garages error:", error);
-    container.innerHTML = `<div style="padding: 30px; text-align: center; color: #f87171;">Failed to load garages: ${error.message}</div>`;
+    console.error("Load garage owners error:", error);
+    container.innerHTML = `<div style="padding: 30px; text-align: center; color: #f87171;">Failed to load garage owners: ${error.message}</div>`;
   }
 }
 
-async function deleteGarageAsAdmin(garageId, garageName) {
-  if (!confirm(`Are you sure you want to permanently delete "${garageName}" (${garageId}) from MongoDB?`)) {
+async function verifyGarageAsAdmin(garageId, optionalName) {
+  const owner = currentAdminOwners.find((o) => o.garageId === garageId || o.id === garageId);
+  const garageName = optionalName || owner?.garageName || garageId;
+  try {
+    const res = await fetch(`${API}/admin/garages/${encodeURIComponent(garageId)}/verify`, {
+      method: "PUT",
+      headers: getAdminHeaders()
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Verification failed");
+
+    showToast(`Garage "${garageName}" is now Verified!`, "success");
+    loadAdminStats();
+    loadAdminGarageOwners();
+  } catch (error) {
+    console.error("Verify garage error:", error);
+    showToast("Verification failed: " + error.message, "error");
+  }
+}
+
+async function deleteGarageAsAdmin(garageId, optionalName) {
+  const owner = currentAdminOwners.find((o) => o.garageId === garageId || o.id === garageId);
+  const garageName = optionalName || owner?.garageName || garageId;
+  if (!confirm(`Are you sure you want to permanently delete garage "${garageName}" from the system and database?`)) {
     return;
   }
 
@@ -112,18 +171,110 @@ async function deleteGarageAsAdmin(garageId, garageName) {
       method: "DELETE",
       headers: getAdminHeaders()
     });
-
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Deletion failed");
 
-    showToast(`Garage "${garageName}" removed successfully.`, "success");
+    showToast(`Garage "${garageName}" permanently removed from MongoDB.`, "success");
     loadAdminStats();
-    loadAdminGarages();
+    loadAdminGarageOwners();
   } catch (error) {
     console.error("Delete garage error:", error);
     showToast("Delete failed: " + error.message, "error");
   }
 }
+
+async function unverifyOrRejectGarageAsAdmin(garageId, ownerId) {
+  const owner = currentAdminOwners.find((o) => o.garageId === garageId || o.id === garageId || o.id === ownerId);
+  const garageName = owner?.garageName || garageId;
+  const targetOwnerId = ownerId || owner?.id;
+  if (!confirm(`Are you sure you want to reject and permanently remove "${garageName}" registration from the system?`)) {
+    return;
+  }
+
+  try {
+    let res = await fetch(`${API}/admin/garages/${encodeURIComponent(garageId)}/reject`, {
+      method: "PUT",
+      headers: getAdminHeaders()
+    });
+
+    if (!res.ok) {
+      res = await fetch(`${API}/admin/garages/${encodeURIComponent(garageId)}`, {
+        method: "DELETE",
+        headers: getAdminHeaders()
+      });
+    }
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Rejection failed");
+
+    if (targetOwnerId && targetOwnerId !== garageId) {
+      try {
+        await fetch(`${API}/admin/users/${encodeURIComponent(targetOwnerId)}`, {
+          method: "DELETE",
+          headers: getAdminHeaders()
+        });
+      } catch (_) {}
+    }
+
+    showToast(`Garage registration "${garageName}" rejected and removed from MongoDB.`, "success");
+    loadAdminStats();
+    loadAdminGarageOwners();
+  } catch (error) {
+    console.error("Reject garage error:", error);
+    showToast("Action failed: " + error.message, "error");
+  }
+}
+
+function adminLoginAsOwner(ownerRef) {
+  try {
+    let owner = null;
+    if (typeof ownerRef === "object" && ownerRef !== null) {
+      owner = ownerRef;
+    } else if (typeof ownerRef === "string") {
+      owner = currentAdminOwners.find((o) => o.id === ownerRef || o.garageId === ownerRef);
+      if (!owner) {
+        try {
+          const sanitized = ownerRef.replace(/%27/g, "'");
+          owner = JSON.parse(decodeURIComponent(sanitized));
+        } catch (_) {}
+      }
+    }
+
+    if (!owner || !owner.mobile) {
+      showToast("Cannot switch: Invalid owner credentials", "error");
+      return;
+    }
+
+    // Capture the current administrator session to allow seamless return
+    const currentSession = typeof getAuthSession === "function" ? getAuthSession() : null;
+    if (currentSession && currentSession.role === "admin") {
+      sessionStorage.setItem("autobuddy_admin_return_session", JSON.stringify(currentSession));
+    }
+
+    const session = {
+      id: owner.id,
+      name: owner.name,
+      mobile: owner.mobile,
+      role: "garage_owner",
+      garageId: owner.garageId,
+      garageName: owner.garageName,
+      district: owner.district,
+      state: owner.state,
+      fromAdminImpersonation: true
+    };
+
+    persistLoginSession(session);
+    showToast(`Opening ${owner.name}'s workshop dashboard...`, "success");
+    setTimeout(() => {
+      window.location.href = "owner-dashboard.html";
+    }, 400);
+  } catch (err) {
+    console.error("Admin owner signin error:", err);
+    showToast("Failed to switch session: " + err.message, "error");
+  }
+}
+
+const loadAdminGarages = loadAdminGarageOwners;
 
 async function loadAdminBookings() {
   const container = document.getElementById("adminBookingsContainer");
@@ -161,11 +312,33 @@ async function loadAdminBookings() {
           <tbody>
             ${bookings.map((b) => {
               const status = (b.status || "pending").toLowerCase();
-              const badgeClass =
-                status === "pending" ? "warning" :
-                status === "accepted" ? "neutral" :
-                status === "in_progress" ? "neutral" :
-                status === "completed" ? "success-chip" : "error-chip";
+              let badgeClass = "warning";
+              let statusLabel = "Pending";
+
+              if (status === "pending") {
+                badgeClass = "warning";
+                statusLabel = "Pending";
+              } else if (status === "accepted") {
+                badgeClass = "success-chip";
+                statusLabel = "Service Partner Assigned";
+              } else if (status === "in_progress") {
+                badgeClass = "neutral";
+                statusLabel = "Service In Progress";
+              } else if (status === "completed") {
+                badgeClass = "success-chip";
+                statusLabel = "Completed";
+              } else if (status === "cancelled" || status === "rejected") {
+                badgeClass = "error-chip";
+                statusLabel = "Cancelled";
+              }
+
+              const numPrice = Number(b.price);
+              let priceFormatted = "Estimate on inspection";
+              if (!isNaN(numPrice) && numPrice > 0) {
+                priceFormatted = `₹${numPrice}`;
+              } else if (b.service === "Book Van" || (b.vehicleInfo && b.vehicleInfo.includes("Van"))) {
+                priceFormatted = b.vehicleType === "bike" ? "₹500" : "₹1,000";
+              }
 
               const canCancel = status !== "cancelled" && status !== "rejected" && status !== "completed";
 
@@ -175,9 +348,9 @@ async function loadAdminBookings() {
                   <td>${b.user?.name || "Customer"}<br><small style="color: var(--text-tertiary);">${b.user?.mobile || ""}</small></td>
                   <td>${b.garage || "Workshop"}</td>
                   <td>${b.service || "Service"}</td>
-                  <td><strong>₹${b.price || 0}</strong></td>
-                  <td><span class="badge ${badgeClass}">${status}</span></td>
-                  <td>${new Date(b.createdAt || Date.now()).toLocaleDateString()}</td>
+                  <td><strong>${priceFormatted}</strong></td>
+                  <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
+                  <td>${new Date(b.createdAt || Date.now()).toLocaleDateString("en-IN", { dateStyle: "medium" })}</td>
                   <td>
                     ${canCancel ? `
                       <button type="button" class="admin-action-btn-danger" onclick="cancelBookingAsAdmin('${b.id}')">
@@ -225,7 +398,7 @@ async function loadAdminUsers() {
   const container = document.getElementById("adminUsersContainer");
   if (!container) return;
 
-  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading users and garage owners...</div>`;
+  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered customer users...</div>`;
 
   try {
     const res = await fetch(`${API}/admin/users`, {
@@ -234,8 +407,8 @@ async function loadAdminUsers() {
     if (!res.ok) throw new Error("Failed to load users");
     const users = await res.json();
 
-    if (!users.length) {
-      container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No registered accounts found.</div>`;
+    if (!Array.isArray(users) || !users.length) {
+      container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No customer driver accounts found.</div>`;
       return;
     }
 
@@ -244,50 +417,34 @@ async function loadAdminUsers() {
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Account Holder</th>
-              <th>Mobile / Email</th>
-              <th>Role</th>
-              <th>Workshop / Vehicle</th>
+              <th>Customer Name</th>
+              <th>Mobile / Phone</th>
+              <th>Email</th>
               <th>Location</th>
               <th>Registered On</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            ${users.map((u) => {
-              const isOwner = u.role === "garage_owner" || u.role === "owner";
-              return `
-                <tr>
-                  <td>
-                    <strong>${u.name}</strong>
-                    <br><small style="color: var(--text-tertiary);">${u.id}</small>
-                  </td>
-                  <td>
-                    <a href="tel:${u.mobile}" style="color: var(--accent-primary); font-weight: 600;">+91 ${u.mobile}</a>
-                    ${u.email ? `<br><small style="color: var(--text-tertiary);">${u.email}</small>` : ""}
-                  </td>
-                  <td>
-                    <span class="${isOwner ? "badge warning" : "badge success-chip"}">
-                      ${isOwner ? "Garage Owner" : "Customer"}
-                    </span>
-                  </td>
-                  <td>
-                    ${isOwner ? (
-                      u.garageName ? `<strong style="color: var(--text-primary); font-size: 0.86rem;">🏢 ${u.garageName}</strong><br><small style="color: var(--text-tertiary);">${u.garageId || ""}</small>` : `<span style="color: var(--text-tertiary); font-size: 0.8rem;">Independent Partner</span>`
-                    ) : (
-                      `<span style="color: var(--text-secondary); font-size: 0.84rem;">🚗 Customer Driver</span>`
-                    )}
-                  </td>
-                  <td>${u.district || "Pune"}, ${u.state || "Maharashtra"}</td>
-                  <td>${new Date(u.createdAt || Date.now()).toLocaleDateString("en-IN", { dateStyle: "medium" })}</td>
-                  <td>
-                    <button type="button" class="admin-action-btn-danger" onclick="deleteUserAsAdmin('${u.id}', '${u.name.replace(/'/g, "\\'")}')">
-                      🗑️ Remove
-                    </button>
-                  </td>
-                </tr>
-              `;
-            }).join("")}
+            ${users.map((u) => `
+              <tr>
+                <td>
+                  <strong>${u.name}</strong>
+                  <br><small style="color: var(--text-tertiary);">${u.id}</small>
+                </td>
+                <td>
+                  <a href="tel:${u.mobile}" style="color: var(--accent-primary); font-weight: 600;">+91 ${u.mobile}</a>
+                </td>
+                <td>${u.email || '<span style="color: var(--text-tertiary);">N/A</span>'}</td>
+                <td>${u.district || "Pune"}, ${u.state || "Maharashtra"}</td>
+                <td>${new Date(u.createdAt || Date.now()).toLocaleDateString("en-IN", { dateStyle: "medium" })}</td>
+                <td>
+                  <button type="button" class="admin-action-btn-danger" onclick="deleteUserAsAdmin('${u.id}', '${u.name.replace(/'/g, "\\'")}')">
+                    🗑️ Remove
+                  </button>
+                </td>
+              </tr>
+            `).join("")}
           </tbody>
         </table>
       </div>
@@ -390,7 +547,7 @@ async function loadAdminRecentLogins() {
                   </td>
                   <td>
                     <span class="${roleClass}" style="display: inline-block;">
-                      ${item.roleLabel || (item.role === "admin" ? "Administrator" : (item.role === "garage_owner" ? "Garage Owner" : "Customer"))}
+                      ${item.roleLabel || (item.role === "admin" ? "Administrator" : (item.role === "garage_owner" ? "Garage Owner" : "User"))}
                     </span>
                   </td>
                   <td>
@@ -420,31 +577,55 @@ function initAdminDashboard() {
       e.currentTarget.classList.add("active");
 
       const targetTab = e.currentTarget.dataset.tab;
+      currentAdminTab = targetTab;
+
       document.querySelectorAll(".admin-tab-section").forEach((sec) => {
         sec.style.display = sec.id === `sec-${targetTab}` ? "" : "none";
       });
 
-      if (targetTab === "logins") {
+      if (targetTab === "users") {
+        loadAdminUsers();
+      } else if (targetTab === "owners") {
+        loadAdminGarageOwners();
+      } else if (targetTab === "bookings") {
+        loadAdminBookings();
+      } else if (targetTab === "logins") {
         loadAdminRecentLogins();
       }
     });
   });
 
   loadAdminStats();
-  loadAdminGarages();
-  loadAdminBookings();
   loadAdminUsers();
+  loadAdminGarageOwners();
+  loadAdminBookings();
   loadAdminRecentLogins();
+
+  if (adminPollingInterval) clearInterval(adminPollingInterval);
+  adminPollingInterval = setInterval(() => {
+    // Skip polling when the browser tab is not visible
+    if (document.hidden) return;
+    loadAdminStats();
+    if (currentAdminTab === "bookings") {
+      loadAdminBookings();
+    } else if (currentAdminTab === "owners") {
+      loadAdminGarageOwners();
+    }
+  }, 30000);
 }
 
-window.deleteGarageAsAdmin = deleteGarageAsAdmin;
+window.adminLoginAsOwner = adminLoginAsOwner;
 window.cancelBookingAsAdmin = cancelBookingAsAdmin;
+window.deleteGarageAsAdmin = deleteGarageAsAdmin;
 window.deleteUserAsAdmin = deleteUserAsAdmin;
-window.loadAdminStats = loadAdminStats;
-window.loadAdminGarages = loadAdminGarages;
 window.loadAdminBookings = loadAdminBookings;
-window.loadAdminUsers = loadAdminUsers;
+window.loadAdminGarageOwners = loadAdminGarageOwners;
+window.loadAdminGarages = loadAdminGarageOwners;
 window.loadAdminRecentLogins = loadAdminRecentLogins;
+window.loadAdminStats = loadAdminStats;
+window.loadAdminUsers = loadAdminUsers;
+window.unverifyOrRejectGarageAsAdmin = unverifyOrRejectGarageAsAdmin;
+window.verifyGarageAsAdmin = verifyGarageAsAdmin;
 
 document.addEventListener("DOMContentLoaded", () => {
   if (getCurrentPage() === "admin-dashboard.html") {

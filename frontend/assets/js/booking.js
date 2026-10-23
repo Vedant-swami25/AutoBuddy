@@ -10,7 +10,7 @@ function enrichStoredBooking(booking) {
   const trackStages = [
     { key: "confirmed", label: "Booking confirmed", threshold: 0.05 },
     { key: "assigned", label: "Service partner assigned", threshold: 0.22 },
-    { key: "enroute", label: "On the way", threshold: 0.5 },
+    { key: "enroute", label: "Service Partner Assigned", threshold: 0.5 },
     { key: "nearby", label: "Service expert is nearby", threshold: 0.8 },
     { key: "arrived", label: "Arrived at your location", threshold: 1 }
   ];
@@ -70,10 +70,25 @@ function enrichStoredBooking(booking) {
 
 function openTrackingForBooking(booking) {
   if (!booking) return;
-  if (typeof setActiveBooking === "function") {
-    setActiveBooking(booking);
+  let targetBooking = typeof booking === "object" ? booking : null;
+  const bookingId = typeof booking === "string" ? booking : (booking.id || "");
+
+  if (!targetBooking && typeof currentUserBookings !== "undefined" && Array.isArray(currentUserBookings)) {
+    targetBooking = currentUserBookings.find((b) => b.id === bookingId);
   }
-  window.location.href = `tracking.html?booking=${encodeURIComponent(booking.id)}`;
+
+  const status = String(targetBooking?.status || "").toLowerCase();
+  if (status === "cancelled" || status === "rejected" || status === "declined") {
+    if (typeof showToast === "function") {
+      showToast(`Tracking is unavailable for ${status} bookings.`, "warning");
+    }
+    return;
+  }
+
+  if (typeof setActiveBooking === "function" && targetBooking) {
+    setActiveBooking(targetBooking);
+  }
+  window.location.href = `map.html?tracking=${encodeURIComponent(bookingId)}`;
 }
 
 function isPendingBooking(booking) {
@@ -81,7 +96,8 @@ function isPendingBooking(booking) {
     return false;
   }
 
-  if (String(booking.status).toLowerCase() === "cancelled" || String(booking.status).toLowerCase() === "rejected") {
+  const status = String(booking.status || "").toLowerCase();
+  if (status === "cancelled" || status === "rejected" || status === "declined") {
     return false;
   }
 
@@ -126,6 +142,68 @@ function shouldUseLocalBookingFallback(error) {
   );
 }
 
+function renderFloatingTrackerLauncher() {
+  const activeBooking = typeof getActiveBooking === "function" ? getActiveBooking() : null;
+  const session = typeof getAuthSession === "function" ? getAuthSession() : null;
+  const currentPage = typeof getCurrentPage === "function" ? getCurrentPage() : "";
+
+  const params = new URLSearchParams(window.location.search);
+  const isCurrentlyTracking = currentPage === "map.html" && (params.has("tracking") || params.has("booking"));
+
+  const isEligible = Boolean(
+    session &&
+    activeBooking &&
+    activeBooking.id &&
+    activeBooking.status !== "completed" &&
+    activeBooking.status !== "cancelled" &&
+    activeBooking.status !== "rejected" &&
+    activeBooking.status !== "declined" &&
+    !isCurrentlyTracking &&
+    currentPage !== "login.html" &&
+    currentPage !== "admin-dashboard.html" &&
+    currentPage !== "owner-dashboard.html"
+  );
+
+  let launcher = document.getElementById("floatingTrackerLauncher");
+  if (!isEligible) {
+    if (launcher) launcher.remove();
+    return;
+  }
+
+  if (!launcher) {
+    launcher = document.createElement("button");
+    launcher.type = "button";
+    launcher.id = "floatingTrackerLauncher";
+    launcher.className = "floating-tracker";
+    launcher.setAttribute("aria-label", "Open live booking tracking");
+    launcher.addEventListener("click", () => {
+      const target = typeof getActiveBooking === "function" ? getActiveBooking() : null;
+      if (target) {
+        openTrackingForBooking(target);
+      }
+    });
+    document.body.appendChild(launcher);
+  }
+
+  const status = (activeBooking.status || "pending").toLowerCase();
+  const statusLabel =
+    status === "accepted" ? "Service Partner Assigned" :
+    status === "in_progress" ? "Service In Progress" : "Booking Confirmed";
+  const garageName = activeBooking.garage || activeBooking.service || "AutoBuddy Service";
+
+  launcher.innerHTML = `
+    <span class="floating-tracker-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 14.5a1 1 0 0 1-2 0V11h-3a1 1 0 0 1 0-2h4a1 1 0 0 1 1 1Zm0-8.25a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 13 8.25Z" />
+      </svg>
+    </span>
+    <span class="floating-tracker-copy">
+      <strong>Live Tracking • ${statusLabel}</strong>
+      <small>${garageName}</small>
+    </span>
+  `;
+}
+
 window.enrichStoredBooking = enrichStoredBooking;
 window.openTrackingForBooking = openTrackingForBooking;
 window.isPendingBooking = isPendingBooking;
@@ -133,3 +211,8 @@ window.getPendingBooking = getPendingBooking;
 window.hasPendingBooking = hasPendingBooking;
 window.toggleTrackingLinkVisibility = toggleTrackingLinkVisibility;
 window.shouldUseLocalBookingFallback = shouldUseLocalBookingFallback;
+window.renderFloatingTrackerLauncher = renderFloatingTrackerLauncher;
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderFloatingTrackerLauncher();
+});

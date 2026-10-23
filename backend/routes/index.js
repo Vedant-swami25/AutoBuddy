@@ -7,6 +7,7 @@ module.exports = [
   { path: "/api/admin", router: require("./admin") },
   { path: "/api/auth", router: require("./auth") },
   { path: "/api/book", router: require("./booking") },
+  { path: "/api/bookings", router: require("./booking") },
   { path: "/api/garage", router: require("./garage") },
   { path: "/api/garages", router: require("./garage") },
   { path: "/api/login", router: require("./login") },

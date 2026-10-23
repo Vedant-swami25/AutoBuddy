@@ -21,10 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(notice, "warning");
   }
 
-  if (typeof window.renderFloatingTrackerLauncher === "function") {
-    window.renderFloatingTrackerLauncher();
-  }
-
   if (typeof window.initRevealAnimations === "function") {
     window.initRevealAnimations();
   }

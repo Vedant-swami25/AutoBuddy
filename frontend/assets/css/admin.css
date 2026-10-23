@@ -252,3 +252,76 @@ body[data-theme="light"] .admin-badge-sys {
   border-color: #cbd5e1;
   color: #334155;
 }
+
+.admin-action-btn-success {
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  min-height: auto;
+  transition: all 0.2s ease;
+}
+
+.admin-action-btn-success:hover {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.admin-action-btn-primary {
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 132, 255, 0.15);
+  border: 1px solid rgba(0, 132, 255, 0.35);
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  min-height: auto;
+  transition: all 0.2s ease;
+}
+
+.admin-action-btn-primary:hover {
+  background: #0084ff;
+  color: #ffffff;
+}
+
+.admin-badge-pending {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+body[data-theme="light"] .admin-badge-pending {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #d97706;
+}
+
+.admin-badge-verified {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+body[data-theme="light"] .admin-badge-verified {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #059669;
+}
+
