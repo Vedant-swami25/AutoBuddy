@@ -6,6 +6,10 @@
 const ADMIN_PHONE = "9579278177";
 let adminPollingInterval = null;
 let currentAdminOwners = [];
+let currentAdminGarages = [];
+let currentGarageFilter = "all";
+let currentAdminUsers = [];
+let currentUserFilter = "all";
 let currentAdminTab = "users";
 
 function getAdminHeaders() {
@@ -152,6 +156,7 @@ async function verifyGarageAsAdmin(garageId, optionalName) {
 
     showToast(`Garage "${garageName}" is now Verified!`, "success");
     loadAdminStats();
+    loadAdminGarages();
     loadAdminGarageOwners();
   } catch (error) {
     console.error("Verify garage error:", error);
@@ -176,6 +181,7 @@ async function deleteGarageAsAdmin(garageId, optionalName) {
 
     showToast(`Garage "${garageName}" permanently removed from MongoDB.`, "success");
     loadAdminStats();
+    loadAdminGarages();
     loadAdminGarageOwners();
   } catch (error) {
     console.error("Delete garage error:", error);
@@ -218,6 +224,7 @@ async function unverifyOrRejectGarageAsAdmin(garageId, ownerId) {
 
     showToast(`Garage registration "${garageName}" rejected and removed from MongoDB.`, "success");
     loadAdminStats();
+    loadAdminGarages();
     loadAdminGarageOwners();
   } catch (error) {
     console.error("Reject garage error:", error);
@@ -274,7 +281,130 @@ function adminLoginAsOwner(ownerRef) {
   }
 }
 
-const loadAdminGarages = loadAdminGarageOwners;
+/**
+ * Load registered garages & workshops (MongoDB Atlas + System verified partners)
+ */
+async function loadAdminGarages() {
+  const container = document.getElementById("adminGaragesContainer");
+  if (!container) return;
+
+  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered garages and workshops...</div>`;
+
+  try {
+    const res = await fetch(`${API}/admin/garages`, {
+      headers: getAdminHeaders()
+    });
+    if (!res.ok) throw new Error("Failed to load garages");
+
+    const garages = await res.json();
+    currentAdminGarages = Array.isArray(garages) ? garages : [];
+    renderAdminGaragesTable();
+  } catch (error) {
+    console.error("Load garages error:", error);
+    container.innerHTML = `<div style="padding: 30px; text-align: center; color: #f87171;">Failed to load garages: ${error.message}</div>`;
+  }
+}
+
+function filterAdminGarages(status) {
+  currentGarageFilter = status;
+  document.querySelectorAll("#garageFilterPills .admin-pill-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.status === status);
+  });
+  renderAdminGaragesTable();
+}
+
+function renderAdminGaragesTable() {
+  const container = document.getElementById("adminGaragesContainer");
+  if (!container) return;
+
+  let filtered = currentAdminGarages;
+  if (currentGarageFilter === "verified") {
+    filtered = currentAdminGarages.filter((g) => Boolean(g.verified));
+  } else if (currentGarageFilter === "pending") {
+    filtered = currentAdminGarages.filter((g) => !g.verified);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No garages found matching the "${currentGarageFilter}" filter.</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Garage / Workshop</th>
+            <th>Contact &amp; Phone</th>
+            <th>Location</th>
+            <th>Services Offered</th>
+            <th>Rating</th>
+            <th>Status</th>
+            <th>Source</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map((g) => {
+            const isVerified = Boolean(g.verified);
+            const badgeClass = isVerified ? "admin-badge-verified" : "admin-badge-pending";
+            const badgeText = isVerified ? "✓ Verified" : "⏳ Pending";
+            const isDb = g.source === "database";
+            const sourceBadge = isDb ? '<span class="admin-badge-db">MongoDB</span>' : '<span class="admin-badge-sys">System</span>';
+            const escapedName = (g.name || "").replace(/'/g, "\\'");
+            const servicesList = Array.isArray(g.services) ? g.services.slice(0, 3).join(", ") + (g.services.length > 3 ? ` +${g.services.length - 3}` : "") : (g.services || "General Service");
+
+            return `
+              <tr>
+                <td>
+                  <strong style="color: var(--text-primary); font-size: 0.92rem;">${g.name}</strong>
+                  <br><small style="color: var(--text-tertiary); font-family: monospace;">${g.id}</small>
+                </td>
+                <td>
+                  ${g.phone ? `<a href="tel:${g.phone}" style="color: var(--accent-primary); font-weight: 600;">${g.phone}</a>` : '<span style="color: var(--text-tertiary);">N/A</span>'}
+                  ${g.ownerName ? `<br><small style="color: var(--text-secondary);">Owner: ${g.ownerName}</small>` : ""}
+                </td>
+                <td>
+                  <span>${g.city || g.district || "Pune"}</span>
+                  ${g.address ? `<br><small style="color: var(--text-tertiary);">${g.address.length > 35 ? g.address.slice(0, 35) + "…" : g.address}</small>` : ""}
+                </td>
+                <td>
+                  <span style="font-size: 0.82rem; color: var(--text-secondary);">${servicesList}</span>
+                </td>
+                <td>
+                  <span style="font-weight: 600; color: #fbbf24;">⭐ ${g.rating || 4.5}</span>
+                  ${g.reviews ? `<br><small style="color: var(--text-tertiary);">(${g.reviews} reviews)</small>` : ""}
+                </td>
+                <td>
+                  <span class="${badgeClass}">${badgeText}</span>
+                </td>
+                <td>
+                  ${sourceBadge}
+                </td>
+                <td>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    ${!isVerified ? `
+                      <button type="button" class="admin-action-btn-success" onclick="verifyGarageAsAdmin('${g.id}', '${escapedName}')">
+                        ✓ Verify
+                      </button>
+                    ` : ""}
+                    ${isDb ? `
+                      <button type="button" class="admin-action-btn-danger" onclick="deleteGarageAsAdmin('${g.id}', '${escapedName}')">
+                        🗑️ Delete
+                      </button>
+                    ` : `
+                      <span style="font-size: 0.74rem; color: var(--text-tertiary);">Protected</span>
+                    `}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
 
 async function loadAdminBookings() {
   const container = document.getElementById("adminBookingsContainer");
@@ -398,7 +528,7 @@ async function loadAdminUsers() {
   const container = document.getElementById("adminUsersContainer");
   if (!container) return;
 
-  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered customer users...</div>`;
+  container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Loading registered users...</div>`;
 
   try {
     const res = await fetch(`${API}/admin/users`, {
@@ -407,31 +537,66 @@ async function loadAdminUsers() {
     if (!res.ok) throw new Error("Failed to load users");
     const users = await res.json();
 
-    if (!Array.isArray(users) || !users.length) {
-      container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No customer driver accounts found.</div>`;
-      return;
-    }
+    currentAdminUsers = Array.isArray(users) ? users : [];
+    renderAdminUsersTable();
+  } catch (error) {
+    console.error("Load users error:", error);
+    container.innerHTML = `<div style="padding: 30px; text-align: center; color: #f87171;">Failed to load accounts: ${error.message}</div>`;
+  }
+}
 
-    container.innerHTML = `
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Mobile / Phone</th>
-              <th>Email</th>
-              <th>Location</th>
-              <th>Registered On</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${users.map((u) => `
+function filterAdminUsers(role) {
+  currentUserFilter = role;
+  document.querySelectorAll("#userFilterPills .admin-pill-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.role === role);
+  });
+  renderAdminUsersTable();
+}
+
+function renderAdminUsersTable() {
+  const container = document.getElementById("adminUsersContainer");
+  if (!container) return;
+
+  let filtered = currentAdminUsers;
+  if (currentUserFilter === "user") {
+    filtered = currentAdminUsers.filter((u) => u.role === "user");
+  } else if (currentUserFilter === "garage_owner") {
+    filtered = currentAdminUsers.filter((u) => u.role === "garage_owner");
+  }
+
+  if (!filtered.length) {
+    container.innerHTML = `<div style="padding: 30px; text-align: center; color: var(--text-secondary);">No accounts found for the "${currentUserFilter}" role filter.</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User / Name</th>
+            <th>Role</th>
+            <th>Mobile / Phone</th>
+            <th>Email</th>
+            <th>Location</th>
+            <th>Registered On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map((u) => {
+            const roleBadge = u.role === "garage_owner" 
+              ? '<span class="badge warning" style="font-size: 0.72rem;">🔧 Garage Owner</span>' 
+              : '<span class="badge success-chip" style="font-size: 0.72rem;">👤 Customer</span>';
+            const escapedName = (u.name || "").replace(/'/g, "\\'");
+
+            return `
               <tr>
                 <td>
                   <strong>${u.name}</strong>
-                  <br><small style="color: var(--text-tertiary);">${u.id}</small>
+                  <br><small style="color: var(--text-tertiary); font-family: monospace;">${u.id}</small>
                 </td>
+                <td>${roleBadge}</td>
                 <td>
                   <a href="tel:${u.mobile}" style="color: var(--accent-primary); font-weight: 600;">+91 ${u.mobile}</a>
                 </td>
@@ -439,20 +604,17 @@ async function loadAdminUsers() {
                 <td>${u.district || "Pune"}, ${u.state || "Maharashtra"}</td>
                 <td>${new Date(u.createdAt || Date.now()).toLocaleDateString("en-IN", { dateStyle: "medium" })}</td>
                 <td>
-                  <button type="button" class="admin-action-btn-danger" onclick="deleteUserAsAdmin('${u.id}', '${u.name.replace(/'/g, "\\'")}')">
+                  <button type="button" class="admin-action-btn-danger" onclick="deleteUserAsAdmin('${u.id}', '${escapedName}')">
                     🗑️ Remove
                   </button>
                 </td>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-    `;
-  } catch (error) {
-    console.error("Load users error:", error);
-    container.innerHTML = `<div style="padding: 30px; text-align: center; color: #f87171;">Failed to load accounts: ${error.message}</div>`;
-  }
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 async function deleteUserAsAdmin(userId, userName) {
@@ -585,6 +747,8 @@ function initAdminDashboard() {
 
       if (targetTab === "users") {
         loadAdminUsers();
+      } else if (targetTab === "garages") {
+        loadAdminGarages();
       } else if (targetTab === "owners") {
         loadAdminGarageOwners();
       } else if (targetTab === "bookings") {
@@ -597,6 +761,7 @@ function initAdminDashboard() {
 
   loadAdminStats();
   loadAdminUsers();
+  loadAdminGarages();
   loadAdminGarageOwners();
   loadAdminBookings();
   loadAdminRecentLogins();
@@ -608,6 +773,8 @@ function initAdminDashboard() {
     loadAdminStats();
     if (currentAdminTab === "bookings") {
       loadAdminBookings();
+    } else if (currentAdminTab === "garages") {
+      loadAdminGarages();
     } else if (currentAdminTab === "owners") {
       loadAdminGarageOwners();
     }
@@ -618,12 +785,16 @@ window.adminLoginAsOwner = adminLoginAsOwner;
 window.cancelBookingAsAdmin = cancelBookingAsAdmin;
 window.deleteGarageAsAdmin = deleteGarageAsAdmin;
 window.deleteUserAsAdmin = deleteUserAsAdmin;
+window.filterAdminGarages = filterAdminGarages;
+window.filterAdminUsers = filterAdminUsers;
 window.loadAdminBookings = loadAdminBookings;
 window.loadAdminGarageOwners = loadAdminGarageOwners;
-window.loadAdminGarages = loadAdminGarageOwners;
+window.loadAdminGarages = loadAdminGarages;
 window.loadAdminRecentLogins = loadAdminRecentLogins;
 window.loadAdminStats = loadAdminStats;
 window.loadAdminUsers = loadAdminUsers;
+window.renderAdminGaragesTable = renderAdminGaragesTable;
+window.renderAdminUsersTable = renderAdminUsersTable;
 window.unverifyOrRejectGarageAsAdmin = unverifyOrRejectGarageAsAdmin;
 window.verifyGarageAsAdmin = verifyGarageAsAdmin;
 

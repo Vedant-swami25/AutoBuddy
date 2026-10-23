@@ -77,32 +77,59 @@
 
       <!-- Tab Navigation -->
       <nav class="admin-tab-nav" role="tablist">
-        <button type="button" class="admin-tab-btn active" data-tab="users" role="tab">👥 Users</button>
-        <button type="button" class="admin-tab-btn" data-tab="owners" role="tab">🏢 Garage Owners</button>
+        <button type="button" class="admin-tab-btn active" data-tab="users" role="tab">👥 Registered Users</button>
+        <button type="button" class="admin-tab-btn" data-tab="garages" role="tab">🏢 Registered Garages</button>
+        <button type="button" class="admin-tab-btn" data-tab="owners" role="tab">👨‍🔧 Workshop Partners</button>
         <button type="button" class="admin-tab-btn" data-tab="bookings" role="tab">📅 All Bookings</button>
         <button type="button" class="admin-tab-btn" data-tab="logins" role="tab">🔐 Recent Logins</button>
       </nav>
 
-      <!-- Section 1: Users (Customer Driver Accounts) -->
+      <!-- Section 1: Users (Customer Driver & Workshop Accounts) -->
       <section id="sec-users" class="admin-tab-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
             <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Registered Users</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary);">All registered customer driver accounts from MongoDB database.</p>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">All registered user accounts from MongoDB database with account roles and contacts.</p>
           </div>
-          <button class="secondary small" type="button" onclick="loadAdminUsers()">🔄 Refresh Users</button>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div class="admin-filter-pills" id="userFilterPills">
+              <button type="button" class="admin-pill-btn active" data-role="all" onclick="filterAdminUsers('all')">All Users</button>
+              <button type="button" class="admin-pill-btn" data-role="user" onclick="filterAdminUsers('user')">👤 Customers</button>
+              <button type="button" class="admin-pill-btn" data-role="garage_owner" onclick="filterAdminUsers('garage_owner')">🔧 Garage Owners</button>
+            </div>
+            <button class="secondary small" type="button" onclick="loadAdminUsers()">🔄 Refresh Users</button>
+          </div>
         </div>
         <div id="adminUsersContainer"></div>
       </section>
 
-      <!-- Section 2: Garage Owners & Workshop Management -->
+      <!-- Section 2: Garages (Verified & Pending Workshops) -->
+      <section id="sec-garages" class="admin-tab-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Registered Garages &amp; Workshops</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">Review registered automotive workshops, manage verification status, and approve pending partner applications.</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div class="admin-filter-pills" id="garageFilterPills">
+              <button type="button" class="admin-pill-btn active" data-status="all" onclick="filterAdminGarages('all')">All Garages</button>
+              <button type="button" class="admin-pill-btn" data-status="verified" onclick="filterAdminGarages('verified')">✓ Verified</button>
+              <button type="button" class="admin-pill-btn" data-status="pending" onclick="filterAdminGarages('pending')">⏳ Pending</button>
+            </div>
+            <button class="secondary small" type="button" onclick="loadAdminGarages()">🔄 Refresh Garages</button>
+          </div>
+        </div>
+        <div id="adminGaragesContainer"></div>
+      </section>
+
+      <!-- Section 3: Garage Owners & Workshop Partner Management -->
       <section id="sec-owners" class="admin-tab-section" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Garage Owners &amp; Workshops</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary);">Review registered workshop owners, approve pending garages, manage verification status, and launch dashboard sessions.</p>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Workshop Partners &amp; Owner Credentials</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">Manage partner login identities, launch impersonation sessions, and link registered owners.</p>
           </div>
-          <button class="secondary small" type="button" onclick="loadAdminGarageOwners()">🔄 Refresh Garage Owners</button>
+          <button class="secondary small" type="button" onclick="loadAdminGarageOwners()">🔄 Refresh Partners</button>
         </div>
         <div id="adminOwnersContainer"></div>
       </section>

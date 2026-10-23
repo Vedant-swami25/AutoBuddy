@@ -46,14 +46,14 @@ async function getAdminStats(_req, res) {
 /**
  * Get all garages with database flag
  */
-async function getAdminGarages(_req, res) {
+async function getAdminGarages(req, res) {
   try {
     const dbGarages = await Garage.find().sort({ createdAt: -1 });
     const dbIds = new Set(dbGarages.map((g) => g.id));
 
-    const merged = [
+    let merged = [
       ...dbGarages.map((g) => ({
-        ...g.toObject(),
+        ...(g.toObject ? g.toObject() : g),
         source: "database",
         canDelete: true
       })),
@@ -63,6 +63,13 @@ async function getAdminGarages(_req, res) {
         canDelete: false
       }))
     ];
+
+    const statusFilter = req.query?.status;
+    if (statusFilter === "verified") {
+      merged = merged.filter((g) => Boolean(g.verified));
+    } else if (statusFilter === "pending" || statusFilter === "unverified") {
+      merged = merged.filter((g) => !g.verified);
+    }
 
     return res.json(merged);
   } catch (error) {
@@ -255,18 +262,24 @@ async function updateAdminBookingStatus(req, res) {
 }
 
 /**
- * Get all registered customer users (role: 'user') from MongoDB
+ * Get all registered users from MongoDB (Customer Users and Garage Owners)
  */
-async function getAdminUsers(_req, res) {
+async function getAdminUsers(req, res) {
   try {
-    const rawUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+    const roleFilter = req.query?.role;
+    const query = roleFilter && roleFilter !== "all"
+      ? { role: roleFilter }
+      : { role: { $ne: "admin" } };
+
+    const rawUsers = await User.find(query).sort({ createdAt: -1 });
 
     const formatted = rawUsers.map((u) => ({
       id: u.id,
-      name: u.name || "Customer User",
+      name: u.name || (u.role === "garage_owner" ? "Garage Owner" : "Customer User"),
       email: u.email || "",
       mobile: u.mobile || "",
-      role: "user",
+      role: u.role || "user",
+      garageId: u.garageId || null,
       district: u.district || "Pune",
       state: u.state || "Maharashtra",
       vehicleType: u.vehicleType || "all",
