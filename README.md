@@ -6,6 +6,13 @@
 
 </div>
 
+## 🌐 Live Demo
+
+AutoBuddy is deployed and live in production on Vercel:
+🚀 **Official Live Application:** [https://autobuddy-ashy.vercel.app](https://autobuddy-ashy.vercel.app/)
+
+---
+
 ## ✨ Features
 
 - 🔐 **Multi-Role Authentication**: Dedicated portals for Customer Drivers, Garage Workshop Owners, and Platform Administrators with passwordless mobile OTP verification.

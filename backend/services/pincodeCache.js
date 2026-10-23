@@ -8,22 +8,37 @@ const path = require("path");
  */
 const cachePath = path.join(__dirname, "..", "data", "pincode-cache.json");
 
-function readCache() {
-  if (!fs.existsSync(cachePath)) {
-    fs.writeFileSync(cachePath, "{}");
-    return {};
-  }
+let inMemoryPincodeCache = {};
 
-  const raw = fs.readFileSync(cachePath, "utf8").trim();
-  return raw ? JSON.parse(raw) : {};
+function readCache() {
+  try {
+    if (!fs.existsSync(cachePath)) {
+      try {
+        fs.writeFileSync(cachePath, "{}");
+      } catch (_) {
+        // Read-only filesystem
+      }
+      return inMemoryPincodeCache;
+    }
+
+    const raw = fs.readFileSync(cachePath, "utf8").trim();
+    return raw ? JSON.parse(raw) : inMemoryPincodeCache;
+  } catch (_) {
+    return inMemoryPincodeCache;
+  }
 }
 
 function writeCache(cache) {
-  fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
+  inMemoryPincodeCache = cache;
+  try {
+    fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
+  } catch (err) {
+    // Gracefully ignore write errors on read-only serverless filesystems
+  }
 }
 
 function getPincodeFromCache(pincode) {
-  return readCache()[pincode] || null;
+  return readCache()[pincode] || inMemoryPincodeCache[pincode] || null;
 }
 
 function savePincodeToCache(pincode, entry) {

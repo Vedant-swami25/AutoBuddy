@@ -5,8 +5,11 @@ mongoose.set("bufferCommands", false);
 
 async function connectDatabase() {
   try {
+    if (mongoose.connection.readyState === 1) {
+      return true;
+    }
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 3000
+      serverSelectionTimeoutMS: 8000
     });
     console.log("MongoDB connected successfully");
 

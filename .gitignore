@@ -1,4 +1,16 @@
+# Dependencies
 node_modules/
+
+# Environment Variables and Secrets
 .env
+.env.*
+.env.local
+.env.production
+
+# Vercel Configuration & Build Output
+.vercel/
+
+# IDE & OS Metadata
 .vscode/
 .DS_Store
+Thumbs.db
