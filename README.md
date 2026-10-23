@@ -6,182 +6,218 @@
 
 </div>
 
-✨ Features
+## ✨ Features
 
-- 🔐 User Authentication
-- 📍 Live GPS Location
-- 🗺️ Nearby Garage Finder
-- 🚐 Mobile Mechanic Booking
-- 📦 Booking History
-- 🚗 Live Tracking
-- ⭐ Verified Garages
-- 📱 Responsive UI
+- 🔐 **Multi-Role Authentication**: Dedicated portals for Customer Drivers, Garage Workshop Owners, and Platform Administrators with passwordless mobile OTP verification.
+- 🚗 **3D Interactive Vehicle Studio**: Real-time Three.js vehicle viewport with multi-angle camera presets (3/4, side, front, back) and custom finish swatches.
+- 🏍️ **Dual Vehicle Mode**: One-tap toggle between Car (Four-Wheeler) and Bike (Two-Wheeler) modes across services, pricing, and dispatch.
+- 📍 **Live GPS Location & Geocoding**: Automatic browser geolocation detection with reverse geocoding and fallback pin support.
+- 🗺️ **Nearby Garage Finder**: Interactive Leaflet & OpenStreetMap discovery displaying nearby verified workshops, distances, and real-time ETAs.
+- ⭐ **Certified Garages Directory**: Searchable directory of verified partner workshops with ratings, operational hours, services, and direct booking.
+- 🧰 **Services & Transparent Pricing**: Categorized catalog covering cleaning, scheduled maintenance, and emergency breakdown packages with upfront pricing.
+- 🚐 **On-Demand Mobile Dispatch & SOS**: Immediate booking of roadside assistance vans and emergency SOS support.
+- 🚗 **Real-Time Live Tracking**: Route rendering on map with moving service technician markers, progress timelines, and live status progression.
+- 📦 **My Bookings Dashboard**: History and live status of customer appointments with status filtering (Pending, In Progress, Completed, Cancelled).
+- 🛠️ **Garage Owner Portal**: Dedicated partner dashboard to toggle dispatch availability, review incoming user requests, and manage repair lifecycle.
+- 🛡️ **Administrator Control Panel**: Comprehensive metrics, workshop verification and onboarding, user account management, and real-time login audit trails.
+- 🌓 **Dynamic Theme System**: Sleek modern dark mode and light mode with fluid micro-animations.
 
 ---
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 
 **Frontend**
-- HTML
-- CSS
-- JavaScript
+- HTML5 (Semantic Structure)
+- Vanilla CSS3 (Custom design system, glassmorphism, responsive grid & dark/light themes)
+- Modern JavaScript (ES6+ Modules, Fetch API, DOM Controllers)
+- Three.js (3D Vehicle Studio & Interactive Shaders)
+- Leaflet.js & OpenStreetMap (Interactive Mapping & Route Visuals)
 
 **Backend**
 - Node.js
 - Express.js
+- Express Rate Limiting (In-memory abuse prevention)
+- CORS Middleware
 
 **Database**
 - MongoDB
-- Mongoose
-
-**Maps**
-- Leaflet.js
-- OpenStreetMap
+- Mongoose ODM
 
 ---
 
-📸 Screenshots
+## 📸 Screenshots
 
-🏠 Home Page
+### 🔐 Authentication Portal
+![AutoBuddy Login](screenshots/login.png)
 
-<img width="1496" height="1017" alt="image" src="https://github.com/user-attachments/assets/7e8d7b3c-457c-4021-b700-7ffbd347cf51" />
+### 🏠 User Dashboard & 3D Vehicle Studio
+![AutoBuddy User Dashboard](screenshots/user-dashboard.png)
 
-🔐 Login Page
+### 🏢 Certified Garages Directory
+![AutoBuddy Garage List](screenshots/garage-list.png)
 
-<img width="1503" height="1021" alt="image" src="https://github.com/user-attachments/assets/395e0e15-3b84-434e-9730-34db208a9675" />
+### 🗺️ Nearby Garages & Map Discovery
+![AutoBuddy Nearby Garages Map](screenshots/nearby-garages-map.png)
 
+### 🧰 Service Catalog & Transparent Pricing
+![AutoBuddy Services](screenshots/services.png)
 
-🚗 Garage List
+### 📦 Instant Booking & Dispatch
+![AutoBuddy Booking](screenshots/booking.png)
 
-<img width="1551" height="1012" alt="image" src="https://github.com/user-attachments/assets/6e80201c-0610-46ea-b022-6ae76e49ce76" />
+### 📅 My Bookings & Request History
+![AutoBuddy My Bookings](screenshots/my-bookings.png)
 
+### 📍 Real-Time Mechanic Live Tracking
+![AutoBuddy Live Tracking](screenshots/live-tracking.png)
 
-🗺️ Live Map
+### 🛠️ Partner Garage Owner Dashboard
+![AutoBuddy Garage Owner Dashboard](screenshots/owner-dashboard.png)
 
-<img width="1677" height="998" alt="image" src="https://github.com/user-attachments/assets/0b7a5ae4-a9b7-4d97-8120-39514f8d7859" />
+### 🛡️ Administrator Control Dashboard
+![AutoBuddy Admin Dashboard](screenshots/admin-dashboard.png)
 
+---
 
-📦 Booking
+## 🚀 Installation & Setup
 
-
-<img width="817" height="517" alt="image" src="https://github.com/user-attachments/assets/e6a263ff-0aeb-46e4-abfb-43a63219150f" />
-
-
-🚐 Live Tracking
-
-
-<img width="1447" height="1001" alt="image" src="https://github.com/user-attachments/assets/a2449330-7266-4a0d-bca4-fdf715107812" />
-
-
-🛠️ Services
-
-
-<img width="1451" height="1006" alt="image" src="https://github.com/user-attachments/assets/30d11a06-a82b-4fb0-89bd-bedbf5397012" />
-
-
-🚀 Installation
-
-Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Vedant-swami25/AutoBuddy.git
+cd AutoBuddy
 ```
 
-Install dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-Create `.env`
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
 
 ```env
-MONGODB_URI=your_mongodb_connection_string
-PORT=5000
+# MongoDB Connection String
+# Local MongoDB:
+MONGODB_URI=mongodb://localhost:27017/autobuddy
+# Or MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/autobuddy
+
+# Server Port
+PORT=3000
+
+# Node Environment
+NODE_ENV=development
 ```
 
-Import demo data
+### 4. Seed database presets
+
+Import verified garage seed records and demo datasets into MongoDB:
 
 ```bash
 npm run migrate
 ```
 
-Run project
+### 5. Start the application
 
 ```bash
 npm start
 ```
 
-📂 Project Structure
+Open your browser and visit:
+```
+http://localhost:3000
+```
+
+---
+
+## 📂 Project Structure
 
 ```text
 AutoBuddy
 │
 ├── backend
 │   ├── config
-│   │   ├── database.js
-│   │   └── pageRoutes.js
+│   │   ├── database.js          # MongoDB connection via Mongoose
+│   │   └── pageRoutes.js        # Static page route bindings
 │   │
 │   ├── controllers
-│   │   ├── adminController.js
-│   │   ├── authController.js
-│   │   ├── bookingController.js
-│   │   ├── garageController.js
-│   │   ├── locationController.js
-│   │   ├── loginController.js
-│   │   └── pincodeController.js
+│   │   ├── adminController.js    # Platform metrics, workshop & user controls
+│   │   ├── authController.js     # Multi-role OTP generation & verification
+│   │   ├── bookingController.js  # Dispatch creation, status lifecycle & lookup
+│   │   ├── garageController.js   # Workshop retrieval, filtering & verification
+│   │   ├── locationController.js # Reverse geocoding & coordinates lookup
+│   │   ├── loginController.js    # User authentication & session helpers
+│   │   └── pincodeController.js  # Pincode geographic caching
 │   │
 │   ├── data
-│   │   ├── garages.json
-│   │   └── pincode-cache.json
+│   │   ├── garages.json          # Pre-configured verified workshop records
+│   │   └── pincode-cache.json    # Local postal code geodata cache
 │   │
 │   ├── middleware
-│   │   ├── adminAuth.js
-│   │   └── auth.js
+│   │   ├── adminAuth.js          # Administrator authorization guard
+│   │   ├── auth.js               # User role authorization middleware
+│   │   └── rateLimiter.js        # OTP rate limiter & request throttling
 │   │
 │   ├── models
-│   │   ├── Booking.js
-│   │   ├── Garage.js
-│   │   └── User.js
+│   │   ├── Booking.js            # Booking schema, status stages & coordinates
+│   │   ├── Garage.js             # Garage schema, services & verification flags
+│   │   ├── LoginHistory.js       # Real-time login audit log schema
+│   │   └── User.js               # Multi-role user account schema
 │   │
 │   ├── routes
-│   │   ├── admin.js
-│   │   ├── auth.js
-│   │   ├── booking.js
-│   │   ├── garage.js
-│   │   ├── index.js
-│   │   ├── location.js
-│   │   ├── login.js
-│   │   └── pincode.js
+│   │   ├── admin.js              # Admin API routes (/api/admin/*)
+│   │   ├── auth.js               # Authentication & OTP routes (/api/auth/*)
+│   │   ├── booking.js            # Booking lifecycle routes (/api/bookings/*)
+│   │   ├── garage.js             # Workshop directory routes (/api/garages/*)
+│   │   ├── index.js              # Express router aggregator
+│   │   ├── location.js           # Geocoding routes (/api/location/*)
+│   │   ├── login.js              # Legacy login compatibility route
+│   │   └── pincode.js            # Pincode query routes (/api/pincode/*)
 │   │
 │   ├── scripts
-│   │   └── migrate.js
+│   │   └── migrate.js            # Seed data migration script
 │   │
 │   ├── services
-│   │   ├── bookingTracking.js
-│   │   ├── otpService.js
-│   │   └── pincodeCache.js
+│   │   ├── bookingTracking.js    # ETA & progression calculation
+│   │   ├── otpService.js         # Mobile OTP generation & verification
+│   │   └── pincodeCache.js       # Postal code resolution service
 │   │
 │   ├── utils
-│   │   └── coordinates.js
+│   │   └── coordinates.js        # Distance calculation & coordinate validation
 │   │
-│   └── server.js
+│   └── server.js                 # Express application entry point
 │
 ├── frontend
 │   ├── assets
-│   │   ├── css/
-│   │   ├── js/
-│   │   └── models/
+│   │   ├── css/                  # Styling (style.css, admin.css, owner.css, sidebar.css)
+│   │   ├── images/               # Logos, icons & brand assets
+│   │   ├── js/                   # Client controllers (map, 3D, auth, tracking, admin)
+│   │   └── models/               # 3D vehicle assets (GLTF/GLB)
 │   │
-│   ├── admin-dashboard.html
-│   ├── garage.html
-│   ├── index.html
-│   ├── login.html
-│   ├── map.html
-│   ├── owner-dashboard.html
-│   ├── partner.html
-│   ├── services.html
-│   └── tracking.html
+│   ├── admin-dashboard.html      # Administrator control dashboard
+│   ├── garage.html               # Verified garage directory & search
+│   ├── index.html                # Main customer home & 3D vehicle studio
+│   ├── login.html                # Multi-role sign in & registration
+│   ├── map.html                  # Interactive garage finder & live route tracking
+│   ├── owner-dashboard.html      # Garage owner partner portal
+│   ├── partner.html              # Workshop partner onboarding landing
+│   ├── services.html             # Categorized service catalog & pricing
+│   └── tracking.html             # User booking history & status feed
+│
+├── screenshots                   # Genuine application UI captures
+│   ├── admin-dashboard.png
+│   ├── booking.png
+│   ├── garage-list.png
+│   ├── live-tracking.png
+│   ├── login.png
+│   ├── my-bookings.png
+│   ├── nearby-garages-map.png
+│   ├── owner-dashboard.png
+│   ├── services.png
+│   └── user-dashboard.png
 │
 ├── .env.example
 ├── .gitignore
@@ -191,23 +227,23 @@ AutoBuddy
 └── README.md
 ```
 
+---
 
+## 🚀 Future Improvements
 
-🚀 Future Improvements
-
-- Online Payments
-- Push Notifications
-- AI Vehicle Diagnosis
-- Ratings & Reviews
-- Admin Dashboard
+- 💳 Online Payment Gateway Integration (UPI, Cards, NetBanking)
+- 📲 Native SMS & WhatsApp OTP Gateway Integration
+- 🔔 Real-Time Browser Push & SMS Status Notifications
+- 🤖 AI-Powered Vehicle Breakdown Diagnostics
+- 🌟 Direct Customer Review & Workshop Rating Submission
 
 ---
 
-👨‍💻 Author
+## 👨‍💻 Author
 
-"Vedant Swami"
+**Vedant Swami**
 
-GitHub: https://github.com/Vedant-swami25
+GitHub: [https://github.com/Vedant-swami25](https://github.com/Vedant-swami25)
 
 ---
 
